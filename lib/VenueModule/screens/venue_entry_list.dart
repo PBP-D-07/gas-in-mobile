@@ -37,7 +37,7 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     return Scaffold(
-      appBar: AppBar(title: const Text('News Entry List')),
+      appBar: AppBar(title: const Text('Book Venues')),
       drawer: const LeftDrawer(),
       body: FutureBuilder(
         future: fetchNews(request),

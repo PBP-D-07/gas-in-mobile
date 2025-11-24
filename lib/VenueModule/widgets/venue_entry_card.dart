@@ -10,7 +10,7 @@ class VenueEntryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: const EdgeInsets.symmetric(vertical: 6),
       child: InkWell(
         onTap: onTap,
         child: Card(
@@ -20,62 +20,59 @@ class VenueEntryCard extends StatelessWidget {
           ),
           elevation: 2,
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(12.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Thumbnail
+                // Thumbnail using aspect ratio so height scales with width
                 ClipRRect(
                   borderRadius: BorderRadius.circular(6),
-                  child: Image.network(
-                    'http://localhost:8000/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
-                    height: 150,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      height: 150,
-                      color: Colors.grey[300],
-                      child: const Center(child: Icon(Icons.broken_image)),
+                  child: AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: Image.network(
+                      'http://localhost:8000/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: Colors.grey[300],
+                        child: const Center(child: Icon(Icons.broken_image)),
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 8),
 
-                // Title News
+                // Title
                 Text(
                   venue.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
 
                 // Category
-                Text('Category: ${venue.category}'),
+                Text(
+                  'Category: ${venue.category}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 12.0, color: Colors.black54),
+                ),
                 const SizedBox(height: 6),
 
-                // Content preview
+                // Content preview limited to 2 lines
                 Text(
                   venue.description.length > 100
                       ? '${venue.description.substring(0, 100)}...'
                       : venue.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.black54),
+                  style: const TextStyle(color: Colors.black54, fontSize: 13.0),
                 ),
-                const SizedBox(height: 6),
-
-                // // Featured indicator
-                // if (venue.isFeatured)
-                //   const Text(
-                //     'Featured',
-                //     style: TextStyle(
-                //       color: Colors.amber,
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   ),
               ],
             ),
           ),

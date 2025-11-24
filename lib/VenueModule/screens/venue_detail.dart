@@ -29,7 +29,7 @@ class VenueDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('News Detail'),
+        title: const Text('Venue Detail'),
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
       ),

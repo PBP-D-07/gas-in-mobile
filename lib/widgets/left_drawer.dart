@@ -60,7 +60,7 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.add_box),
+            leading: const Icon(Icons.home_work_rounded),
             title: const Text('Book Venue'),
             // Bagian redirection ke MyHomePage
             onTap: () {

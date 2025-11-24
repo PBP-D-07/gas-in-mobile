@@ -56,21 +56,29 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
                 ],
               );
             } else {
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (_, index) => VenueEntryCard(
-                  venue: snapshot.data![index],
-                  onTap: () {
-                    // Navigate to news detail page
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            VenueDetailPage(venue: snapshot.data![index]),
-                      ),
-                    );
-                  },
+              return GridView.builder(
+                padding: const EdgeInsets.all(8.0),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 0.8,
                 ),
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  final venue = snapshot.data![index];
+                  return VenueEntryCard(
+                    venue: venue,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VenueDetailPage(venue: venue),
+                        ),
+                      );
+                    },
+                  );
+                },
               );
             }
           }

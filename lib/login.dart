@@ -18,7 +18,7 @@ class LoginApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple)
-          .copyWith(secondary: Colors.deepPurpleAccent[600]),
+          .copyWith(secondary: Colors.deepPurpleAccent[400]),
       ),
       home: const LoginPage(),
     );
@@ -101,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                       // TODO: Change the URL and don't forget to add trailing slash (/) at the end of URL!
                       // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
                       // If you using chrome,  use URL http://localhost:8000
-                      final response = await request.post(
+                      final response = await request.login(
                           "http://localhost:8000/auth/login/",
                           {
                             'username': username,

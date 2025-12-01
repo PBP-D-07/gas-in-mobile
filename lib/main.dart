@@ -5,12 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:gas_in/login.dart';
 
 void main() {
-  runApp(
-    Provider<CookieRequest>(
-      create: (_) => CookieRequest(),
-      child: const MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -18,6 +13,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return MaterialApp(
       title: 'gas.in',
       theme: ThemeData(
@@ -26,6 +22,22 @@ class MyApp extends StatelessWidget {
         ).copyWith(secondary: Colors.deepPurpleAccent[600]),
       ),
       home: const MyHomePage(),
+=======
+    return Provider(
+      create: (_) {
+        CookieRequest request = CookieRequest();
+        return request;
+      },
+      child: MaterialApp(
+        title: 'gas.in',
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)
+          .copyWith(secondary: Colors.deepPurpleAccent[400]),
+        ),
+        home: LoginPage(),
+      ),
+>>>>>>> fd483042e7578882423265c8445adea9feff9ce6
     );
   }
 }

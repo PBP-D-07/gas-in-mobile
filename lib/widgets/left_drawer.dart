@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gas_in/EventMakerModule/screens/edit_event.dart';
+import 'package:gas_in/EventMakerModule/screens/event_detail.dart';
 import 'package:gas_in/screens/menu.dart';
 import 'package:gas_in/EventMakerModule/screens/create_event.dart';
 import 'package:gas_in/VenueModule/screens/venue_entry_list.dart';
@@ -56,6 +58,39 @@ class LeftDrawer extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => CreateEventPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.add_box),
+            title: const Text('Edit Event'),
+            // Bagian redirection ke MyHomePage
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditEventPage(initialData: {}),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.add_box),
+            title: const Text('Event Detail'),
+            // Bagian redirection ke MyHomePage
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EventDetailPage(
+                    name: 'Pacilrun',
+                    description: 'lari bos',
+                    location: 'depok',
+                    category: 'running',
+                    thumbnailFile: null,
+                    selectedDate: DateTime.now(),
+                  ),
+                ),
               );
             },
           ),

@@ -30,7 +30,7 @@ class VenueDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Venue Detail'),
-        backgroundColor: Colors.indigo,
+        backgroundColor: Colors.deepPurpleAccent,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -40,7 +40,7 @@ class VenueDetailPage extends StatelessWidget {
             // Thumbnail image
             if (venue.thumbnail.isNotEmpty)
               Image.network(
-                'http://localhost:8000/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
+                'http://localhost:8000/api/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
                 width: double.infinity,
                 height: 250,
                 fit: BoxFit.cover,
@@ -98,7 +98,7 @@ class VenueDetailPage extends StatelessWidget {
                           vertical: 4.0,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.indigo.shade100,
+                          color: Colors.blueAccent.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Text(
@@ -106,7 +106,7 @@ class VenueDetailPage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Colors.indigo.shade700,
+                            color: Colors.blueAccent[700],
                           ),
                         ),
                       ),

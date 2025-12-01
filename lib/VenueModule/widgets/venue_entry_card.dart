@@ -31,7 +31,7 @@ class VenueEntryCard extends StatelessWidget {
                   child: AspectRatio(
                     aspectRatio: 16 / 9,
                     child: Image.network(
-                      'http://localhost:8000/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
+                      'http://localhost:8000/api/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
                       width: double.infinity,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => Container(

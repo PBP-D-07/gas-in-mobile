@@ -9,14 +9,63 @@ class MyHomePage extends StatelessWidget {
     // Scaffold menyediakan struktur dasar halaman dengan AppBar dan body.
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'gas.in',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        backgroundColor: Colors.white,
+        elevation: 5,
+        shadowColor: Colors.black.withValues(alpha: 0.5),
+        titleSpacing: 0,
+
+        title: Row(
+          children: [
+            /// CENTER — Logo + Brand, dengan Expanded agar benar-benar center
+            Expanded(
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset("logo.png", width: 20),
+                    SizedBox(width: 6),
+                    ShaderMask(
+                      shaderCallback: (bounds) =>
+                          const LinearGradient(
+                            colors: [
+                              Color(0xFF4338CA), // indigo-700
+                              Color(0xFF6B21A8), // purple-800
+                            ],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ).createShader(
+                            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                          ),
+                      child: const Padding(
+                        padding: EdgeInsets.only(right: 2),
+                        child: Text(
+                          'GAS.in',
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white, // warna tetap harus ada
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            /// RIGHT — Login Button
+            Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: Text("Login", style: const TextStyle(color: Colors.black)),
+            ),
+          ],
         ),
-        // Warna latar belakang AppBar diambil dari skema warna tema aplikasi.
-        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
+
       drawer: LeftDrawer(),
+
       // Body halaman dengan padding di sekelilingnya.
       body: Padding(
         padding: const EdgeInsets.all(16.0),

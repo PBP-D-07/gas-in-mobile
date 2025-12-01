@@ -29,9 +29,8 @@ class VenueDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Venue Detail'),
-        backgroundColor: Colors.deepPurpleAccent,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -98,7 +97,7 @@ class VenueDetailPage extends StatelessWidget {
                           vertical: 4.0,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.blueAccent.withOpacity(0.1),
+                          color: Colors.purpleAccent[100]!.withOpacity(0.5),
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Text(
@@ -106,7 +105,7 @@ class VenueDetailPage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blueAccent[700],
+                            color: Colors.black,
                           ),
                         ),
                       ),

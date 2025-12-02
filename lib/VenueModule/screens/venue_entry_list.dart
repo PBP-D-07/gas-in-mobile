@@ -37,72 +37,104 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     return Scaffold(
-      appBar: AppBar(title: const Text('Book Venues')),
+      appBar: AppBar(
+        title: const Text('Book Venues'),
+        backgroundColor: Colors.white,
+        elevation: 5,
+        shadowColor: Colors.black.withOpacity(0.5),
+      ),
       drawer: const LeftDrawer(),
-      body: FutureBuilder(
-        future: fetchNews(request),
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.data == null) {
-            return const Center(child: CircularProgressIndicator());
-          } else {
-            if (!snapshot.hasData) {
-              return const Column(
-                children: [
-                  Text(
-                    'There are no news in football news yet.',
-                    style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
-                  ),
-                  SizedBox(height: 8),
-                ],
-              );
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [
+              Colors.purple[100]!, // deep purple at bottom
+              Colors.purple[50]!, // medium purple
+              Colors.purple[50]!, // light purple
+              Colors.white, // fade to transparent at top
+            ],
+            stops: [0.0, 0.35, 0.7, 1.0],
+          ),
+        ),
+        child: FutureBuilder(
+          future: fetchNews(request),
+          builder: (context, AsyncSnapshot snapshot) {
+            if (snapshot.data == null) {
+              return const Center(child: CircularProgressIndicator());
             } else {
-              // Make header part of the scrollable content so it's not fixed
-              return CustomScrollView(
-                slivers: [
-                  const SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-                      child: Text(
-                        'Book Your Venues',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
+              if (!snapshot.hasData) {
+                return const Column(
+                  children: [
+                    Text(
+                      'There are no news in football news yet.',
+                      style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
+                    ),
+                    SizedBox(height: 8),
+                  ],
+                );
+              } else {
+                // Make header part of the scrollable content so it's not fixed
+                return CustomScrollView(
+                  slivers: [
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                        child: Text(
+                          'Book Your Venues!',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SliverPadding(
-                    padding: const EdgeInsets.all(8.0),
-                    sliver: SliverGrid(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final venue = snapshot.data![index];
-                        return VenueEntryCard(
-                          venue: venue,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    VenueDetailPage(venue: venue),
-                              ),
-                            );
-                          },
-                        );
-                      }, childCount: snapshot.data!.length),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
-                            childAspectRatio: 0.8,
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                        child: Text(
+                          'Found The Best Sports Venues In Your Area with gas.in!',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[700],
                           ),
+                        ),
+                      ),
                     ),
-                  ),
-                ],
-              );
+                    SliverPadding(
+                      padding: const EdgeInsets.all(8.0),
+                      sliver: SliverGrid(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final venue = snapshot.data![index];
+                          return VenueEntryCard(
+                            venue: venue,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      VenueDetailPage(venue: venue),
+                                ),
+                              );
+                            },
+                          );
+                        }, childCount: snapshot.data!.length),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                              childAspectRatio: 0.8,
+                            ),
+                      ),
+                    ),
+                  ],
+                );
+              }
             }
-          }
-        },
+          },
+        ),
       ),
     );
   }

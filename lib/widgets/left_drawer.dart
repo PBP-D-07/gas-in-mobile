@@ -4,6 +4,7 @@ import 'package:gas_in/EventMakerModule/screens/event_detail.dart';
 import 'package:gas_in/screens/menu.dart';
 import 'package:gas_in/EventMakerModule/screens/create_event.dart';
 import 'package:gas_in/VenueModule/screens/venue_entry_list.dart';
+import 'package:gas_in/VenueModule/screens/venue_form.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -14,7 +15,7 @@ class LeftDrawer extends StatelessWidget {
       child: ListView(
         children: [
           const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.blue),
+            decoration: BoxDecoration(color: Colors.blueAccent),
             child: Column(
               children: [
                 Text(
@@ -102,6 +103,17 @@ class LeftDrawer extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => VenueEntryListPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.home_work_rounded),
+            title: const Text('Create Venue'),
+            // Bagian redirection ke MyHomePage
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => VenueFormPage()),
               );
             },
           ),

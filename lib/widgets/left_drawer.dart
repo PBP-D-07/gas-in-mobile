@@ -69,7 +69,7 @@ class LeftDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => EditEventPage(
-                    eventId: "d2329b74-4a98-494e-8f04-c9eae120f7ab",
+                    eventId: "83dbc83c-7356-43df-a966-2573e77e4e92",
                   ),
                 ),
               );
@@ -83,13 +83,7 @@ class LeftDrawer extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EventDetailPage(
-                    name: 'Pacilrun',
-                    description: 'lari bos',
-                    location: 'depok',
-                    category: 'running',
-                    thumbnailFile: null,
-                    selectedDate: DateTime.now(),
+                  builder: (context) => EventDetailPage(eventId: "83dbc83c-7356-43df-a966-2573e77e4e92",
                   ),
                 ),
               );

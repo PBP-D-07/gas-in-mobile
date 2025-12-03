@@ -49,6 +49,20 @@ class _CreateEventPageState extends State<CreateEventPage> {
     {"value": "other", "label": "Lainnya"},
   ];
 
+  void resetForm() {
+    setState(() {
+      _name = "";
+      _description = "";
+      _location = "";
+      _category = "other";
+      _selectedDate = null;
+      _thumbnailFile = null;
+      _webThumbnailBytes = null;
+    });
+
+    _formKey.currentState?.reset(); // reset validator
+  }
+
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
@@ -189,7 +203,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   title: Text(
                     _selectedDate == null
                         ? "Choose Event Date"
-                        : formatDate(_selectedDate!),style: TextStyle(color: Colors.black),
+                        : formatDate(_selectedDate!),
+                    style: TextStyle(color: Colors.black),
                   ),
                   trailing: const Icon(
                     Icons.calendar_month,
@@ -417,7 +432,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   onPressed: () async {
                     final requestProvider = context.read<CookieRequest>();
 
-                    // ❗ Cek login
                     if (!requestProvider.loggedIn) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -449,31 +463,31 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       return;
                     }
 
-                    // ---- lanjut proses submit seperti biasa ----
                     final url = Uri.parse(
-                      "http://localhost:8000/event-maker/api/create",
+                      "http://10.0.2.2:8000/event-maker/api/create/",
                     );
 
                     var multipartRequest = http.MultipartRequest("POST", url);
 
                     // Set cookies dari requestProvider
-                    final cookies = requestProvider.cookies;
-                    if (cookies.isNotEmpty) {
-                      multipartRequest.headers["Cookie"] = cookies.entries
-                          .map((e) => "${e.key}=${e.value}")
-                          .join("; ");
+                    // Ambil header yang sudah benar dari pbp_django_auth
 
-                      if (cookies.containsKey("csrftoken")) {
-                        multipartRequest.headers["X-CSRFToken"] =
-                            cookies["csrftoken"]!.toString();
-                      }
+                    final cookieHeader = request.headers['cookie'];
+                    if (cookieHeader != null) {
+                      multipartRequest.headers['cookie'] = cookieHeader;
+                    }
+
+                    final csrfToken = request.headers['X-CSRFToken'];
+                    if (csrfToken != null) {
+                      multipartRequest.headers['X-CSRFToken'] = csrfToken;
                     }
 
                     multipartRequest.fields['name'] = _name;
                     multipartRequest.fields['description'] = _description;
                     multipartRequest.fields['location'] = _location;
-                    multipartRequest.fields['date'] = _selectedDate!
-                        .toIso8601String();
+                    multipartRequest.fields['date'] = DateFormat(
+                      "yyyy-MM-ddTHH:mm",
+                    ).format(_selectedDate!);
                     multipartRequest.fields['category'] = _category;
 
                     if (kIsWeb) {
@@ -499,19 +513,23 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
                     if (!context.mounted) return;
 
-                    if (respJson['status'] == 'success') {
+                    if (response.statusCode == 201) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text("Event created successfully"),
                         ),
                       );
+
+                      resetForm();
+
+                      // TODO: nanti push ke event page
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (_) => MyHomePage()),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Failed to create event")),
+                        SnackBar(content: Text(respJson['message'])),
                       );
                     }
                   },

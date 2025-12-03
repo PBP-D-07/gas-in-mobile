@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_in/login.dart';
 import 'package:gas_in/widgets/left_drawer.dart';
 
 class MyHomePage extends StatelessWidget {
@@ -58,7 +59,18 @@ class MyHomePage extends StatelessWidget {
             /// RIGHT — Login Button
             Padding(
               padding: const EdgeInsets.only(right: 12),
-              child: Text("Login", style: const TextStyle(color: Colors.black)),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
+                },
+                child: Text(
+                  "Login",
+                  style: const TextStyle(color: Colors.black),
+                ),
+              ),
             ),
           ],
         ),

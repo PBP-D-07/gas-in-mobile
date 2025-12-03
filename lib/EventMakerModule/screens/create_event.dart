@@ -9,6 +9,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:typed_data';
 
 String formatDate(DateTime date) {
   return DateFormat("EEEE, dd MMMM yyyy HH:mm", "id_ID").format(date);
@@ -28,22 +30,23 @@ class _CreateEventPageState extends State<CreateEventPage> {
   String _description = "";
   String _location = "";
   String _category = "other";
-  File? _thumbnailFile;
+  Uint8List? _webThumbnailBytes; // untuk web
+  File? _thumbnailFile; // untuk mobile
 
   final ImagePicker _picker = ImagePicker();
   DateTime? _selectedDate;
 
-  final List<String> _categories = [
-    "running",
-    "badminton",
-    "futsal",
-    "football",
-    "basketball",
-    "cycling",
-    "volleyball",
-    "yoga",
-    "padel",
-    "other",
+  final List<Map<String, String>> _categories = [
+    {"value": "running", "label": "Lari"},
+    {"value": "badminton", "label": "Badminton"},
+    {"value": "futsal", "label": "Futsal"},
+    {"value": "football", "label": "Sepak Bola"},
+    {"value": "basketball", "label": "Basket"},
+    {"value": "cycling", "label": "Bersepeda"},
+    {"value": "volleyball", "label": "Voli"},
+    {"value": "yoga", "label": "Yoga"},
+    {"value": "padel", "label": "Padel"},
+    {"value": "other", "label": "Lainnya"},
   ];
 
   @override
@@ -186,7 +189,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   title: Text(
                     _selectedDate == null
                         ? "Choose Event Date"
-                        : formatDate(_selectedDate!),
+                        : formatDate(_selectedDate!),style: TextStyle(color: Colors.black),
                   ),
                   trailing: const Icon(
                     Icons.calendar_month,
@@ -222,6 +225,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     if (picked != null) {
                       // TIME PICKER
                       TimeOfDay? time = await showTimePicker(
+                        // ignore: use_build_context_synchronously
                         context: context,
                         initialTime: TimeOfDay.now(),
                         initialEntryMode:
@@ -242,11 +246,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                   dialBackgroundColor:
                                       Colors.deepPurple.shade50,
                                   hourMinuteTextStyle:
-                                      MaterialStateTextStyle.resolveWith((
+                                      WidgetStateTextStyle.resolveWith((
                                         states,
                                       ) {
                                         if (states.contains(
-                                          MaterialState.selected,
+                                          WidgetState.selected,
                                         )) {
                                           return const TextStyle(
                                             color: Colors.white,
@@ -286,7 +290,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
               // CATEGORY
               DropdownButtonFormField<String>(
-                value: _category,
+                initialValue: _category,
                 decoration: InputDecoration(
                   labelText: "Category",
                   labelStyle: TextStyle(color: Colors.deepPurple),
@@ -307,15 +311,19 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   border: OutlineInputBorder(),
                 ),
                 dropdownColor: Colors.white,
-                items: _categories
-                    .map(
-                      (cat) => DropdownMenuItem(
-                        value: cat,
-                        child: Text(cat[0].toUpperCase() + cat.substring(1)),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (value) => _category = value!,
+
+                items: _categories.map((cat) {
+                  return DropdownMenuItem(
+                    value: cat["value"], // ✅ String
+                    child: Text(cat["label"]!), // ✅ label tampil
+                  );
+                }).toList(),
+
+                onChanged: (value) {
+                  setState(() {
+                    _category = value!; // simpan value string
+                  });
+                },
               ),
 
               const SizedBox(height: 16),
@@ -329,10 +337,22 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     source: ImageSource.gallery,
                     imageQuality: 70,
                   );
+
                   if (picked != null) {
-                    setState(() {
-                      _thumbnailFile = File(picked.path);
-                    });
+                    if (kIsWeb) {
+                      // WEB → simpan sebagai bytes
+                      final bytes = await picked.readAsBytes();
+                      setState(() {
+                        _webThumbnailBytes = bytes;
+                        _thumbnailFile = null;
+                      });
+                    } else {
+                      // MOBILE → simpan sebagai File
+                      setState(() {
+                        _thumbnailFile = File(picked.path);
+                        _webThumbnailBytes = null;
+                      });
+                    }
                   }
                 },
                 child: Container(
@@ -343,7 +363,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     borderRadius: BorderRadius.circular(12),
                     color: Colors.white,
                   ),
-                  child: _thumbnailFile == null
+                  child: (_thumbnailFile == null && _webThumbnailBytes == null)
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -364,12 +384,19 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         )
                       : ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: Image.file(
-                            _thumbnailFile!,
-                            width: double.infinity,
-                            height: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
+                          child: kIsWeb
+                              ? Image.memory(
+                                  _webThumbnailBytes!,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.file(
+                                  _thumbnailFile!,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                 ),
               ),
@@ -388,56 +415,85 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     ),
                   ),
                   onPressed: () async {
-                    if (!_formKey.currentState!.validate()) return;
-                    if (_selectedDate == null) {
+                    final requestProvider = context.read<CookieRequest>();
+
+                    // ❗ Cek login
+                    if (!requestProvider.loggedIn) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Please choose a date first")),
+                        const SnackBar(
+                          content: Text(
+                            "Anda harus login terlebih dahulu untuk membuat event.",
+                          ),
+                        ),
                       );
                       return;
                     }
+
+                    if (!_formKey.currentState!.validate()) return;
+
+                    if (_selectedDate == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Please choose a date first"),
+                        ),
+                      );
+                      return;
+                    }
+
                     if (_thumbnailFile == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text("Please choose a thumbnail first"),
                         ),
                       );
                       return;
                     }
 
-                    final requestProvider = context.read<CookieRequest>();
-
+                    // ---- lanjut proses submit seperti biasa ----
                     final url = Uri.parse(
-                      "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event-maker/api/create",
+                      "http://localhost:8000/event-maker/api/create",
                     );
 
-                    var request = http.MultipartRequest("POST", url);
+                    var multipartRequest = http.MultipartRequest("POST", url);
 
+                    // Set cookies dari requestProvider
                     final cookies = requestProvider.cookies;
                     if (cookies.isNotEmpty) {
-                      request.headers["Cookie"] = cookies.entries
-                          .map((e) => '${e.key}=${e.value}')
-                          .join('; ');
+                      multipartRequest.headers["Cookie"] = cookies.entries
+                          .map((e) => "${e.key}=${e.value}")
+                          .join("; ");
 
-                      if (cookies.containsKey('csrftoken')) {
-                        request.headers['X-CSRFToken'] = cookies['csrftoken']!
-                            .toString();
+                      if (cookies.containsKey("csrftoken")) {
+                        multipartRequest.headers["X-CSRFToken"] =
+                            cookies["csrftoken"]!.toString();
                       }
                     }
 
-                    request.fields['name'] = _name;
-                    request.fields['description'] = _description;
-                    request.fields['location'] = _location;
-                    request.fields['date'] = _selectedDate!.toIso8601String();
-                    request.fields['category'] = _category;
+                    multipartRequest.fields['name'] = _name;
+                    multipartRequest.fields['description'] = _description;
+                    multipartRequest.fields['location'] = _location;
+                    multipartRequest.fields['date'] = _selectedDate!
+                        .toIso8601String();
+                    multipartRequest.fields['category'] = _category;
 
-                    request.files.add(
-                      await http.MultipartFile.fromPath(
-                        'thumbnail',
-                        _thumbnailFile!.path,
-                      ),
-                    );
+                    if (kIsWeb) {
+                      multipartRequest.files.add(
+                        http.MultipartFile.fromBytes(
+                          'thumbnail',
+                          _webThumbnailBytes!,
+                          filename: "thumbnail.jpg",
+                        ),
+                      );
+                    } else {
+                      multipartRequest.files.add(
+                        await http.MultipartFile.fromPath(
+                          'thumbnail',
+                          _thumbnailFile!.path,
+                        ),
+                      );
+                    }
 
-                    final response = await request.send();
+                    final response = await multipartRequest.send();
                     final respStr = await response.stream.bytesToString();
                     final respJson = jsonDecode(respStr);
 
@@ -445,7 +501,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
                     if (respJson['status'] == 'success') {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Event created successfully")),
+                        const SnackBar(
+                          content: Text("Event created successfully"),
+                        ),
                       );
                       Navigator.pushReplacement(
                         context,
@@ -453,7 +511,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Failed to create event")),
+                        const SnackBar(content: Text("Failed to create event")),
                       );
                     }
                   },

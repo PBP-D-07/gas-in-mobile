@@ -7,7 +7,6 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
 import 'package:intl/intl.dart';
 
 class EditEventPage extends StatefulWidget {

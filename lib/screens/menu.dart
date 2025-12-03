@@ -23,7 +23,7 @@ class MyHomePage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset("logo.png", width: 20),
+                    Image.asset("assets/logo.png", width: 20),
                     SizedBox(width: 6),
                     ShaderMask(
                       shaderCallback: (bounds) =>

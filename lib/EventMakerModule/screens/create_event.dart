@@ -469,9 +469,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
                     var multipartRequest = http.MultipartRequest("POST", url);
 
-                    // Set cookies dari requestProvider
-                    // Ambil header yang sudah benar dari pbp_django_auth
-
                     final cookieHeader = request.headers['cookie'];
                     if (cookieHeader != null) {
                       multipartRequest.headers['cookie'] = cookieHeader;

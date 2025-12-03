@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gas_in/widgets/left_drawer.dart';
 import 'package:gas_in/screens/menu.dart';
+import 'package:gas_in/EventMakerModule/models/event_model.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -8,11 +9,13 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:typed_data';
 
 class EditEventPage extends StatefulWidget {
-  final Map<String, dynamic> initialData;
+  final String eventId;
 
-  const EditEventPage({super.key, required this.initialData});
+  const EditEventPage({super.key, required this.eventId});
 
   @override
   State<EditEventPage> createState() => _EditEventPageState();
@@ -21,13 +24,15 @@ class EditEventPage extends StatefulWidget {
 class _EditEventPageState extends State<EditEventPage> {
   final _formKey = GlobalKey<FormState>();
 
-  late String _name;
-  late String _description;
-  late String _location;
-  late String _category;
+  late TextEditingController _nameController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _locationController;
+  String _category = "other";
+  Uint8List? _webThumbnailBytes; // untuk web
   File? _thumbnailFile;
   final ImagePicker _picker = ImagePicker();
-  DateTime? _selectedDate;
+  DateTime _selectedDate = DateTime.now();
+  bool isLoading = true;
 
   final List<String> _categories = [
     "running",
@@ -45,14 +50,36 @@ class _EditEventPageState extends State<EditEventPage> {
   @override
   void initState() {
     super.initState();
+    _nameController = TextEditingController();
+    _descriptionController = TextEditingController();
+    _locationController = TextEditingController();
+    fetchEventData();
+  }
 
-    _name = widget.initialData["name"] ?? "";
-    _description = widget.initialData["description"] ?? "";
-    _location = widget.initialData["location"] ?? "";
-    _category = widget.initialData["category"] ?? "other";
-    _selectedDate = widget.initialData["date"] != null
-        ? DateTime.parse(widget.initialData["date"])
-        : DateTime.now();
+  Future<void> fetchEventData() async {
+    final response = await http.get(
+      Uri.parse("http://10.0.2.2:8000/event-maker/${widget.eventId}/"),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body)["data"];
+
+      setState(() {
+        _nameController.text = data["name"] ?? "";
+        _descriptionController.text = data["description"] ?? "";
+        _locationController.text = data["location"] ?? "";
+
+        _category = data["category"] ?? "other";
+
+        _selectedDate = data["date"] != null
+            ? DateTime.parse(data["date"])
+            : DateTime.now();
+
+        isLoading = false;
+      });
+    } else {
+      setState(() => isLoading = false);
+    }
   }
 
   String formatDate(DateTime date) {
@@ -91,7 +118,7 @@ class _EditEventPageState extends State<EditEventPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-      ), 
+      ),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -101,7 +128,7 @@ class _EditEventPageState extends State<EditEventPage> {
             children: [
               // NAME
               TextFormField(
-                initialValue: _name,
+                controller: _nameController,
                 decoration: InputDecoration(
                   labelText: "Event Name",
                   labelStyle: TextStyle(color: Colors.deepPurple),
@@ -121,17 +148,15 @@ class _EditEventPageState extends State<EditEventPage> {
                   ),
                   border: OutlineInputBorder(),
                 ),
-                onChanged: (value) => _name = value,
                 validator: (value) => (value == null || value.isEmpty)
                     ? "Nama can't be empty!"
                     : null,
               ),
-
               const SizedBox(height: 16),
 
               // DESCRIPTION
               TextFormField(
-                initialValue: _description,
+                controller: _descriptionController,
                 maxLines: 4,
                 decoration: InputDecoration(
                   labelText: "Description",
@@ -152,17 +177,15 @@ class _EditEventPageState extends State<EditEventPage> {
                   ),
                   border: OutlineInputBorder(),
                 ),
-                onChanged: (value) => _description = value,
                 validator: (value) => (value == null || value.isEmpty)
                     ? "Description can't be empty"
                     : null,
               ),
-
               const SizedBox(height: 16),
 
               // LOCATION
               TextFormField(
-                initialValue: _location,
+                controller: _locationController,
                 decoration: InputDecoration(
                   labelText: "Location",
                   labelStyle: TextStyle(color: Colors.deepPurple),
@@ -182,12 +205,10 @@ class _EditEventPageState extends State<EditEventPage> {
                   ),
                   border: OutlineInputBorder(),
                 ),
-                onChanged: (value) => _location = value,
                 validator: (value) => (value == null || value.isEmpty)
                     ? "Location is required!"
                     : null,
               ),
-
               const SizedBox(height: 16),
 
               // DATE PICKER
@@ -203,6 +224,7 @@ class _EditEventPageState extends State<EditEventPage> {
                     _selectedDate == null
                         ? "Choose Event Date"
                         : formatDate(_selectedDate!),
+                    style: TextStyle(color: Colors.black),
                   ),
                   trailing: const Icon(
                     Icons.calendar_month,
@@ -238,6 +260,7 @@ class _EditEventPageState extends State<EditEventPage> {
                     if (picked != null) {
                       // TIME PICKER
                       TimeOfDay? time = await showTimePicker(
+                        // ignore: use_build_context_synchronously
                         context: context,
                         initialTime: TimeOfDay.now(),
                         initialEntryMode:
@@ -258,11 +281,11 @@ class _EditEventPageState extends State<EditEventPage> {
                                   dialBackgroundColor:
                                       Colors.deepPurple.shade50,
                                   hourMinuteTextStyle:
-                                      MaterialStateTextStyle.resolveWith((
+                                      WidgetStateTextStyle.resolveWith((
                                         states,
                                       ) {
                                         if (states.contains(
-                                          MaterialState.selected,
+                                          WidgetState.selected,
                                         )) {
                                           return const TextStyle(
                                             color: Colors.white,
@@ -302,7 +325,7 @@ class _EditEventPageState extends State<EditEventPage> {
 
               // CATEGORY
               DropdownButtonFormField<String>(
-                value: _category,
+                initialValue: _category,
                 decoration: InputDecoration(
                   labelText: "Category",
                   labelStyle: TextStyle(color: Colors.deepPurple),
@@ -404,72 +427,101 @@ class _EditEventPageState extends State<EditEventPage> {
                     ),
                   ),
                   onPressed: () async {
-                    if (!_formKey.currentState!.validate()) return;
-                    if (_selectedDate == null) {
+                    final requestProvider = context.read<CookieRequest>();
+
+                    if (!requestProvider.loggedIn) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Please choose a date first")),
+                        const SnackBar(
+                          content: Text(
+                            "Anda harus login terlebih dahulu untuk mengedit event.",
+                          ),
+                        ),
                       );
                       return;
                     }
+
+                    if (!_formKey.currentState!.validate()) return;
+
                     if (_thumbnailFile == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text("Please choose a thumbnail first"),
                         ),
                       );
                       return;
                     }
 
-                    final requestProvider = context.read<CookieRequest>();
-
                     final url = Uri.parse(
-                      "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event-maker/api/edit",
+                      "http://10.0.2.2:8000/event-maker/api/edit/${widget.eventId}/",
                     );
 
-                    var request = http.MultipartRequest("POST", url);
+                    var multipartRequest = http.MultipartRequest("POST", url);
 
-                    final cookies = requestProvider.cookies;
-                    if (cookies.isNotEmpty) {
-                      request.headers["Cookie"] = cookies.entries
-                          .map((e) => '${e.key}=${e.value}')
-                          .join('; ');
-
-                      if (cookies.containsKey('csrftoken')) {
-                        request.headers['X-CSRFToken'] = cookies['csrftoken']!
-                            .toString();
-                      }
+                    final cookieHeader = request.headers['cookie'];
+                    if (cookieHeader != null) {
+                      multipartRequest.headers['cookie'] = cookieHeader;
                     }
 
-                    request.fields['name'] = _name;
-                    request.fields['description'] = _description;
-                    request.fields['location'] = _location;
-                    request.fields['date'] = _selectedDate!.toIso8601String();
-                    request.fields['category'] = _category;
+                    final csrfToken = request.headers['X-CSRFToken'];
+                    if (csrfToken != null) {
+                      multipartRequest.headers['X-CSRFToken'] = csrfToken;
+                    }
 
-                    request.files.add(
-                      await http.MultipartFile.fromPath(
-                        'thumbnail',
-                        _thumbnailFile!.path,
-                      ),
-                    );
+                    multipartRequest.fields['name'] = _nameController.text;
+                    multipartRequest.fields['description'] =
+                        _descriptionController.text;
+                    multipartRequest.fields['location'] =
+                        _locationController.text;
 
-                    final response = await request.send();
+                    multipartRequest.fields['date'] = DateFormat(
+                      "yyyy-MM-ddTHH:mm",
+                    ).format(_selectedDate);
+
+                    multipartRequest.fields['category'] = _category;
+
+                    // === Thumbnail ===
+                    if (kIsWeb) {
+                      multipartRequest.files.add(
+                        http.MultipartFile.fromBytes(
+                          'thumbnail',
+                          _webThumbnailBytes!,
+                          filename: "thumbnail.jpg",
+                        ),
+                      );
+                    } else {
+                      multipartRequest.files.add(
+                        await http.MultipartFile.fromPath(
+                          'thumbnail',
+                          _thumbnailFile!.path,
+                        ),
+                      );
+                    }
+
+                    // === Send request ===
+                    final response = await multipartRequest.send();
                     final respStr = await response.stream.bytesToString();
                     final respJson = jsonDecode(respStr);
 
                     if (!context.mounted) return;
 
-                    if (respJson['status'] == 'success') {
+                    if (response.statusCode == 200) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Event created successfully")),
+                        const SnackBar(
+                          content: Text("Event updated successfully"),
+                        ),
                       );
+
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (_) => MyHomePage()),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Failed to create event")),
+                        SnackBar(
+                          content: Text(
+                            respJson['message'] ?? "Failed to edit event",
+                          ),
+                        ),
                       );
                     }
                   },

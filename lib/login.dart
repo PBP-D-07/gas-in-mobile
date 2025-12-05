@@ -1,4 +1,4 @@
-import 'package:gas_in/menu.dart';
+import 'package:gas_in/screens/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:gas_in/register.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';

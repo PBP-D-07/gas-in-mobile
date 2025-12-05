@@ -38,8 +38,9 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
     final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Book Venues'),
+        title: const Text(''),
         backgroundColor: Colors.white,
+        foregroundColor: const Color(0xFF1A237E),
         elevation: 5,
         shadowColor: Colors.black.withOpacity(0.5),
       ),
@@ -78,36 +79,58 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
                 // Make header part of the scrollable content so it's not fixed
                 return CustomScrollView(
                   slivers: [
-                    const SliverToBoxAdapter(
+                    SliverToBoxAdapter(
                       child: Padding(
-                        padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-                        child: Text(
-                          'Book Your Venues!',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
+                        padding: const EdgeInsets.fromLTRB(25, 30, 16, 8),
+                        child: ShaderMask(
+                          shaderCallback: (bounds) =>
+                              const LinearGradient(
+                                colors: [
+                                  Color(0xFF4338CA), // indigo-700
+                                  Color(0xFF6B21A8), // purple-800
+                                ],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ).createShader(
+                                Rect.fromLTWH(
+                                  0,
+                                  0,
+                                  bounds.width,
+                                  bounds.height,
+                                ),
+                              ),
+                          child: const Padding(
+                            padding: EdgeInsets.only(right: 2),
+                            child: Text(
+                              'Book Your Venues!',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                        padding: const EdgeInsets.fromLTRB(25, 0, 16, 16),
                         child: Text(
                           'Found The Best Sports Venues In Your Area with gas.in!',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[700],
-                          ),
+                          style: TextStyle(fontSize: 18, color: Colors.black),
                         ),
                       ),
                     ),
-                    SliverPadding(
-                      padding: const EdgeInsets.all(8.0),
-                      sliver: SliverGrid(
-                        delegate: SliverChildBuilderDelegate((context, index) {
-                          final venue = snapshot.data![index];
-                          return VenueEntryCard(
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final venue = snapshot.data![index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 30.0,
+                            vertical: 6.0,
+                          ),
+                          child: VenueEntryCard(
                             venue: venue,
                             onTap: () {
                               Navigator.push(
@@ -118,16 +141,9 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
                                 ),
                               );
                             },
-                          );
-                        }, childCount: snapshot.data!.length),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 8,
-                              mainAxisSpacing: 8,
-                              childAspectRatio: 0.8,
-                            ),
-                      ),
+                          ),
+                        );
+                      }, childCount: snapshot.data!.length),
                     ),
                   ],
                 );

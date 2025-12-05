@@ -17,9 +17,9 @@ class _VenueFormPageState extends State<VenueFormPage> {
   String _name = "";
   String _description = "";
   String _location = "";
-  String _category = "running"; // default
+  String _category = "running";
   String _thumbnail = "";
-  String _imagesCsv = ""; // comma-separated image URLs
+  String _imagesCsv = "";
   String _contactNumber = "";
 
   final List<String> _categories = [
@@ -35,244 +35,306 @@ class _VenueFormPageState extends State<VenueFormPage> {
     'other',
   ];
 
+  // Helper untuk Style Input Decoration
+  InputDecoration _customInputDecoration({String? hint}) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: TextStyle(color: Colors.grey[400]),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      filled: true,
+      fillColor: Colors.white, // Input field tetap putih solid
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16.0),
+        borderSide: const BorderSide(color: Color(0xFF1A237E), width: 2.0),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16.0),
+        borderSide: const BorderSide(color: Color(0xFF1A237E), width: 2.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16.0),
+        borderSide: const BorderSide(color: Colors.red, width: 2.0),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16.0),
+        borderSide: const BorderSide(color: Colors.red, width: 2.5),
+      ),
+    );
+  }
+
+  // Helper untuk Label
+  Widget _buildLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0, left: 4.0, top: 12.0),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+
     return Scaffold(
+      extendBodyBehindAppBar: true, // Agar gradient sampai ke atas
       appBar: AppBar(
-        title: const Center(child: Text('Form Tambah Venue')),
-        backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
+        title: const Text(''),
+        backgroundColor: Colors.white, // Transparan
+        foregroundColor: const Color(0xFF1A237E),
+        elevation: 5,
+        shadowColor: Colors.black.withOpacity(0.5),
       ),
-      drawer: LeftDrawer(),
-      body: Form(
-        key: _formKey,
+      drawer: const LeftDrawer(),
+      body: Container(
+        // === Background Gradient ===
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.white, Colors.purple[50]!, Colors.purple[100]!],
+            stops: const [0.0, 0.5, 1.0],
+          ),
+        ),
         child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(24.0, 60.0, 24.0, 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // === Name ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "Nama Venue",
-                    labelText: "Nama Venue",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _name = value ?? "";
-                    });
-                  },
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return "Nama venue tidak boleh kosong!";
-                    }
-                    return null;
-                  },
+              // === Header Text (Di luar kotak putih) ===
+              const SizedBox(height: 20),
+              const Text(
+                'Create New Venue',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.black,
                 ),
               ),
-              // === Description ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                    hintText: "Deskripsi Venue",
-                    labelText: "Deskripsi",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _description = value ?? "";
-                    });
-                  },
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return "Deskripsi tidak boleh kosong!";
-                    }
-                    return null;
-                  },
-                ),
+              const SizedBox(height: 8),
+              Text(
+                'Create Venue for people around you!',
+                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
               ),
+              const SizedBox(height: 30),
 
-              // === Location ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "Lokasi (alamat/koordinat)",
-                    labelText: "Lokasi",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
+              // === KOTAK PUTIH OPACITY (Form Container) ===
+              Container(
+                padding: const EdgeInsets.all(20.0), // Padding dalam kotak
+                decoration: BoxDecoration(
+                  // Warna putih dengan Opacity 70%
+                  color: Colors.white.withOpacity(0.7),
+                  // Sudut kotak agak tegas (8.0), ganti 0.0 jika ingin lancip total
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _location = value ?? "";
-                    });
-                  },
+                  ],
                 ),
-              ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // === Name ===
+                      _buildLabel("Venue Name"),
+                      TextFormField(
+                        decoration: _customInputDecoration(hint: ""),
+                        onChanged: (val) => setState(() => _name = val),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return "Nama tidak boleh kosong!";
+                          }
+                          return null;
+                        },
+                      ),
 
-              // === Contact Number ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    hintText: "Nomor kontak",
-                    labelText: "Nomor Kontak",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _contactNumber = value ?? "";
-                    });
-                  },
-                ),
-              ),
+                      // === Description ===
+                      _buildLabel("Description"),
+                      TextFormField(
+                        maxLines: 4,
+                        decoration: _customInputDecoration(hint: ""),
+                        onChanged: (val) => setState(() => _description = val),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return "Deskripsi tidak boleh kosong!";
+                          }
+                          return null;
+                        },
+                      ),
 
-              // === Category ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    labelText: "Kategori",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  value: _category,
-                  items: _categories
-                      .map(
-                        (cat) => DropdownMenuItem(
-                          value: cat,
-                          child: Text(cat[0].toUpperCase() + cat.substring(1)),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _category = newValue!;
-                    });
-                  },
-                ),
-              ),
+                      // === Location ===
+                      _buildLabel("Location"),
+                      TextFormField(
+                        decoration: _customInputDecoration(hint: ""),
+                        onChanged: (val) => setState(() => _location = val),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return "Lokasi tidak boleh kosong!";
+                          }
+                          return null;
+                        },
+                      ),
 
-              // === Images (CSV) ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "URL gambar (pisahkan pakai koma)",
-                    labelText: "Images (CSV)",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _imagesCsv = value ?? "";
-                    });
-                  },
-                ),
-              ),
+                      // === Contact ===
+                      _buildLabel("Contact Number"),
+                      TextFormField(
+                        keyboardType: TextInputType.phone,
+                        decoration: _customInputDecoration(hint: ""),
+                        onChanged: (val) =>
+                            setState(() => _contactNumber = val),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return "Kontak tidak boleh kosong!";
+                          }
+                          final parsed = int.tryParse(
+                            value.replaceAll(',', '.'),
+                          );
+                          if (parsed == null) {
+                            return "Masukkan angka yang valid untuk harga!";
+                          }
+                          return null;
+                        },
+                      ),
 
-              // === Thumbnail URL ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "URL Thumbnail (opsional)",
-                    labelText: "URL Thumbnail",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _thumbnail = value ?? "";
-                    });
-                  },
-                ),
-              ),
-              // === Tombol Simpan ===
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.indigo),
-                    ),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
-                        // If you using chrome,  use URL http://localhost:8000
-
-                        // Prepare images list from CSV
-                        List<String> images = _imagesCsv
-                            .split(',')
-                            .map((e) => e.trim())
-                            .where((e) => e.isNotEmpty)
-                            .toList();
-
-                        final payload = jsonEncode({
-                          "name": _name,
-                          "description": _description,
-                          "location": _location,
-                          "thumbnail": _thumbnail,
-                          "images": images,
-                          "contact_number": _contactNumber,
-                          "category": _category,
-                        });
-
-                        final response = await request.postJson(
-                          "http://localhost:8000/venue/create-venue-flutter/",
-                          payload,
-                        );
-
-                        if (context.mounted) {
-                          if (response != null &&
-                              response['status'] == 'success') {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Venue successfully saved!"),
-                              ),
-                            );
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MyHomePage(),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  "Something went wrong, please try again.",
+                      // === Category ===
+                      _buildLabel("Category"),
+                      DropdownButtonFormField<String>(
+                        decoration: _customInputDecoration(),
+                        initialValue: _category.isEmpty ? null : _category,
+                        items: _categories
+                            .map(
+                              (cat) => DropdownMenuItem(
+                                value: cat,
+                                child: Text(
+                                  cat[0].toUpperCase() + cat.substring(1),
                                 ),
                               ),
-                            );
+                            )
+                            .toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _category = newValue ?? "";
+                          });
+                        },
+                        onSaved: (String? value) {
+                          _category = value ?? '';
+                        },
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return "Kategori tidak boleh kosong!";
                           }
-                        }
-                      }
-                    },
-                    child: const Text(
-                      "Simpan",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                          return null;
+                        },
+                      ),
+
+                      // === Images (CSV) ===
+                      _buildLabel("Images (comma-separated URLs)"),
+                      TextFormField(
+                        decoration: _customInputDecoration(hint: "https://..."),
+                        maxLines: 2,
+                        onChanged: (val) => setState(() => _imagesCsv = val),
+                        // optional: allow empty
+                        validator: (val) => null,
+                      ),
+
+                      // === Thumbnail ===
+                      _buildLabel("Thumbnail (Image URL)"),
+                      TextFormField(
+                        decoration: _customInputDecoration(hint: ""),
+                        maxLines: 4, // Kotak besar seperti di gambar
+                        onChanged: (val) => setState(() => _thumbnail = val),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return "Thumbnail produk tidak boleh kosong!";
+                          } else if (!Uri.tryParse(value)!.isAbsolute) {
+                            return "Masukkan URL yang valid!";
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      // === Tombol Add Event (smaller, centered) ===
+                      Center(
+                        child: SizedBox(
+                          width: 150,
+                          height: 40,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFE0B3FF),
+                              foregroundColor: Colors.black,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(22),
+                              ),
+                              textStyle: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                // Logic simpan data
+                                List<String> images = _imagesCsv
+                                    .split(',')
+                                    .map((e) => e.trim())
+                                    .toList();
+
+                                final payload = jsonEncode({
+                                  "name": _name,
+                                  "description": _description,
+                                  "location": _location,
+                                  "thumbnail": _thumbnail,
+                                  "images": images,
+                                  "contact_number": _contactNumber,
+                                  "category": _category,
+                                });
+
+                                final response = await request.postJson(
+                                  "http://localhost:8000/venue/create-venue-flutter/",
+                                  payload,
+                                );
+
+                                if (context.mounted) {
+                                  if (response != null &&
+                                      response['status'] == 'success') {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text("Success!")),
+                                    );
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MyHomePage(),
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text("Failed.")),
+                                    );
+                                  }
+                                }
+                              }
+                            },
+                            child: const Text("Add Venue"),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
+              const SizedBox(height: 40),
             ],
           ),
         ),

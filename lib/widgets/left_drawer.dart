@@ -54,7 +54,7 @@ class LeftDrawer extends StatelessWidget {
             title: const Text('Create Event'),
             // Bagian redirection ke MyHomePage
             onTap: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => CreateEventPage()),
               );
@@ -65,7 +65,7 @@ class LeftDrawer extends StatelessWidget {
             title: const Text('Edit Event'),
             // Bagian redirection ke MyHomePage
             onTap: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => EditEventPage(
@@ -80,10 +80,11 @@ class LeftDrawer extends StatelessWidget {
             title: const Text('Event Detail'),
             // Bagian redirection ke MyHomePage
             onTap: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EventDetailPage(eventId: "83dbc83c-7356-43df-a966-2573e77e4e92",
+                  builder: (context) => EventDetailPage(
+                    eventId: "83dbc83c-7356-43df-a966-2573e77e4e92",
                   ),
                 ),
               );

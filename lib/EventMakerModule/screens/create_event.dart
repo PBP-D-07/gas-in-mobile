@@ -69,10 +69,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Create New Event",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
         foregroundColor: Colors.white,
 
         // Hapus backgroundColor, ganti pakai gradient
@@ -103,6 +99,20 @@ class _CreateEventPageState extends State<CreateEventPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const Text(
+                "Create New Event",
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                "Let's create your own event!",
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              const SizedBox(height: 24),
               // NAME
               TextFormField(
                 decoration: InputDecoration(

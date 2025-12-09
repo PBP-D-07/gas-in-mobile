@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gas_in/screens/menu.dart';
+import 'package:gas_in/screens/landing.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ).copyWith(secondary: Colors.blueAccent[400]),
         ),
-        home: MyHomePage(),
+        home: const LandingPage(),
       ),
     );
   }

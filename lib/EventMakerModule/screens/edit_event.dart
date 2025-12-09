@@ -92,10 +92,6 @@ class _EditEventPageState extends State<EditEventPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Edit Event",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
         foregroundColor: Colors.white,
 
         // Hapus backgroundColor, ganti pakai gradient
@@ -126,6 +122,20 @@ class _EditEventPageState extends State<EditEventPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const Text(
+                "Edit Event",
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                "Update your event details",
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              const SizedBox(height: 24),
               // NAME
               TextFormField(
                 controller: _nameController,

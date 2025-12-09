@@ -116,10 +116,6 @@ class _EventDetailPageState extends State<EventDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Event Detail",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
         foregroundColor: Colors.white,
 
         backgroundColor: Colors.transparent,
@@ -135,7 +131,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back), 
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -157,148 +153,161 @@ class _EventDetailPageState extends State<EventDetailPage> {
           final bool isOwner = user != null && user["id"] == event.owner.id;
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.only(bottom: 30),
             child: Column(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: event.thumbnail != null
-                      ? Image.network(
-                          getFullImageUrl(event.thumbnail),
-                          height: 200,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        )
-                      : Container(
-                          height: 200,
-                          color: Colors.grey.shade300,
-                          child: const Center(
-                            child: Icon(Icons.image, size: 60),
-                          ),
-                        ),
-                ),
+                event.thumbnail != null
+                    ? Image.network(
+                        getFullImageUrl(event.thumbnail),
+                        height: 250,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        height: 250,
+                        color: Colors.grey.shade300,
+                        child: const Center(child: Icon(Icons.image, size: 60)),
+                      ),
 
                 const SizedBox(height: 20),
 
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    event.name,
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      event.name,
+                      style: const TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
 
                 const SizedBox(height: 6),
 
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    event.description,
-                    style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      event.description,
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
                   ),
                 ),
 
                 const SizedBox(height: 24),
 
-                Card(
-                  elevation: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.calendar_today),
-                            const SizedBox(width: 8),
-                            Text(formatDate(event.date)),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Card(
+                    elevation: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.calendar_today),
+                              const SizedBox(width: 8),
+                              Text(formatDate(event.date)),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
 
-                        Row(
-                          children: [
-                            const Icon(Icons.schedule),
-                            const SizedBox(width: 8),
-                            Text(formatTime(event.date)),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(Icons.schedule),
+                              const SizedBox(width: 8),
+                              Text(formatTime(event.date)),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
 
-                        Row(
-                          children: [
-                            const Icon(Icons.bolt),
-                            const SizedBox(width: 8),
-                            Text(event.categoryDisplay),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(Icons.bolt),
+                              const SizedBox(width: 8),
+                              Text(event.categoryDisplay),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
 
-                        Row(
-                          children: [
-                            const Icon(Icons.location_on),
-                            const SizedBox(width: 8),
-                            Text(event.location),
-                          ],
-                        ),
-                      ],
+                          Row(
+                            children: [
+                              const Icon(Icons.location_on),
+                              const SizedBox(width: 8),
+                              Text(event.location),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
                 if (isOwner) ...[
                   const SizedBox(height: 20),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  EditEventPage(eventId: widget.eventId),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.edit),
-                        label: const Text("Edit"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.amber,
-                          foregroundColor: Colors.white,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    EditEventPage(eventId: widget.eventId),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.edit),
+                          label: const Text("Edit"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber,
+                            foregroundColor: Colors.white,
+                          ),
                         ),
-                      ),
 
-                      ElevatedButton.icon(
-                        onPressed: () => deleteEvent(event.id),
-                        icon: const Icon(Icons.delete),
-                        label: const Text("Delete"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
+                        ElevatedButton.icon(
+                          onPressed: () => deleteEvent(event.id),
+                          icon: const Icon(Icons.delete),
+                          label: const Text("Delete"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ] else ...[
                   // ======= NON-OWNER: JOIN BUTTON =======
                   const SizedBox(height: 20),
 
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: () => joinEvent(event.id),
-                      icon: const Icon(Icons.group_add),
-                      label: const Text("Join Event"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        textStyle: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () => joinEvent(event.id),
+                        icon: const Icon(Icons.group_add),
+                        label: const Text("Join Event"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          textStyle: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),

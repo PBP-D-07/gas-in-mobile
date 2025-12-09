@@ -30,13 +30,13 @@ class _EventDetailPageState extends State<EventDetailPage> {
   String getFullImageUrl(String? thumbnail) {
     if (thumbnail == null) return "";
     if (thumbnail.startsWith("http")) return thumbnail;
-    return "http://10.0.2.2:8000$thumbnail";
+    return "http://localhost:8000$thumbnail";
   }
 
   Future<Map<String, dynamic>?> fetchCurrentUser() async {
     final request = context.read<CookieRequest>();
     final response = await request.get(
-      "http://10.0.2.2:8000/auth/current-user/",
+      "http://localhost:8000/auth/current-user/",
     );
 
     if (response['data'] != null) {
@@ -46,7 +46,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
   }
 
   Future<EventMaker> fetchEventMaker(String id) async {
-    final url = Uri.parse("http://10.0.2.2:8000/event-maker/$id/");
+    final url = Uri.parse("http://localhost:8000/event-maker/$id/");
 
     final response = await http.get(url);
 
@@ -58,7 +58,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
   }
 
   Future<void> deleteEvent(String id) async {
-    final url = Uri.parse("http://10.0.2.2:8000/event-maker/api/delete/$id/");
+    final url = Uri.parse("http://localhost:8000/event-maker/api/delete/$id/");
 
     final response = await http.post(url);
 
@@ -83,7 +83,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
     final request = context.read<CookieRequest>();
 
     final response = await request.post(
-      "http://10.0.2.2:8000/event-maker/api/join/$id/",
+      "http://localhost:8000/event-maker/api/join/$id/",
       jsonEncode({}),
     );
 

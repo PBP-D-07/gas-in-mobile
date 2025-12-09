@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:gas_in/login.dart';
 import 'package:gas_in/widgets/left_drawer.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
 
   final List<ItemHomepage> items = [
     ItemHomepage("Event", Icons.list),
-    ItemHomepage("Forum", Icons.chat_bubble_outline_outlined ),
-    ItemHomepage("Venue", Icons.stadium_outlined ),
+    ItemHomepage("Forum", Icons.chat_bubble_outline_outlined),
+    ItemHomepage("Venue", Icons.stadium_outlined),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -30,13 +34,14 @@ class MyHomePage extends StatelessWidget {
                     Image.asset("assets/logo.png", width: 20),
                     const SizedBox(width: 6),
                     ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        colors: [Color(0xFF4338CA), Color(0xFF6B21A8)],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ).createShader(
-                        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                      ),
+                      shaderCallback: (bounds) =>
+                          const LinearGradient(
+                            colors: [Color(0xFF4338CA), Color(0xFF6B21A8)],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ).createShader(
+                            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                          ),
                       child: const Padding(
                         padding: EdgeInsets.only(right: 2),
                         child: Text(
@@ -56,18 +61,68 @@ class MyHomePage extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 12),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                  );
-                },
-                child: const Text(
-                  "Login",
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
+              child: request.loggedIn
+                  ? PopupMenuButton<String>(
+                      onSelected: (value) async {
+                        if (value == 'logout') {
+                          final response = await request.logout(
+                            "http://localhost:8000/auth/logout/",
+                          );
+                          if (context.mounted) {
+                            if (response['status']) {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginPage(),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("Logout failed")),
+                              );
+                            }
+                          }
+                        }
+                      },
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<String>>[
+                            PopupMenuItem<String>(
+                              value: 'logout',
+                              child: const Row(
+                                children: [
+                                  Icon(Icons.logout, color: Colors.red),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Logout',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                      child: Row(
+                        children: [
+                          const Icon(Icons.person, color: Colors.black),
+                          const SizedBox(width: 8),
+                          Text(
+                            request.jsonData['username'] ?? 'User',
+                            style: const TextStyle(color: Colors.black, fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
+                      },
+                      child: const Text(
+                        "Login",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
             ),
           ],
         ),
@@ -88,7 +143,7 @@ class MyHomePage extends StatelessWidget {
                 crossAxisCount: 3,
                 shrinkWrap: true,
                 // Tambahkan childAspectRatio jika teks terlalu panjang atau terpotong
-                // childAspectRatio: 0.8, 
+                // childAspectRatio: 0.8,
                 children: items.map((ItemHomepage item) {
                   return ItemCard(item);
                 }).toList(),
@@ -105,7 +160,7 @@ class ItemHomepage {
   final String name;
   final IconData icon;
 
-  ItemHomepage(this.name, this.icon );
+  ItemHomepage(this.name, this.icon);
 }
 
 class ItemCard extends StatelessWidget {
@@ -124,7 +179,7 @@ class ItemCard extends StatelessWidget {
           height: 60,
           decoration: BoxDecoration(
             // Membuat bentuk lingkaran
-            shape: BoxShape.circle, 
+            shape: BoxShape.circle,
             gradient: const LinearGradient(
               colors: [
                 Color(0xFF4338CA), // Indigo
@@ -145,33 +200,33 @@ class ItemCard extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               // Membuat efek ripple (klik) juga berbentuk lingkaran
-              customBorder: const CircleBorder(), 
+              customBorder: const CircleBorder(),
               onTap: () {
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
-                  ..showSnackBar(SnackBar(
-                      content: Text("Kamu menekan tombol ${item.name}!")));
+                  ..showSnackBar(
+                    SnackBar(
+                      content: Text("Kamu menekan tombol ${item.name}!"),
+                    ),
+                  );
               },
               child: Center(
-                child: Icon(
-                  item.icon,
-                  color: Colors.white,
-                  size: 30.0,
-                ),
+                child: Icon(item.icon, color: Colors.white, size: 30.0),
               ),
             ),
           ),
         ),
-        
+
         // 2. Jarak antara tombol dan teks
-        const SizedBox(height: 8), 
+        const SizedBox(height: 8),
 
         // 3. Bagian Teks (Sekarang di luar tombol)
         Text(
           item.name,
           textAlign: TextAlign.center,
           style: const TextStyle(
-            color: Colors.black, // Ubah ke hitam agar terbaca di background putih
+            color:
+                Colors.black, // Ubah ke hitam agar terbaca di background putih
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),

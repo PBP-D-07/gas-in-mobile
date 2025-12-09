@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gas_in/widgets/left_drawer.dart';
 import 'package:gas_in/screens/menu.dart';
-import 'package:gas_in/EventMakerModule/models/event_model.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -231,9 +229,7 @@ class _EditEventPageState extends State<EditEventPage> {
                   iconColor: Colors.deepPurple,
                   textColor: Colors.deepPurple,
                   title: Text(
-                    _selectedDate == null
-                        ? "Choose Event Date"
-                        : formatDate(_selectedDate!),
+                    formatDate(_selectedDate),
                     style: TextStyle(color: Colors.black),
                   ),
                   trailing: const Icon(

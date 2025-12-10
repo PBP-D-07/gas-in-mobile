@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gas_in/pop-up_logo.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:gas_in/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)
           .copyWith(secondary: Colors.deepPurpleAccent[400]),
         ),
-        home: LoginPage(),
+        home: SplashScreen(),
       ),
     );
   }

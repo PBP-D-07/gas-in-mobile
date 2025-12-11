@@ -9,79 +9,185 @@ class LeftDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        children: [
-          const DrawerHeader(
-            // TODO: Bagian drawer header
+      child: Container(
+        color: const Color(0xFFF5F7FA),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            // Modern Drawer Header with Gradient
+            Container(
+              padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
               decoration: BoxDecoration(
-                color: Colors.deepPurple,
+                gradient: LinearGradient(
+                  colors: [
+                    const Color(0xFF6C5CE7),
+                    const Color(0xFF6C5CE7).withOpacity(0.8),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF6C5CE7).withOpacity(0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.admin_panel_settings,
+                      color: Colors.white,
+                      size: 32,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
                     'Admin gas.in',
-                    textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 30,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
-                  Padding(padding: EdgeInsets.all(10)),
-                  Text("Pusat info users dan events ada disini!",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Pusat info users dan events ada disini!',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
                   ),
                 ],
               ),
             ),
-          // TODO: Bagian routing
-          ListTile(
-            leading: const Icon(Icons.admin_panel_settings),
-            title: const Text('Admin Homepage'),
-            onTap: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => adminPage(),
-                  ));
-            },
+            
+            const SizedBox(height: 16),
+
+            // Menu Items with Modern Cards
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  _buildModernListTile(
+                    context,
+                    icon: Icons.admin_panel_settings,
+                    title: 'Admin Homepage',
+                    color: const Color(0xFF6C5CE7),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => adminPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _buildModernListTile(
+                    context,
+                    icon: Icons.people,
+                    title: 'Users Management',
+                    color: const Color(0xFF00B894),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PageUsers(),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _buildModernListTile(
+                    context,
+                    icon: Icons.event_available_rounded,
+                    title: 'Events Management',
+                    color: const Color(0xFF0984E3),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PageRequest(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernListTile(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          ListTile(
-            leading: const Icon(Icons.verified_user),
-            title: const Text('Users Management'),
-            onTap: () {
-              /*
-              TODO: Buatlah routing ke NewsFormPage di sini,
-              setelah halaman NewsFormPage sudah dibuat.
-              */
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PageUsers(),
-                  ));
-            },
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF2D3436),
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.grey.withOpacity(0.5),
+                size: 16,
+              ),
+            ],
           ),
-          ListTile(
-            leading: const Icon(Icons.event_available_rounded),
-            title: const Text('Events Management'),
-            onTap: () {
-              /*
-              TODO: Buatlah routing ke NewsFormPage di sini,
-              setelah halaman NewsFormPage sudah dibuat.
-              */
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PageRequest(),
-                  ));
-            },
-          ),
-        ],
+        ),
       ),
     );
   }

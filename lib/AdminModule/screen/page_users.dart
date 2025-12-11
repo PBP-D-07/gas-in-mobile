@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gas_in/AdminModule/screen/users_api.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:provider/provider.dart'; // Import service
+import 'package:provider/provider.dart';
 
 class PageUsers extends StatefulWidget {
   const PageUsers({super.key});
@@ -11,27 +11,23 @@ class PageUsers extends StatefulWidget {
 }
 
 class _PageUsersState extends State<PageUsers> {
-  final TextEditingController _promoteController = TextEditingController();
-  final TextEditingController _demoteController = TextEditingController();
-
   List<Map<String, dynamic>> users = [];
+  List<Map<String, dynamic>> adminUsers = [];
+  List<Map<String, dynamic>> regularUsers = [];
   bool isLoading = true;
   String? errorMessage;
 
   @override
   void initState() {
     super.initState();
-    // Load users setelah widget mounted
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUsers();
     });
   }
 
-  // Method untuk load data dari API
   Future<void> _loadUsers() async {
     final request = context.read<CookieRequest>();
     
-    // Check apakah user sudah login
     if (!request.loggedIn) {
       setState(() {
         isLoading = false;
@@ -46,7 +42,6 @@ class _PageUsersState extends State<PageUsers> {
     });
 
     try {
-      // Pakai UserService dengan CookieRequest
       final fetchedUsers = await UserService.getAllUsers(request);
       setState(() {
         users = fetchedUsers.map((user) => {
@@ -54,6 +49,11 @@ class _PageUsersState extends State<PageUsers> {
           'role': user.role,
           'registered': user.formattedDate,
         }).toList();
+        
+        // Pisahkan admin dan user
+        adminUsers = users.where((u) => u['role'] == 'Admin').toList();
+        regularUsers = users.where((u) => u['role'] == 'User').toList();
+        
         isLoading = false;
       });
     } catch (e) {
@@ -68,10 +68,7 @@ class _PageUsersState extends State<PageUsers> {
     final request = context.read<CookieRequest>();
     
     try {
-      // Kirim request dengan CookieRequest
       final result = await UserService.promoteUser(request, username);
-      
-      // Reload data dari server untuk update UI
       await _loadUsers();
       
       if (mounted) {
@@ -82,7 +79,6 @@ class _PageUsersState extends State<PageUsers> {
           ),
         );
       }
-      _promoteController.clear();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -99,10 +95,7 @@ class _PageUsersState extends State<PageUsers> {
     final request = context.read<CookieRequest>();
     
     try {
-      // Kirim request dengan CookieRequest
       final result = await UserService.demoteUser(request, username);
-      
-      // Reload data dari server
       await _loadUsers();
       
       if (mounted) {
@@ -113,7 +106,6 @@ class _PageUsersState extends State<PageUsers> {
           ),
         );
       }
-      _demoteController.clear();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -128,405 +120,346 @@ class _PageUsersState extends State<PageUsers> {
 
   @override
   Widget build(BuildContext context) {
-    final request = context.watch<CookieRequest>(); // Ambil di build(), bukan di initState
-    
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : errorMessage != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        errorMessage!,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _loadUsers,
-                        child: const Text('Retry'),
-                      ),
-                    ],
+      backgroundColor: const Color(0xFFF5F7FA),
+      body: Column(
+        children: [
+          // Header with Back Button
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.deepPurpleAccent,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                // Back Button
+                IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Color(0xFF2D3436),
+                    size: 24,
                   ),
-                )
-              : RefreshIndicator(
-                  onRefresh: _loadUsers,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Header
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(24),
-                          decoration: const BoxDecoration(
-                            color: Colors.deepPurpleAccent,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'User Management',
-                                        style: TextStyle(
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        'Promote or demote users to/from admin role',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.white.withOpacity(0.9),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.refresh, color: Colors.white),
-                                    onPressed: _loadUsers,
-                                    tooltip: 'Refresh',
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Promote and Demote Section
-                              Row(
-                                children: [
-                                  // Promote User to Admin
-                                  Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.all(20),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.05),
-                                            blurRadius: 10,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Promote User to Admin',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 16),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: TextField(
-                                                  controller: _promoteController,
-                                                  decoration: InputDecoration(
-                                                    hintText: 'Enter username',
-                                                    border: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(4),
-                                                    ),
-                                                    contentPadding: const EdgeInsets.symmetric(
-                                                      horizontal: 12,
-                                                      vertical: 12,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 12),
-                                              ElevatedButton.icon(
-                                                onPressed: () {
-                                                  if (_promoteController.text.isNotEmpty) {
-                                                    _promoteUser(_promoteController.text);
-                                                  }
-                                                },
-                                                icon: const Icon(Icons.arrow_upward),
-                                                label: const Text('Promote'),
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Colors.green,
-                                                  foregroundColor: Colors.white,
-                                                  padding: const EdgeInsets.symmetric(
-                                                    horizontal: 24,
-                                                    vertical: 16,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 24),
-                                  // Demote Admin to User
-                                  Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.all(20),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.05),
-                                            blurRadius: 10,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Demote Admin to User',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 16),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: TextField(
-                                                  controller: _demoteController,
-                                                  decoration: InputDecoration(
-                                                    hintText: 'Enter username',
-                                                    border: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(4),
-                                                    ),
-                                                    contentPadding: const EdgeInsets.symmetric(
-                                                      horizontal: 12,
-                                                      vertical: 12,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 12),
-                                              ElevatedButton.icon(
-                                                onPressed: () {
-                                                  if (_demoteController.text.isNotEmpty) {
-                                                    _demoteUser(_demoteController.text);
-                                                  }
-                                                },
-                                                icon: const Icon(Icons.arrow_downward),
-                                                label: const Text('Demote'),
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Colors.orange[700],
-                                                  foregroundColor: Colors.white,
-                                                  padding: const EdgeInsets.symmetric(
-                                                    horizontal: 24,
-                                                    vertical: 16,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              const SizedBox(height: 32),
-
-                              // All Users Table
-                              Container(
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'All Users',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          '${users.length} users',
-                                          style: TextStyle(
-                                            color: Colors.grey[600],
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Table(
-                                      columnWidths: const {
-                                        0: FlexColumnWidth(2),
-                                        1: FlexColumnWidth(1.5),
-                                        2: FlexColumnWidth(1.5),
-                                        3: FlexColumnWidth(1.5),
-                                      },
-                                      children: [
-                                        // Header
-                                        TableRow(
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[100],
-                                          ),
-                                          children: [
-                                            _buildTableHeader('Username'),
-                                            _buildTableHeader('Role'),
-                                            _buildTableHeader('Registered'),
-                                            _buildTableHeader('Actions'),
-                                          ],
-                                        ),
-                                        // Data rows
-                                        ...users.map((user) {
-                                          return TableRow(
-                                            decoration: const BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                  color: Colors.black12,
-                                                  width: 1,
-                                                ),
-                                              ),
-                                            ),
-                                            children: [
-                                              _buildTableCell(user['username']),
-                                              _buildTableCell(
-                                                user['role'],
-                                                isRole: true,
-                                                role: user['role'],
-                                              ),
-                                              _buildTableCell(user['registered']),
-                                              _buildTableCell(
-                                                '',
-                                                isAction: true,
-                                                user: user,
-                                              ),
-                                            ],
-                                          );
-                                        }).toList(),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  tooltip: 'Back to Admin Dashboard',
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE8E5FF),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.people,
+                    color: Color(0xFF6C5CE7),
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                const Expanded(
+                  child: Text(
+                    'User Management',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF2D3436),
                     ),
                   ),
                 ),
-    );
-  }
+                IconButton(
+                  icon: const Icon(Icons.refresh, color: Color(0xFF2D3436)),
+                  onPressed: _loadUsers,
+                  tooltip: 'Refresh',
+                ),
+              ],
+            ),
+          ),
 
-  Widget _buildTableHeader(String text) {
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-        ),
+          // Content
+          Expanded(
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : errorMessage != null
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              errorMessage!,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: _loadUsers,
+                              child: const Text('Retry'),
+                            ),
+                          ],
+                        ),
+                      )
+                    : SingleChildScrollView(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          children: [
+                            // Admin Users Section
+                            _buildUserSection(
+                              title: 'Admin Users',
+                              count: adminUsers.length,
+                              color: const Color(0xFFFFEBEE),
+                              borderColor: Colors.redAccent,
+                              users: adminUsers,
+                              isAdmin: true,
+                            ),
+                            const SizedBox(height: 16),
+                            
+                            // Regular Users Section
+                            _buildUserSection(
+                              title: 'Regular Users',
+                              count: regularUsers.length,
+                              color: const Color(0xFFE8F5E9),
+                              borderColor: Colors.greenAccent,
+                              users: regularUsers,
+                              isAdmin: false,
+                            ),
+                          ],
+                        ),
+                      ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildTableCell(
-    String text, {
-    bool isRole = false,
-    String? role,
-    bool isAction = false,
-    Map<String, dynamic>? user,
+  Widget _buildUserSection({
+    required String title,
+    required int count,
+    required Color color,
+    required Color borderColor,
+    required List<Map<String, dynamic>> users,
+    required bool isAdmin,
   }) {
-    if (isRole) {
-      return Padding(
-        padding: const EdgeInsets.all(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: role == 'Admin' ? Colors.red : Colors.grey,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Text(
-            text,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
+    return Container(
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: borderColor, width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Section Header
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      isAdmin ? Icons.admin_panel_settings : Icons.person,
+                      color: borderColor,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: borderColor,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    count.toString(),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: borderColor,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-        ),
-      );
-    }
 
-    if (isAction && user != null) {
-      return Padding(
-        padding: const EdgeInsets.all(12),
-        child: ElevatedButton(
-          onPressed: () {
-            if (user['role'] == 'User') {
-              _promoteUser(user['username']);
-            } else {
-              _demoteUser(user['username']);
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor:
-                user['role'] == 'User' ? Colors.green : Colors.orange[700],
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
+          // User Cards
+          if (users.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Column(
+                children: users
+                    .map((user) => _buildUserCard(user, isAdmin))
+                    .toList(),
+              ),
+            )
+          else
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Center(
+                child: Text(
+                  'No ${isAdmin ? 'admin' : 'regular'} users',
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
             ),
-          ),
-          child: Text(user['role'] == 'User' ? 'Promote' : 'Demote'),
-        ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: Text(text),
+        ],
+      ),
     );
   }
 
-  @override
-  void dispose() {
-    _promoteController.dispose();
-    _demoteController.dispose();
-    super.dispose();
+  Widget _buildUserCard(Map<String, dynamic> user, bool isAdmin) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Username with Avatar
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: isAdmin 
+                    ? const Color(0xFFEF5350) 
+                    : const Color(0xFF4CAF50),
+                child: Text(
+                  user['username'][0].toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user['username'],
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Color(0xFF2D3436),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isAdmin 
+                                ? const Color(0xFFFFCDD2) 
+                                : const Color(0xFFC8E6C9),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            user['role'],
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isAdmin 
+                                  ? const Color(0xFFC62828) 
+                                  : const Color(0xFF2E7D32),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Registration Date
+          Row(
+            children: [
+              const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+              const SizedBox(width: 6),
+              Text(
+                'Registered: ${user['registered']}',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Action Button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                if (isAdmin) {
+                  _demoteUser(user['username']);
+                } else {
+                  _promoteUser(user['username']);
+                }
+              },
+              icon: Icon(
+                isAdmin ? Icons.arrow_downward : Icons.arrow_upward,
+                size: 16,
+              ),
+              label: Text(
+                isAdmin ? 'Demote to User' : 'Promote to Admin',
+                style: const TextStyle(fontSize: 12),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isAdmin 
+                    ? const Color(0xFFFF9800) 
+                    : const Color(0xFF4CAF50),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -63,7 +63,7 @@ class _PageRequestState extends State<PageRequest> {
       if (response['success'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Event ${status}d successfully!'),
+            content: Text('Event $status successfully!'),
             backgroundColor: Colors.green,
           ),
         );
@@ -113,7 +113,7 @@ class _PageRequestState extends State<PageRequest> {
       backgroundColor: const Color(0xFFF5F7FA),
       body: Column(
         children: [
-          // Header
+          // Header with Back Button
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
@@ -128,6 +128,19 @@ class _PageRequestState extends State<PageRequest> {
             ),
             child: Row(
               children: [
+                // Back Button
+                IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Color(0xFF2D3436),
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  tooltip: 'Back to Admin Dashboard',
+                ),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -135,36 +148,22 @@ class _PageRequestState extends State<PageRequest> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
-                    Icons.admin_panel_settings,
+                    Icons.event_available,
                     color: Color(0xFF6C5CE7),
                     size: 28,
                   ),
                 ),
                 const SizedBox(width: 16),
-                const Text(
-                  'Events Request Management',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF2D3436),
+                const Expanded(
+                  child: Text(
+                    'Events Request Management',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF2D3436),
+                    ),
                   ),
                 ),
-                const Spacer(),
-                // OutlinedButton.icon(
-                //   onPressed: () {
-                //     // TODO: Show create request dialog
-                //   },
-                //   icon: const Icon(Icons.add),
-                //   label: const Text('New Request'),
-                //   style: OutlinedButton.styleFrom(
-                //     foregroundColor: const Color(0xFF6C5CE7),
-                //     side: const BorderSide(color: Color(0xFF6C5CE7)),
-                //     padding: const EdgeInsets.symmetric(
-                //       horizontal: 20,
-                //       vertical: 12,
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),
@@ -173,47 +172,40 @@ class _PageRequestState extends State<PageRequest> {
           Expanded(
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : Padding(
+                : SingleChildScrollView(
                     padding: const EdgeInsets.all(24),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Column(
                       children: [
                         // Request Screening (Pending)
-                        Expanded(
-                          child: _buildColumn(
-                            title: 'Request Screening',
-                            count: pendingEvents.length,
-                            color: const Color(0xFFFFFDE7), 
-                            borderColor: Colors.yellowAccent,
-                            events: pendingEvents,
-                            status: 'pending',
-                          ),
+                        _buildColumn(
+                          title: 'Request Screening',
+                          count: pendingEvents.length,
+                          color: const Color(0xFFFFFDE7), 
+                          borderColor: Colors.yellowAccent,
+                          events: pendingEvents,
+                          status: 'pending',
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(height: 16),
                         
                         // Request In Progress (Approved)
-                        Expanded(
-                          child: _buildColumn(
-                            title: 'Request Approve',
-                            count: approvedEvents.length,
-                            color: const Color(0xFFE8F5E9),
-                            borderColor: Colors.greenAccent,
-                            events: approvedEvents,
-                            status: 'approved',
-                          ),
+                        _buildColumn(
+                          title: 'Request Approve',
+                          count: approvedEvents.length,
+                          color: const Color(0xFFE8F5E9),
+                          borderColor: Colors.greenAccent,
+                          events: approvedEvents,
+                          status: 'approved',
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(height: 16),
                         
                         // Request Closed (Rejected)
-                        Expanded(
-                          child: _buildColumn(
-                            title: 'Request Rejected',
-                            count: rejectedEvents.length,
-                            color: const Color(0xFFFFEBEE),
-                            borderColor: Colors.redAccent,
-                            events: rejectedEvents,
-                            status: 'rejected',
-                          ),
+                        _buildColumn(
+                          title: 'Request Rejected',
+                          count: rejectedEvents.length,
+                          color: const Color(0xFFFFEBEE),
+                          borderColor: Colors.redAccent,
+                          events: rejectedEvents,
+                          status: 'rejected',
                         ),
                       ],
                     ),
@@ -240,6 +232,7 @@ class _PageRequestState extends State<PageRequest> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           // Column Header
           Padding(
@@ -277,15 +270,28 @@ class _PageRequestState extends State<PageRequest> {
           ),
 
           // Event Cards
-          Expanded(
-            child: ListView.builder(
+          if (events.isNotEmpty)
+            Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              itemCount: events.length,
-              itemBuilder: (context, index) {
-                return _buildEventCard(events[index], status);
-              },
+              child: Column(
+                children: events
+                    .map((event) => _buildEventCard(event, status))
+                    .toList(),
+              ),
+            )
+          else
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Center(
+                child: Text(
+                  'No events',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
             ),
-          ),
         ],
       ),
     );

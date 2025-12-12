@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gas_in/ForumModule/widgets/post_card.dart';
 
-class MyHomePage extends StatelessWidget {
-    MyHomePage({super.key});
+class ForumCommunity extends StatelessWidget {
+    ForumCommunity({super.key});
 
     final String nama = "Keira Nuzahra Anjani"; //nama
     final String npm = "2406423282"; //npm

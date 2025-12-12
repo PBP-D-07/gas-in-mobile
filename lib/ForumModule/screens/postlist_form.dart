@@ -145,7 +145,7 @@ class _PostFormPageState extends State<PostFormPage> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => MyHomePage()),
+                                builder: (context) => ForumCommunity()),
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(

@@ -184,6 +184,48 @@ class _PageUsersState extends State<PageUsers> {
             ),
           ),
 
+          // Overview Cards
+          if (!isLoading && errorMessage == null)
+            Container(
+              padding: const EdgeInsets.all(24),
+              child: Row(
+                children: [
+                  // Total Users Card
+                  Expanded(
+                    child: _buildOverviewCard(
+                      title: 'Total Users',
+                      count: users.length,
+                      color: const Color(0xFFE3F2FD),
+                      borderColor: Colors.blueAccent,
+                      icon: Icons.people,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Admin Users Card
+                  Expanded(
+                    child: _buildOverviewCard(
+                      title: 'Admin Users',
+                      count: adminUsers.length,
+                      color: const Color(0xFFFFEBEE),
+                      borderColor: Colors.redAccent,
+                      icon: Icons.admin_panel_settings,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Regular Users Card
+                  Expanded(
+                    child: _buildOverviewCard(
+                      title: 'Regular Users',
+                      count: regularUsers.length,
+                      color: const Color(0xFFE8F5E9),
+                      borderColor: Colors.greenAccent,
+                      icon: Icons.person,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
           // Content
           Expanded(
             child: isLoading
@@ -232,6 +274,63 @@ class _PageUsersState extends State<PageUsers> {
                           ],
                         ),
                       ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOverviewCard({
+    required String title,
+    required int count,
+    required Color color,
+    required Color borderColor,
+    required IconData icon,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: borderColor, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Icon(
+                icon,
+                color: borderColor,
+                size: 28,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            count.toString(),
+            style: TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+              color: borderColor,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: borderColor.withOpacity(0.8),
+            ),
           ),
         ],
       ),

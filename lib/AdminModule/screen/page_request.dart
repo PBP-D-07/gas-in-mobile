@@ -168,6 +168,48 @@ class _PageRequestState extends State<PageRequest> {
             ),
           ),
 
+          // Overview Cards
+          if (!isLoading)
+            Container(
+              padding: const EdgeInsets.all(24),
+              child: Row(
+                children: [
+                  // Pending Card
+                  Expanded(
+                    child: _buildOverviewCard(
+                      title: 'Pending Requests',
+                      count: pendingEvents.length,
+                      color: const Color(0xFFFFFDE7),
+                      borderColor: Colors.yellowAccent,
+                      icon: Icons.pending_actions,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Approved Card
+                  Expanded(
+                    child: _buildOverviewCard(
+                      title: 'Approved Events',
+                      count: approvedEvents.length,
+                      color: const Color(0xFFE8F5E9),
+                      borderColor: Colors.greenAccent,
+                      icon: Icons.check_circle,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Rejected Card
+                  Expanded(
+                    child: _buildOverviewCard(
+                      title: 'Rejected Requests',
+                      count: rejectedEvents.length,
+                      color: const Color(0xFFFFEBEE),
+                      borderColor: Colors.redAccent,
+                      icon: Icons.cancel,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
           // Kanban Board
           Expanded(
             child: isLoading
@@ -210,6 +252,63 @@ class _PageRequestState extends State<PageRequest> {
                       ],
                     ),
                   ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOverviewCard({
+    required String title,
+    required int count,
+    required Color color,
+    required Color borderColor,
+    required IconData icon,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: borderColor, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Icon(
+                icon,
+                color: borderColor,
+                size: 28,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            count.toString(),
+            style: TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+              color: borderColor,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: borderColor.withOpacity(0.8),
+            ),
           ),
         ],
       ),
@@ -375,32 +474,6 @@ class _PageRequestState extends State<PageRequest> {
             ],
           ),
           const SizedBox(height: 12),
-
-          // User Avatar & Name
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 12,
-                backgroundColor: const Color(0xFF6C5CE7),
-                child: Text(
-                  event.username[0].toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                event.username,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
-              ),
-            ],
-          ),
 
           // Action Buttons
           if (status == 'pending') ...[

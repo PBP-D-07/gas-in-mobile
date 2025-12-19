@@ -45,7 +45,7 @@ class ItemCard extends StatelessWidget {
                 context,
                 MaterialPageRoute(builder: (context) => const PageUsers()),
               );
-            } else if (item.name == "Event Requests Management") {
+            } else if (item.name == "Events Request Management") {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const PageRequest()),

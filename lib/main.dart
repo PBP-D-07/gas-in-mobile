@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gas_in/screens/landing.dart';
+import 'package:gas_in/pop-up_logo.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +43,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ).copyWith(secondary: Colors.blueAccent[400]),
         ),
-        home: const LandingPage(),
+        home: SplashScreen(),
       ),
     );
   }

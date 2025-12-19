@@ -5,11 +5,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 class VenueDetailPage extends StatelessWidget {
   final VenueEntry venue;
+  final String? heroTag;
 
-  const VenueDetailPage({super.key, required this.venue});
+  const VenueDetailPage({super.key, required this.venue, this.heroTag});
 
   String _formatDate(DateTime date) {
-    // Simple date formatter without intl package
     final months = [
       'Jan',
       'Feb',
@@ -48,6 +48,26 @@ class VenueDetailPage extends StatelessWidget {
     }
   }
 
+  Widget _buildHeroImage() {
+    final imageWidget = venue.thumbnail.trim().isNotEmpty
+        ? Image.network(
+            'http://localhost:8000/api/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
+            width: double.infinity,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) =>
+                Image.asset('assets/venue.jpg', fit: BoxFit.cover),
+          )
+        : Image.asset(
+            'assets/venue.jpg',
+            width: double.infinity,
+            fit: BoxFit.cover,
+          );
+
+    if (heroTag == null) return imageWidget;
+
+    return Hero(tag: heroTag!, child: imageWidget);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +77,6 @@ class VenueDetailPage extends StatelessWidget {
         elevation: 2,
       ),
       body: Container(
-        // Ensure the gradient fills the whole screen
         constraints: const BoxConstraints.expand(),
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -77,28 +96,8 @@ class VenueDetailPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // --- Thumbnail (with fallback) ---
-                AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: venue.thumbnail.trim().isNotEmpty
-                      ? Image.network(
-                          'http://localhost:8000/api/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Image.asset(
-                                'assets/venue.jpg',
-                                fit: BoxFit.cover,
-                              ),
-                        )
-                      : Image.asset(
-                          'assets/venue.jpg',
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                ),
+                AspectRatio(aspectRatio: 16 / 9, child: _buildHeroImage()),
 
-                // --- Content ---
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16.0,
@@ -107,7 +106,6 @@ class VenueDetailPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Title
                       Text(
                         venue.name,
                         style: const TextStyle(
@@ -117,30 +115,6 @@ class VenueDetailPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
 
-                      // Owner / creator
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.person_outline,
-                            size: 16,
-                            color: Colors.black54,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            venue.ownerUsername != null &&
-                                    venue.ownerUsername.toString().isNotEmpty
-                                ? 'Owner: ${venue.ownerUsername}'
-                                : 'Owner: BonDummy',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-
-                      // Category badge + date
                       Row(
                         children: [
                           Container(
@@ -160,6 +134,7 @@ class VenueDetailPage extends StatelessWidget {
                               ),
                             ),
                           ),
+
                           const SizedBox(width: 12),
                           Text(
                             _formatDate(venue.createdAt),
@@ -172,8 +147,26 @@ class VenueDetailPage extends StatelessWidget {
                       ),
 
                       const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.person_outline,
+                            size: 16,
+                            color: Colors.black54,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            venue.ownerUsername != null &&
+                                    venue.ownerUsername.toString().isNotEmpty
+                                ? 'Owner: ${venue.ownerUsername}'
+                                : 'Owner: BonDummy',
+                            style: TextStyle(fontSize: 13, color: Colors.black),
+                          ),
+                        ],
+                      ),
 
-                      // Location & Contact
+                      const SizedBox(height: 12),
+
                       Row(
                         children: [
                           const Icon(
@@ -230,7 +223,6 @@ class VenueDetailPage extends StatelessWidget {
 
                       const SizedBox(height: 12),
 
-                      // Images carousel (if any)
                       if (venue.images.isNotEmpty) ...[
                         const Text(
                           'Gallery',
@@ -276,7 +268,6 @@ class VenueDetailPage extends StatelessWidget {
 
                       const Divider(),
 
-                      // Full description
                       Text(
                         venue.description.isNotEmpty ? venue.description : '-',
                         style: const TextStyle(fontSize: 16.0, height: 1.6),

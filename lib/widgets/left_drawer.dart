@@ -10,42 +10,31 @@ import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class LeftDrawer extends StatelessWidget {
-  // Tambahkan parameter opsional untuk mengetahui halaman mana yang aktif
   final String currentPage;
 
   const LeftDrawer({super.key, this.currentPage = 'Home'});
 
   @override
   Widget build(BuildContext context) {
-    // Try to detect current route name (if pages use named routes). If not,
-    // fall back to the `currentPage` parameter passed to the drawer.
     final rawRouteName = ModalRoute.of(context)?.settings.name;
     final activeKey = (rawRouteName ?? currentPage)
         .toString()
         .toLowerCase()
         .trim();
-    // Definisi Warna sesuai gambar
-    const Color activeColor = Color(0xFF101850); // Biru Dongker Gelap
+    const Color activeColor = Color(0xFF101850);
     const Color logoutColor = Colors.redAccent;
 
     return Drawer(
-      backgroundColor: Colors.white, // Background Drawer Putih
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.zero,
-      ), // Force sharp rectangular corners for the drawer panel
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       child: ListView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-        ), // Padding kiri-kanan
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         children: [
-          // === HEADER ===
-          const SizedBox(height: 60), // Spasi dari atas (pengganti SafeArea)
+          const SizedBox(height: 60),
           Row(
             children: [
-              // Logo asset to match the top AppBar branding
               Image.asset('assets/logo_biru.png', width: 50),
               const SizedBox(width: 6),
-              // Gradient-styled brand text (same look as in `menu.dart`)
               const Padding(
                 padding: EdgeInsets.only(right: 2),
                 child: Text(
@@ -60,13 +49,11 @@ class LeftDrawer extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20), // Jarak Header ke Menu
-          // === MENU ITEMS ===
+          const SizedBox(height: 20),
 
-          // 1. Home
           _buildDrawerItem(
             title: 'Home',
-            isActive: activeKey == 'home', // Logic aktif (case-insensitive)
+            isActive: activeKey == 'home',
             onTap: () {
               Navigator.pushReplacement(
                 context,
@@ -78,7 +65,6 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
 
-          // 2. Create Event (Masuk kategori Event)
           _buildDrawerItem(
             title: 'Create Event',
             isActive: activeKey == 'create event',
@@ -93,7 +79,6 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
 
-          // 3. Edit Event
           _buildDrawerItem(
             title: 'Edit Event',
             isActive: activeKey == 'edit event',
@@ -108,7 +93,6 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
 
-          // 4. Event Detail
           _buildDrawerItem(
             title: 'Event Detail',
             isActive: activeKey == 'event detail',
@@ -130,7 +114,6 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
 
-          // 5. Book Venue (Masuk kategori Venue)
           _buildDrawerItem(
             title: 'Book Venue',
             isActive: activeKey == 'book venue',
@@ -145,7 +128,6 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
 
-          // 6. Create Venue
           _buildDrawerItem(
             title: 'Create Venue',
             isActive: activeKey == 'create venue',
@@ -161,25 +143,19 @@ class LeftDrawer extends StatelessWidget {
           ),
 
           const SizedBox(height: 10),
-          const Divider(color: Colors.grey, thickness: 0.5), // Garis tipis
+          const Divider(color: Colors.grey, thickness: 0.5),
           const SizedBox(height: 10),
 
-          // === LOGOUT ===
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () async {
-              // close drawer first
               Navigator.pop(context);
               final request = context.read<CookieRequest>();
               try {
-                // try application logout endpoint
                 await request.get("http://localhost:8000/auth/logout/");
-              } catch (e) {
-                // ignore network errors, still navigate to login
-              }
+              } catch (e) {}
 
-              // navigate to login and remove previous routes
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => const LoginPage()),
@@ -192,7 +168,6 @@ class LeftDrawer extends StatelessWidget {
     );
   }
 
-  // Helper Widget untuk membuat Item Menu (Pill Shape)
   Widget _buildDrawerItem({
     required String title,
     required bool isActive,
@@ -203,13 +178,13 @@ class LeftDrawer extends StatelessWidget {
     const Color inactiveText = Color(0xFF101850);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 2), // Jarak antar item (dikurangi)
+      margin: const EdgeInsets.only(bottom: 2),
       decoration: isActive
           ? BoxDecoration(
-              color: activeBg, // Background Biru Dongker kalau aktif
-              borderRadius: BorderRadius.circular(30), // Pill Shape
+              color: activeBg,
+              borderRadius: BorderRadius.circular(30),
             )
-          : null, // Tidak ada background kalau tidak aktif
+          : null,
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 20),
         title: Text(
@@ -222,9 +197,7 @@ class LeftDrawer extends StatelessWidget {
         ),
         onTap: onTap,
         dense: true,
-        visualDensity: const VisualDensity(
-          vertical: -3,
-        ), // Kompres sedikit tinggi baris
+        visualDensity: const VisualDensity(vertical: -3),
       ),
     );
   }

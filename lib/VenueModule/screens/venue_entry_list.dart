@@ -5,9 +5,12 @@ import 'package:gas_in/VenueModule/screens/venue_detail.dart';
 import 'package:gas_in/VenueModule/widgets/venue_entry_card.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:shimmer/shimmer.dart';
 
 class VenueEntryListPage extends StatefulWidget {
-  const VenueEntryListPage({super.key});
+  final String drawerPage;
+
+  const VenueEntryListPage({super.key, this.drawerPage = 'book venue'});
 
   @override
   State<VenueEntryListPage> createState() => _VenueEntryListPageState();
@@ -15,15 +18,10 @@ class VenueEntryListPage extends StatefulWidget {
 
 class _VenueEntryListPageState extends State<VenueEntryListPage> {
   Future<List<VenueEntry>> fetchNews(CookieRequest request) async {
-    // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
-    // If you using chrome,  use URL http://localhost:8000
-
     final response = await request.get('http://localhost:8000/venue/api/json/');
 
-    // Decode response to json format
     var data = response;
 
-    // Convert json data to VenueEntry objects
     List<VenueEntry> listVenues = [];
     for (var d in data) {
       if (d != null) {
@@ -31,6 +29,51 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
       }
     }
     return listVenues;
+  }
+
+  Widget _buildShimmerCard() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 6.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(6.0),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 160,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(6.0),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(height: 12, width: 60, color: Colors.white),
+                    const SizedBox(height: 10),
+                    Container(height: 16, width: 180, color: Colors.white),
+                    const SizedBox(height: 8),
+                    Container(height: 14, width: 140, color: Colors.white),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -44,17 +87,17 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
         elevation: 5,
         shadowColor: Colors.black.withOpacity(0.5),
       ),
-      drawer: const LeftDrawer(),
+      drawer: LeftDrawer(currentPage: widget.drawerPage),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
             colors: [
-              Colors.purple[100]!, // deep purple at bottom
-              Colors.purple[50]!, // medium purple
-              Colors.purple[50]!, // light purple
-              Colors.white, // fade to transparent at top
+              Colors.purple[100]!,
+              Colors.purple[50]!,
+              Colors.purple[50]!,
+              Colors.white,
             ],
             stops: [0.0, 0.35, 0.7, 1.0],
           ),
@@ -63,7 +106,11 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
           future: fetchNews(request),
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.data == null) {
-              return const Center(child: CircularProgressIndicator());
+              return ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                itemCount: 3,
+                itemBuilder: (_, __) => _buildShimmerCard(),
+              );
             } else {
               if (!snapshot.hasData) {
                 return const Column(
@@ -76,7 +123,6 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
                   ],
                 );
               } else {
-                // Make header part of the scrollable content so it's not fixed
                 return CustomScrollView(
                   slivers: [
                     SliverToBoxAdapter(
@@ -85,10 +131,7 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
                         child: ShaderMask(
                           shaderCallback: (bounds) =>
                               const LinearGradient(
-                                colors: [
-                                  Color(0xFF4338CA), // indigo-700
-                                  Color(0xFF6B21A8), // purple-800
-                                ],
+                                colors: [Color(0xFF4338CA), Color(0xFF6B21A8)],
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
                               ).createShader(
@@ -125,6 +168,7 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
                     SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {
                         final venue = snapshot.data![index];
+                        final heroTag = 'venue-${venue.id}';
                         return Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 30.0,
@@ -132,12 +176,15 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
                           ),
                           child: VenueEntryCard(
                             venue: venue,
+                            heroTag: heroTag,
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      VenueDetailPage(venue: venue),
+                                  builder: (context) => VenueDetailPage(
+                                    venue: venue,
+                                    heroTag: heroTag,
+                                  ),
                                 ),
                               );
                             },

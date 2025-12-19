@@ -17,7 +17,7 @@ class _VenueFormPageState extends State<VenueFormPage> {
   String _name = "";
   String _description = "";
   String _location = "";
-  String _category = "running";
+  String _category = "";
   String _thumbnail = "";
   String _imagesCsv = "";
   String _contactNumber = "";
@@ -35,14 +35,13 @@ class _VenueFormPageState extends State<VenueFormPage> {
     'other',
   ];
 
-  // Helper untuk Style Input Decoration
   InputDecoration _customInputDecoration({String? hint}) {
     return InputDecoration(
       hintText: hint,
       hintStyle: TextStyle(color: Colors.grey[400]),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       filled: true,
-      fillColor: Colors.white, // Input field tetap putih solid
+      fillColor: Colors.white,
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16.0),
         borderSide: const BorderSide(color: Color(0xFF1A237E), width: 2.0),
@@ -62,7 +61,6 @@ class _VenueFormPageState extends State<VenueFormPage> {
     );
   }
 
-  // Helper untuk Label
   Widget _buildLabel(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0, left: 4.0, top: 12.0),
@@ -82,17 +80,16 @@ class _VenueFormPageState extends State<VenueFormPage> {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
-      extendBodyBehindAppBar: true, // Agar gradient sampai ke atas
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: const Text(''),
-        backgroundColor: Colors.white, // Transparan
+        backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF1A237E),
         elevation: 5,
         shadowColor: Colors.black.withOpacity(0.5),
       ),
       drawer: const LeftDrawer(),
       body: Container(
-        // === Background Gradient ===
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
@@ -108,30 +105,39 @@ class _VenueFormPageState extends State<VenueFormPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // === Header Text (Di luar kotak putih) ===
               const SizedBox(height: 20),
-              const Text(
-                'Create New Venue',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black,
+              ShaderMask(
+                shaderCallback: (bounds) =>
+                    const LinearGradient(
+                      colors: [Color(0xFF4338CA), Color(0xFF6B21A8)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ).createShader(
+                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                    ),
+                child: const Padding(
+                  padding: EdgeInsets.only(right: 2),
+                  child: Text(
+                    'Create New Venue',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
+              const Text(
                 'Create Venue for people around you!',
-                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                style: TextStyle(fontSize: 18, color: Colors.black),
               ),
               const SizedBox(height: 30),
 
-              // === KOTAK PUTIH OPACITY (Form Container) ===
               Container(
-                padding: const EdgeInsets.all(20.0), // Padding dalam kotak
+                padding: const EdgeInsets.all(20.0),
                 decoration: BoxDecoration(
-                  // Warna putih dengan Opacity 70%
                   color: Colors.white.withOpacity(0.7),
-                  // Sudut kotak agak tegas (8.0), ganti 0.0 jika ingin lancip total
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
@@ -145,7 +151,6 @@ class _VenueFormPageState extends State<VenueFormPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // === Name ===
                       _buildLabel("Venue Name"),
                       TextFormField(
                         decoration: _customInputDecoration(hint: ""),
@@ -158,7 +163,6 @@ class _VenueFormPageState extends State<VenueFormPage> {
                         },
                       ),
 
-                      // === Description ===
                       _buildLabel("Description"),
                       TextFormField(
                         maxLines: 4,
@@ -172,7 +176,6 @@ class _VenueFormPageState extends State<VenueFormPage> {
                         },
                       ),
 
-                      // === Location ===
                       _buildLabel("Location"),
                       TextFormField(
                         decoration: _customInputDecoration(hint: ""),
@@ -185,7 +188,6 @@ class _VenueFormPageState extends State<VenueFormPage> {
                         },
                       ),
 
-                      // === Contact ===
                       _buildLabel("Contact Number"),
                       TextFormField(
                         keyboardType: TextInputType.phone,
@@ -206,7 +208,6 @@ class _VenueFormPageState extends State<VenueFormPage> {
                         },
                       ),
 
-                      // === Category ===
                       _buildLabel("Category"),
                       DropdownButtonFormField<String>(
                         decoration: _customInputDecoration(),
@@ -237,21 +238,49 @@ class _VenueFormPageState extends State<VenueFormPage> {
                         },
                       ),
 
-                      // === Images (CSV) ===
                       _buildLabel("Images (comma-separated URLs)"),
                       TextFormField(
-                        decoration: _customInputDecoration(hint: "https://..."),
-                        maxLines: 2,
+                        decoration: _customInputDecoration(
+                          hint:
+                              "https://example.com/img1.jpg, https://example.com/img2.jpg",
+                        ),
+                        maxLines: 3,
                         onChanged: (val) => setState(() => _imagesCsv = val),
-                        // optional: allow empty
-                        validator: (val) => null,
+                        validator: (val) {
+                          if (val == null || val.isEmpty) {
+                            return "Masukkan URL gambar!";
+                          }
+                          if (val != null && val.isNotEmpty) {
+                            final urls = val
+                                .split(',')
+                                .map((e) => e.trim())
+                                .where((e) => e.isNotEmpty);
+                            for (var url in urls) {
+                              if (!Uri.tryParse(url)!.isAbsolute) {
+                                return "Pastikan semua URL valid!";
+                              }
+                            }
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 6),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: Text(
+                          "Pisahkan dengan koma (,) untuk multiple images",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
                       ),
 
-                      // === Thumbnail ===
                       _buildLabel("Thumbnail (Image URL)"),
                       TextFormField(
                         decoration: _customInputDecoration(hint: ""),
-                        maxLines: 4, // Kotak besar seperti di gambar
+                        maxLines: 4,
                         onChanged: (val) => setState(() => _thumbnail = val),
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
@@ -265,7 +294,6 @@ class _VenueFormPageState extends State<VenueFormPage> {
 
                       const SizedBox(height: 30),
 
-                      // === Tombol Add Event (smaller, centered) ===
                       Center(
                         child: SizedBox(
                           width: 150,
@@ -285,10 +313,10 @@ class _VenueFormPageState extends State<VenueFormPage> {
                             ),
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                // Logic simpan data
                                 List<String> images = _imagesCsv
                                     .split(',')
                                     .map((e) => e.trim())
+                                    .where((e) => e.isNotEmpty)
                                     .toList();
 
                                 final payload = jsonEncode({
@@ -301,26 +329,52 @@ class _VenueFormPageState extends State<VenueFormPage> {
                                   "category": _category,
                                 });
 
-                                final response = await request.postJson(
-                                  "http://localhost:8000/venue/create-venue-flutter/",
-                                  payload,
-                                );
+                                try {
+                                  final response = await request.postJson(
+                                    "http://localhost:8000/venue/create-venue-flutter/",
+                                    payload,
+                                  );
 
-                                if (context.mounted) {
-                                  if (response != null &&
-                                      response['status'] == 'success') {
+                                  if (context.mounted) {
+                                    if (response != null &&
+                                        response['status'] == 'success') {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            "Venue berhasil dibuat!",
+                                          ),
+                                          backgroundColor: Colors.green,
+                                        ),
+                                      );
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => MyHomePage(),
+                                        ),
+                                      );
+                                    } else {
+                                      final errorMsg =
+                                          response?['message'] ??
+                                          'Gagal membuat venue.';
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(errorMsg),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text("Success!")),
-                                    );
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => MyHomePage(),
+                                      SnackBar(
+                                        content: Text("Error: $e"),
+                                        backgroundColor: Colors.red,
                                       ),
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text("Failed.")),
                                     );
                                   }
                                 }

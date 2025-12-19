@@ -1,52 +1,85 @@
 import 'package:flutter/material.dart';
 import 'package:gas_in/widgets/left_drawer.dart';
+import 'package:gas_in/widgets/preview_menu_card.dart';
+import 'package:gas_in/VenueModule/models/venue_model.dart';
+import 'package:gas_in/VenueModule/screens/venue_detail.dart';
+import 'package:gas_in/VenueModule/screens/venue_entry_list.dart';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
 
+  // Fetch Venues
+  Future<List<VenueEntry>> fetchVenue(CookieRequest request) async {
+    // Sesuaikan URL (localhost / 10.0.2.2)
+    final response = await request.get('http://localhost:8000/venue/api/json/');
+    List<VenueEntry> listVenues = [];
+    for (var d in response) {
+      if (d != null) {
+        listVenues.add(VenueEntry.fromJson(d));
+      }
+    }
+    return listVenues;
+  }
+
+  // Fetch Events
+  Future<List<dynamic>> fetchEvent(CookieRequest request) async {
+    try {
+      final response = await request.get(
+        'http://localhost:8000/event-maker/all/',
+      );
+
+      if (response is Map && response['data'] is List) {
+        return (response['data'] as List).toList();
+      } else if (response is List) {
+        return response.toList();
+      }
+      return [];
+    } catch (e) {
+      print('Error fetching events: $e');
+      return [];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Scaffold menyediakan struktur dasar halaman dengan AppBar dan body.
+    final request = context.watch<CookieRequest>();
+
     return Scaffold(
+      // Background sangat muda (sedikit ungu/putih) agar bersih seperti gambar
+      backgroundColor: const Color(0xFFFDF7FF),
+
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 5,
-        shadowColor: Colors.black.withValues(alpha: 0.5),
+        surfaceTintColor: Colors.white,
+        elevation: 0,
         titleSpacing: 0,
-
+        iconTheme: const IconThemeData(color: Colors.black87),
         title: Row(
           children: [
-            /// CENTER — Logo + Brand, dengan Expanded agar benar-benar center
             Expanded(
               child: Center(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset("logo.png", width: 20),
-                    SizedBox(width: 6),
+                    Image.asset(
+                      "assets/logo.png",
+                      width: 24,
+                    ), // Sesuaikan path logo
+                    const SizedBox(width: 8),
                     ShaderMask(
-                      shaderCallback: (bounds) =>
-                          const LinearGradient(
-                            colors: [
-                              Color(0xFF4338CA), // indigo-700
-                              Color(0xFF6B21A8), // purple-800
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ).createShader(
-                            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                          ),
-                      child: const Padding(
-                        padding: EdgeInsets.only(right: 2),
-                        child: Text(
-                          'GAS.in',
-                          style: TextStyle(
-                            fontStyle: FontStyle.italic,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white, // warna tetap harus ada
-                          ),
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [Color(0xFF4338CA), Color(0xFF6B21A8)],
+                      ).createShader(bounds),
+                      child: const Text(
+                        'GAS.in',
+                        style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -54,53 +87,139 @@ class MyHomePage extends StatelessWidget {
                 ),
               ),
             ),
-
-            /// RIGHT — Login Button
             Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: Text("Login", style: const TextStyle(color: Colors.black)),
+              padding: const EdgeInsets.only(right: 16),
+              child: Text(
+                "Login",
+                style: TextStyle(
+                  color: Colors.grey[800],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ],
         ),
       ),
+      drawer: const LeftDrawer(currentPage: 'home'),
 
-      drawer: LeftDrawer(),
-
-      // Body halaman dengan padding di sekelilingnya.
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        // Menyusun widget secara vertikal dalam sebuah kolom.
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Menempatkan widget berikutnya di tengah halaman.
-            Center(
-              child: Column(
-                // Menyusun teks dan grid item secara vertikal.
-                children: [
-                  // Menampilkan teks sambutan dengan gaya tebal dan ukuran 18.
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16.0),
-                    child: Text(
-                      'Selamat datang di gas.in',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
-                      ),
-                    ),
-                  ),
+            const SizedBox(height: 24),
 
-                  // Grid untuk menampilkan ItemCard dalam bentuk grid 3 kolom.
-                  GridView.count(
-                    primary: true,
-                    padding: const EdgeInsets.all(20),
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 3,
-                    // Agar grid menyesuaikan tinggi kontennya.
-                    shrinkWrap: true,
+            // ======= SECTION: EVENTS =======
+            _buildSectionHeader(
+              context: context,
+              title: "Events",
+              subtitle: "Check out upcoming events",
+              onSeeAllTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    settings: const RouteSettings(name: 'event detail'),
+                    builder: (context) =>
+                        const VenueEntryListPage(drawerPage: 'event detail'),
                   ),
-                ],
+                );
+              },
+            ),
+
+            SizedBox(
+              height:
+                  360, // Tinggi area scroll horizontal (ditambah untuk cegah overflow)
+              child: FutureBuilder(
+                future: fetchEvent(request),
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return _buildEmptyState('No events available.');
+                  } else {
+                    return ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: snapshot.data!.length > 5
+                          ? 5
+                          : snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        var event = snapshot.data![index];
+                        // SizedBox menentukan lebar kartu
+                        return SizedBox(
+                          width: 350,
+                          child: EventEntryCard(
+                            event: event,
+                            onTap: () {
+                              print("Event tapped");
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            // ======= SECTION: VENUE =======
+            _buildSectionHeader(
+              context: context,
+              title: "Venue",
+              subtitle: "Explore popular venues near you",
+              onSeeAllTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    settings: const RouteSettings(name: 'book venue'),
+                    builder: (context) =>
+                        const VenueEntryListPage(drawerPage: 'book venue'),
+                  ),
+                );
+              },
+            ),
+
+            SizedBox(
+              height: 360,
+              child: FutureBuilder(
+                future: fetchVenue(request),
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return _buildEmptyState('No venues found.');
+                  } else {
+                    return ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: snapshot.data!.length > 5
+                          ? 5
+                          : snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        VenueEntry venue = snapshot.data![index];
+                        return SizedBox(
+                          width: 350,
+                          child: VenueEntryCard(
+                            venue: venue,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      VenueDetailPage(venue: venue),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
               ),
             ),
           ],
@@ -108,44 +227,71 @@ class MyHomePage extends StatelessWidget {
       ),
     );
   }
-}
 
-class InfoCard extends StatelessWidget {
-  // Kartu informasi yang menampilkan title dan content.
+  // Header Style sesuai gambar: Judul tebal, Subtitle kecil abu-abu
+  Widget _buildSectionHeader({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required VoidCallback onSeeAllTap,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w900, // Sangat tebal (Black)
+                  color: Color(0xFF1A1A2E), // Hitam kebiruan
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+          GestureDetector(
+            onTap: onSeeAllTap,
+            child: Text(
+              'See All',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-  final String title; // Judul kartu.
-  final String content; // Isi kartu.
-
-  const InfoCard({super.key, required this.title, required this.content});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      // Membuat kotak kartu dengan bayangan dibawahnya.
-      elevation: 2.0,
+  Widget _buildEmptyState(String message) {
+    return Center(
       child: Container(
-        // Mengatur ukuran dan jarak di dalam kartu.
-        width:
-            MediaQuery.of(context).size.width /
-            3.5, // menyesuaikan dengan lebar device yang digunakan.
-        padding: const EdgeInsets.all(16.0),
-        // Menyusun title dan content secara vertikal.
-        child: Column(
-          children: [
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8.0),
-            Text(content),
-          ],
+        margin: const EdgeInsets.all(20),
+        child: Text(
+          message,
+          style: TextStyle(
+            color: Colors.grey[500],
+            fontStyle: FontStyle.italic,
+          ),
         ),
       ),
     );
   }
-}
-
-class ItemHomepage {
-  final String name;
-  final IconData icon;
-  final Color color;
-
-  ItemHomepage(this.name, this.icon, this.color);
 }

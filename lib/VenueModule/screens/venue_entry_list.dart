@@ -20,7 +20,7 @@ class VenueEntryListPage extends StatefulWidget {
 
 class _VenueEntryListPageState extends State<VenueEntryListPage> {
   // fetch venue
-  Future<List<VenueEntry>> fetchNews(CookieRequest request) async {
+  Future<List<VenueEntry>> fetchVenue(CookieRequest request) async {
     final response = await request.get('http://localhost:8000/venue/api/json/');
 
     var data = response;
@@ -111,10 +111,12 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
             stops: [0.0, 0.35, 0.7, 1.0],
           ),
         ),
+
+        // refresh indicator untuk pull to refresh
         child: RefreshIndicator(
-          onRefresh: () => fetchNews(request),
+          onRefresh: () => fetchVenue(request),
           child: FutureBuilder(
-            future: fetchNews(request),
+            future: fetchVenue(request),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.data == null) {
                 return ListView.builder(
@@ -159,6 +161,7 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
                                     bounds.height,
                                   ),
                                 ),
+
                             // judul halaman
                             child: const Padding(
                               padding: EdgeInsets.only(right: 2),
@@ -174,6 +177,7 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
                           ),
                         ),
                       ),
+
                       // description halaman
                       SliverToBoxAdapter(
                         child: Padding(
@@ -184,6 +188,7 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
                           ),
                         ),
                       ),
+
                       // list venue entry
                       SliverList(
                         delegate: SliverChildBuilderDelegate((context, index) {

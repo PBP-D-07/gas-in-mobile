@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:gas_in/AdminModule/widgets/left_drawer.dart';
 import 'package:gas_in/AdminModule/widgets/buttons_card.dart';
 
-class adminPage extends StatelessWidget {
-  adminPage({super.key});
-  
+class AdminPage extends StatelessWidget {
+  AdminPage({super.key});
+
   final List<ItemAdminpage> items = [
     ItemAdminpage(
       "Users Management",

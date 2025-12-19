@@ -20,6 +20,7 @@ class PostEntry {
     String? ownerId;
     String? ownerUsername;
     bool isRealUser;
+    bool isOwner;
     List<Comment>? comments;
 
     PostEntry({
@@ -34,6 +35,7 @@ class PostEntry {
         this.ownerId,
         this.ownerUsername,
         required this.isRealUser,
+        required this.isOwner,
         this.comments,
     });
 
@@ -49,6 +51,8 @@ class PostEntry {
         ownerId: json["owner_id"],
         ownerUsername: json["owner_username"],
         isRealUser: json["is_real_user"],
+        isOwner: json["is_owner"] ?? false,
+
         comments: json["comments"] == null ? [] : List<Comment>.from(json["comments"]!.map((x) => Comment.fromJson(x))),
     );
 
@@ -64,6 +68,7 @@ class PostEntry {
         "owner_id": ownerId,
         "owner_username": ownerUsername,
         "is_real_user": isRealUser,
+        "is_owner": isOwner,
         "comments": comments == null ? [] : List<dynamic>.from(comments!.map((x) => x.toJson())),
     };
 }

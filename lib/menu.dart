@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_in/ForumModule/screens/forumMenu.dart';
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
@@ -99,6 +100,14 @@ class ItemCard extends StatelessWidget {
             ..showSnackBar(
               SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!"))
             );
+          if (item.name == "Forum") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder:  (context) => ForumCommunity(),
+              )
+            );
+          }
         },
         // Container untuk menyimpan Icon dan Text
         child: Container(

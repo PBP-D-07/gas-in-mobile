@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gas_in/ForumModule/models/post_entry.dart';
 
-class PostEntryCard extends StatelessWidget {
+class PostEntryCard extends StatefulWidget {
   final PostEntry post;
   final VoidCallback onTap;
 
@@ -12,121 +12,239 @@ class PostEntryCard extends StatelessWidget {
   });
 
   @override
+  State<PostEntryCard> createState() => _PostEntryCardState();
+}
+
+class _PostEntryCardState extends State<PostEntryCard> {
+  bool _thumbnailValid = true;
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+
+    if (difference.inDays > 0) {
+      return "${difference.inDays}d ago";
+    } else if (difference.inHours > 0) {
+      return "${difference.inHours}h ago";
+    } else if (difference.inMinutes > 0) {
+      return "${difference.inMinutes}m ago";
+    } else {
+      return "Just now";
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: InkWell(
-        onTap: onTap,
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            side: BorderSide(color: Colors.grey.shade300),
-          ),
-          elevation: 2,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // THUMBNAIL
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: post.thumbnail != null && post.thumbnail!.isNotEmpty
-                      ? Image.network(
-                          'http://localhost:8000/forum/proxy-image/?url=${Uri.encodeComponent(post.thumbnail!)}',
-                          height: 150,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              _thumbnailPlaceholder(),
-                        )
-                      : _thumbnailPlaceholder(),
+    final hasThumbnail = _thumbnailValid &&
+        widget.post.thumbnail != null &&
+        widget.post.thumbnail!.trim().isNotEmpty;
+
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // thumbnail image if exist
+            if (hasThumbnail)
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(16),
                 ),
-
-                const SizedBox(height: 12),
-
-                // DESCRIPTION (as title)
-                Text(
-                  post.description.length > 60
-                      ? '${post.description.substring(0, 60)}...'
-                      : post.description,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Image.network(
+                  'http://localhost:8000/forum/proxy-image/?url=${Uri.encodeComponent(widget.post.thumbnail!)}',
+                  width: double.infinity,
+                  height: 200,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        setState(() {
+                          _thumbnailValid = false;
+                        });
+                      }
+                    });
+                    return const SizedBox.shrink();
+                  },
                 ),
+              ),
 
-                const SizedBox(height: 8),
+            // Content Section
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Hot Badge 
+                  if (widget.post.isHot == true)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      margin: const EdgeInsets.only(bottom: 12),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Colors.deepOrange],
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(
+                            Icons.local_fire_department,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            'HOT POST',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
-                // CATEGORY
-                Text(
-                  "Category: ${post.category}",
-                  style: const TextStyle(color: Colors.black54),
-                ),
-
-                const SizedBox(height: 8),
-
-                // OWNER
-                if (post.ownerUsername != null)
+                  // Post Description
                   Text(
-                    "By: ${post.ownerUsername}",
+                    widget.post.description,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.black54,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1A1B4B),
+                      height: 1.3,
                     ),
                   ),
 
-                const SizedBox(height: 8),
+                  const SizedBox(height: 16),
 
-                Row(
-                  children: [
-                    Icon(Icons.remove_red_eye, size: 16, color: Colors.grey[600]),
-                    const SizedBox(width: 4),
-                    Text("${post.postViews}"),
-
-                    const SizedBox(width: 16),
-
-                    Icon(Icons.favorite, size: 16, color: Colors.redAccent),
-                    const SizedBox(width: 4),
-                    Text("${post.likeCount}"),
-
-                    const SizedBox(width: 16),
-
-                    if (post.isHot == true)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.orange,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: const Text(
-                          "HOT",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
+                  // Author Info Row 
+                  Row(
+                    children: [
+                      // Profile Picture Circle Avatar
+                      CircleAvatar(
+                        radius: 20,
+                        backgroundColor: const Color(0xFFD4B5E8),
+                        child: Text(
+                          (widget.post.ownerUsername ?? 'U')[0].toUpperCase(),
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
+                            color: Color(0xFF4A4E9E),
                           ),
                         ),
                       ),
-                  ],
-                ),
-              ],
+                      const SizedBox(width: 12),
+
+                      // Username and Time
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.post.ownerUsername ?? 'Unknown User',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: Color(0xFF1A1B4B),
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              _formatDate(widget.post.createdAt),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Category Badge 
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFE4D6),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          widget.post.category.toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFFF6B35),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Stats Row 
+                  Row(
+                    children: [
+                      _buildStatItem(
+                        Icons.visibility,
+                        '${widget.post.postViews}',
+                      ),
+                      const SizedBox(width: 20),
+                      _buildStatItem(
+                        Icons.favorite,
+                        '${widget.post.likeCount}',
+                      ),
+                      const SizedBox(width: 20),
+                      _buildStatItem(
+                        Icons.comment,
+                        '${widget.post.comments?.length ?? 0}',
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _thumbnailPlaceholder() {
-    return Container(
-      height: 150,
-      width: double.infinity,
-      color: Colors.grey[300],
-      child: const Center(
-        child: Icon(Icons.image_not_supported, size: 40),
-      ),
+  Widget _buildStatItem(IconData icon, String value) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: Colors.grey[600]),
+        const SizedBox(width: 4),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey[700],
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 }

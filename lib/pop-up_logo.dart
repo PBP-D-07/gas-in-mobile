@@ -94,7 +94,7 @@ class _SplashScreenState extends State<SplashScreen>
                       // Logo standalone dengan shadow
                       Container(
                         child: Image.asset(
-                          'assets/images/logo_gasin.png',
+                          'assets/logo_gasin.png',
                           width: 150,
                           height: 150,
                           fit: BoxFit.contain,

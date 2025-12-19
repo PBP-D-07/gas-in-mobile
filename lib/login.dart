@@ -17,8 +17,9 @@ class LoginApp extends StatelessWidget {
       title: 'Login',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple)
-            .copyWith(secondary: Colors.deepPurpleAccent[400]),
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.deepPurple,
+        ).copyWith(secondary: Colors.deepPurpleAccent[400]),
       ),
       home: const LoginPage(),
     );
@@ -68,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              
+
               // White Card Content
               Expanded(
                 child: Container(
@@ -104,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(height: 40),
-                        
+
                         // Username Field
                         const Text(
                           'Username',
@@ -150,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        
+
                         // Password Field
                         const Text(
                           'Password',
@@ -197,7 +198,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(height: 40),
-                        
+
                         // Login Button
                         SizedBox(
                           width: double.infinity,
@@ -209,10 +210,7 @@ class _LoginPageState extends State<LoginPage> {
 
                               final response = await request.login(
                                 "http://localhost:8000/auth/login/",
-                                {
-                                  'username': username,
-                                  'password': password,
-                                },
+                                {'username': username, 'password': password},
                               );
 
                               if (request.loggedIn) {
@@ -224,14 +222,17 @@ class _LoginPageState extends State<LoginPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          isAdmin ? adminPage() : MyHomePage(),
+                                          // isAdmin ? const AdminPage() : const MyHomePage(),
+                                          MyHomePage(),
                                     ),
                                   );
                                   ScaffoldMessenger.of(context)
                                     ..hideCurrentSnackBar()
                                     ..showSnackBar(
                                       SnackBar(
-                                        content: Text("$message Welcome, $uname."),
+                                        content: Text(
+                                          "$message Welcome, $uname.",
+                                        ),
                                       ),
                                     );
                                 }
@@ -273,7 +274,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        
+
                         // Sign Up Link
                         Center(
                           child: GestureDetector(

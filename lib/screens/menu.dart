@@ -1,28 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:gas_in/login.dart';
 import 'package:gas_in/widgets/left_drawer.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:gas_in/widgets/preview_menu_card.dart';
+import 'package:gas_in/VenueModule/models/venue_model.dart';
+import 'package:gas_in/VenueModule/screens/venue_detail.dart';
+import 'package:gas_in/VenueModule/screens/venue_entry_list.dart';
 import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({super.key});
+  const MyHomePage({super.key});
 
-  final List<ItemHomepage> items = [
-    ItemHomepage("Event", Icons.list),
-    ItemHomepage("Forum", Icons.chat_bubble_outline_outlined),
-    ItemHomepage("Venue", Icons.stadium_outlined),
-  ];
+  Future<List<VenueEntry>> fetchVenue(CookieRequest request) async {
+    final response = await request.get('http://localhost:8000/venue/api/json/');
+    List<VenueEntry> listVenues = [];
+    for (var d in response) {
+      if (d != null) {
+        listVenues.add(VenueEntry.fromJson(d));
+      }
+    }
+    return listVenues;
+  }
+
+  Future<List<dynamic>> fetchEvent(CookieRequest request) async {
+    try {
+      final response = await request.get(
+        'http://localhost:8000/event-maker/all/',
+      );
+
+      if (response is Map && response['data'] is List) {
+        return (response['data'] as List).toList();
+      } else if (response is List) {
+        return response.toList();
+      }
+      return [];
+    } catch (e) {
+      print('Error fetching events: $e');
+      return [];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
+      backgroundColor: const Color(0xFFFDF7FF),
+
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 5,
-        shadowColor: Colors.black.withValues(alpha: 0.5),
+        surfaceTintColor: Colors.white,
+        elevation: 0,
         titleSpacing: 0,
+        iconTheme: const IconThemeData(color: Colors.black87),
         title: Row(
           children: [
             Expanded(
@@ -31,27 +61,19 @@ class MyHomePage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset("assets/logo.png", width: 20),
-                    const SizedBox(width: 6),
+                    Image.asset("assets/logo.png", width: 24),
+                    const SizedBox(width: 8),
                     ShaderMask(
-                      shaderCallback: (bounds) =>
-                          const LinearGradient(
-                            colors: [Color(0xFF4338CA), Color(0xFF6B21A8)],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ).createShader(
-                            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                          ),
-                      child: const Padding(
-                        padding: EdgeInsets.only(right: 2),
-                        child: Text(
-                          'GAS.in',
-                          style: TextStyle(
-                            fontStyle: FontStyle.italic,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [Color(0xFF4338CA), Color(0xFF6B21A8)],
+                      ).createShader(bounds),
+                      child: const Text(
+                        'GAS.in',
+                        style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -60,93 +82,134 @@ class MyHomePage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: request.loggedIn
-                  ? PopupMenuButton<String>(
-                      onSelected: (value) async {
-                        if (value == 'logout') {
-                          final response = await request.logout(
-                            "http://localhost:8000/auth/logout/",
-                          );
-                          if (context.mounted) {
-                            if (response['status']) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => LoginPage(),
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Logout failed")),
-                              );
-                            }
-                          }
-                        }
-                      },
-                      itemBuilder: (BuildContext context) =>
-                          <PopupMenuEntry<String>>[
-                            PopupMenuItem<String>(
-                              value: 'logout',
-                              child: const Row(
-                                children: [
-                                  Icon(Icons.logout, color: Colors.red),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Logout',
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                      child: Row(
-                        children: [
-                          const Icon(Icons.person, color: Colors.black),
-                          const SizedBox(width: 8),
-                          Text(
-                            request.jsonData['username'] ?? 'User',
-                            style: const TextStyle(color: Colors.black, fontSize: 14),
-                          ),
-                        ],
-                      ),
-                    )
-                  : ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                        );
-                      },
-                      child: const Text(
-                        "Login",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
+              padding: const EdgeInsets.only(right: 16),
+              child: Text(
+                "Login",
+                style: TextStyle(
+                  color: Colors.grey[800],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ],
         ),
       ),
-      drawer: const LeftDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      drawer: const LeftDrawer(currentPage: 'home'),
+
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: GridView.count(
-                primary: true,
-                padding: const EdgeInsets.all(20),
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                crossAxisCount: 3,
-                shrinkWrap: true,
-                // Tambahkan childAspectRatio jika teks terlalu panjang atau terpotong
-                // childAspectRatio: 0.8,
-                children: items.map((ItemHomepage item) {
-                  return ItemCard(item);
-                }).toList(),
+            const SizedBox(height: 24),
+
+            _buildSectionHeader(
+              context: context,
+              title: "Events",
+              subtitle: "Check out upcoming events",
+              onSeeAllTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    settings: const RouteSettings(name: 'event detail'),
+                    builder: (context) =>
+                        const VenueEntryListPage(drawerPage: 'event detail'),
+                  ),
+                );
+              },
+            ),
+
+            SizedBox(
+              height: 360,
+              child: FutureBuilder(
+                future: fetchEvent(request),
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return _buildEmptyState('No events available.');
+                  } else {
+                    return ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: snapshot.data!.length > 5
+                          ? 5
+                          : snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        var event = snapshot.data![index];
+                        return SizedBox(
+                          width: 350,
+                          child: EventEntryCard(
+                            event: event,
+                            onTap: () {
+                              print("Event tapped");
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            _buildSectionHeader(
+              context: context,
+              title: "Venue",
+              subtitle: "Explore popular venues near you",
+              onSeeAllTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    settings: const RouteSettings(name: 'book venue'),
+                    builder: (context) =>
+                        const VenueEntryListPage(drawerPage: 'book venue'),
+                  ),
+                );
+              },
+            ),
+
+            SizedBox(
+              height: 360,
+              child: FutureBuilder(
+                future: fetchVenue(request),
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return _buildEmptyState('No venues found.');
+                  } else {
+                    return ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: snapshot.data!.length > 5
+                          ? 5
+                          : snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        VenueEntry venue = snapshot.data![index];
+                        return SizedBox(
+                          width: 350,
+                          child: VenueEntryCard(
+                            venue: venue,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      VenueDetailPage(venue: venue),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
               ),
             ),
           ],
@@ -154,84 +217,70 @@ class MyHomePage extends StatelessWidget {
       ),
     );
   }
-}
 
-class ItemHomepage {
-  final String name;
-  final IconData icon;
-
-  ItemHomepage(this.name, this.icon);
-}
-
-class ItemCard extends StatelessWidget {
-  final ItemHomepage item;
-
-  const ItemCard(this.item, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center, // Vertikal center
-      children: [
-        // 1. Bagian Tombol Lingkaran
-        Container(
-          width: 60, // Tentukan ukuran lingkaran
-          height: 60,
-          decoration: BoxDecoration(
-            // Membuat bentuk lingkaran
-            shape: BoxShape.circle,
-            gradient: const LinearGradient(
-              colors: [
-                Color(0xFF4338CA), // Indigo
-                Color(0xFF6B21A8), // Purple
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: .2),
-                blurRadius: 4,
-                offset: const Offset(2, 2),
+  Widget _buildSectionHeader({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required VoidCallback onSeeAllTap,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF1A1A2E),
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ],
           ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              // Membuat efek ripple (klik) juga berbentuk lingkaran
-              customBorder: const CircleBorder(),
-              onTap: () {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    SnackBar(
-                      content: Text("Kamu menekan tombol ${item.name}!"),
-                    ),
-                  );
-              },
-              child: Center(
-                child: Icon(item.icon, color: Colors.white, size: 30.0),
+          GestureDetector(
+            onTap: onSeeAllTap,
+            child: Text(
+              'See All',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).primaryColor,
               ),
             ),
           ),
-        ),
+        ],
+      ),
+    );
+  }
 
-        // 2. Jarak antara tombol dan teks
-        const SizedBox(height: 8),
-
-        // 3. Bagian Teks (Sekarang di luar tombol)
-        Text(
-          item.name,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color:
-                Colors.black, // Ubah ke hitam agar terbaca di background putih
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
+  Widget _buildEmptyState(String message) {
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.all(20),
+        child: Text(
+          message,
+          style: TextStyle(
+            color: Colors.grey[500],
+            fontStyle: FontStyle.italic,
           ),
         ),
-      ],
+      ),
     );
   }
 }

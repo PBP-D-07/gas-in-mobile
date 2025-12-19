@@ -10,9 +10,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
 
-  // Fetch Venues
   Future<List<VenueEntry>> fetchVenue(CookieRequest request) async {
-    // Sesuaikan URL (localhost / 10.0.2.2)
     final response = await request.get('http://localhost:8000/venue/api/json/');
     List<VenueEntry> listVenues = [];
     for (var d in response) {
@@ -23,7 +21,6 @@ class MyHomePage extends StatelessWidget {
     return listVenues;
   }
 
-  // Fetch Events
   Future<List<dynamic>> fetchEvent(CookieRequest request) async {
     try {
       final response = await request.get(
@@ -47,7 +44,6 @@ class MyHomePage extends StatelessWidget {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
-      // Background sangat muda (sedikit ungu/putih) agar bersih seperti gambar
       backgroundColor: const Color(0xFFFDF7FF),
 
       appBar: AppBar(
@@ -64,10 +60,7 @@ class MyHomePage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      "assets/logo.png",
-                      width: 24,
-                    ), // Sesuaikan path logo
+                    Image.asset("assets/logo.png", width: 24),
                     const SizedBox(width: 8),
                     ShaderMask(
                       shaderCallback: (bounds) => const LinearGradient(
@@ -109,7 +102,6 @@ class MyHomePage extends StatelessWidget {
           children: [
             const SizedBox(height: 24),
 
-            // ======= SECTION: EVENTS =======
             _buildSectionHeader(
               context: context,
               title: "Events",
@@ -127,8 +119,7 @@ class MyHomePage extends StatelessWidget {
             ),
 
             SizedBox(
-              height:
-                  360, // Tinggi area scroll horizontal (ditambah untuk cegah overflow)
+              height: 360,
               child: FutureBuilder(
                 future: fetchEvent(request),
                 builder: (context, AsyncSnapshot snapshot) {
@@ -146,7 +137,6 @@ class MyHomePage extends StatelessWidget {
                           : snapshot.data!.length,
                       itemBuilder: (context, index) {
                         var event = snapshot.data![index];
-                        // SizedBox menentukan lebar kartu
                         return SizedBox(
                           width: 350,
                           child: EventEntryCard(
@@ -165,7 +155,6 @@ class MyHomePage extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            // ======= SECTION: VENUE =======
             _buildSectionHeader(
               context: context,
               title: "Venue",
@@ -228,7 +217,6 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
-  // Header Style sesuai gambar: Judul tebal, Subtitle kecil abu-abu
   Widget _buildSectionHeader({
     required BuildContext context,
     required String title,
@@ -248,8 +236,8 @@ class MyHomePage extends StatelessWidget {
                 title,
                 style: const TextStyle(
                   fontSize: 24,
-                  fontWeight: FontWeight.w900, // Sangat tebal (Black)
-                  color: Color(0xFF1A1A2E), // Hitam kebiruan
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF1A1A2E),
                   letterSpacing: -0.5,
                 ),
               ),

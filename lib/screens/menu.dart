@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gas_in/login.dart';
 import 'package:gas_in/widgets/left_drawer.dart';
 import 'package:gas_in/widgets/preview_menu_card.dart';
 import 'package:gas_in/VenueModule/models/venue_model.dart';
@@ -11,6 +10,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
 
+  // fetch venue
   Future<List<VenueEntry>> fetchVenue(CookieRequest request) async {
     final response = await request.get('http://localhost:8000/venue/api/json/');
     List<VenueEntry> listVenues = [];
@@ -22,6 +22,7 @@ class MyHomePage extends StatelessWidget {
     return listVenues;
   }
 
+  // fetch event
   Future<List<dynamic>> fetchEvent(CookieRequest request) async {
     try {
       final response = await request.get(
@@ -46,7 +47,6 @@ class MyHomePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFDF7FF),
-
       appBar: AppBar(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
@@ -94,6 +94,7 @@ class MyHomePage extends StatelessWidget {
           ],
         ),
       ),
+
       drawer: const LeftDrawer(currentPage: 'home'),
 
       body: SingleChildScrollView(
@@ -103,6 +104,7 @@ class MyHomePage extends StatelessWidget {
           children: [
             const SizedBox(height: 24),
 
+            // header section untuk event
             _buildSectionHeader(
               context: context,
               title: "Events",
@@ -119,6 +121,7 @@ class MyHomePage extends StatelessWidget {
               },
             ),
 
+            // preview card untuk event
             SizedBox(
               height: 360,
               child: FutureBuilder(
@@ -156,6 +159,7 @@ class MyHomePage extends StatelessWidget {
 
             const SizedBox(height: 10),
 
+            // header section untuk venue
             _buildSectionHeader(
               context: context,
               title: "Venue",
@@ -172,6 +176,7 @@ class MyHomePage extends StatelessWidget {
               },
             ),
 
+            // preview card untuk venue
             SizedBox(
               height: 360,
               child: FutureBuilder(
@@ -218,6 +223,7 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
+  // widget untuk header section dengan judul, description, dan tombol "See All"
   Widget _buildSectionHeader({
     required BuildContext context,
     required String title,
@@ -269,6 +275,7 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
+  // widget untuk menampilkan state kosong
   Widget _buildEmptyState(String message) {
     return Center(
       child: Container(

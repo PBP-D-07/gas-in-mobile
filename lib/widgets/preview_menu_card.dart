@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:gas_in/VenueModule/models/venue_model.dart';
 
 class PreviewCard extends StatelessWidget {
+  // variables
   final String title;
   final String description;
   final String category;
   final String? thumbnail;
   final VoidCallback onTap;
 
+  // constructor
   const PreviewCard({
     super.key,
     required this.title,
@@ -42,6 +44,7 @@ class PreviewCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // image
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(6.0),
@@ -67,11 +70,13 @@ class PreviewCard extends StatelessWidget {
                 ),
               ),
 
+              // card content
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // category
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -92,8 +97,10 @@ class PreviewCard extends StatelessWidget {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 12),
 
+                    // title
                     Text(
                       title,
                       maxLines: 1,
@@ -105,8 +112,10 @@ class PreviewCard extends StatelessWidget {
                         letterSpacing: -0.5,
                       ),
                     ),
+
                     const SizedBox(height: 6),
 
+                    // description
                     Text(
                       description.isEmpty
                           ? "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
@@ -130,6 +139,7 @@ class PreviewCard extends StatelessWidget {
   }
 }
 
+// venue entry card
 class VenueEntryCard extends StatelessWidget {
   final VenueEntry venue;
   final VoidCallback onTap;
@@ -148,6 +158,7 @@ class VenueEntryCard extends StatelessWidget {
   }
 }
 
+// event entry card
 class EventEntryCard extends StatelessWidget {
   final Map<String, dynamic> event;
   final VoidCallback onTap;

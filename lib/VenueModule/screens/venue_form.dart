@@ -3,7 +3,6 @@ import 'package:gas_in/widgets/left_drawer.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:gas_in/screens/menu.dart';
 
 class VenueFormPage extends StatefulWidget {
   const VenueFormPage({super.key});
@@ -14,14 +13,17 @@ class VenueFormPage extends StatefulWidget {
 
 class _VenueFormPageState extends State<VenueFormPage> {
   final _formKey = GlobalKey<FormState>();
+
+  // variabel untuk menyimpan state input form
   String _name = "";
   String _description = "";
   String _location = "";
   String _category = "";
   String _thumbnail = "";
-  String _imagesCsv = "";
-  String _contactNumber = "";
+  String _images = "";
+  String _contact = "";
 
+  // list kategori venue
   final List<String> _categories = [
     'running',
     'badminton',
@@ -35,6 +37,7 @@ class _VenueFormPageState extends State<VenueFormPage> {
     'other',
   ];
 
+  // custom input decoration untuk form fields
   InputDecoration _customInputDecoration({String? hint}) {
     return InputDecoration(
       hintText: hint,
@@ -42,6 +45,7 @@ class _VenueFormPageState extends State<VenueFormPage> {
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       filled: true,
       fillColor: Colors.white,
+
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16.0),
         borderSide: const BorderSide(color: Color(0xFF1A237E), width: 2.0),
@@ -61,6 +65,7 @@ class _VenueFormPageState extends State<VenueFormPage> {
     );
   }
 
+  // widget untuk label form fields
   Widget _buildLabel(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0, left: 4.0, top: 12.0),
@@ -75,12 +80,14 @@ class _VenueFormPageState extends State<VenueFormPage> {
     );
   }
 
+  // widget untuk membangun form input
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
       extendBodyBehindAppBar: true,
+      // appBar dengan drawer
       appBar: AppBar(
         title: const Text(''),
         backgroundColor: Colors.white,
@@ -88,6 +95,7 @@ class _VenueFormPageState extends State<VenueFormPage> {
         elevation: 5,
         shadowColor: Colors.black.withOpacity(0.5),
       ),
+      // left drawer
       drawer: const LeftDrawer(),
       body: Container(
         width: double.infinity,
@@ -106,6 +114,7 @@ class _VenueFormPageState extends State<VenueFormPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
+
               ShaderMask(
                 shaderCallback: (bounds) =>
                     const LinearGradient(
@@ -127,11 +136,14 @@ class _VenueFormPageState extends State<VenueFormPage> {
                   ),
                 ),
               ),
+
               const SizedBox(height: 8),
+
               const Text(
                 'Create Venue for people around you!',
                 style: TextStyle(fontSize: 18, color: Colors.black),
               ),
+
               const SizedBox(height: 30),
 
               Container(
@@ -151,6 +163,7 @@ class _VenueFormPageState extends State<VenueFormPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // field nama venue
                       _buildLabel("Venue Name"),
                       TextFormField(
                         decoration: _customInputDecoration(hint: ""),
@@ -163,6 +176,7 @@ class _VenueFormPageState extends State<VenueFormPage> {
                         },
                       ),
 
+                      // field deskripsi venue
                       _buildLabel("Description"),
                       TextFormField(
                         maxLines: 4,
@@ -176,6 +190,7 @@ class _VenueFormPageState extends State<VenueFormPage> {
                         },
                       ),
 
+                      // field lokasi venue
                       _buildLabel("Location"),
                       TextFormField(
                         decoration: _customInputDecoration(hint: ""),
@@ -188,12 +203,12 @@ class _VenueFormPageState extends State<VenueFormPage> {
                         },
                       ),
 
+                      // field kontak venue
                       _buildLabel("Contact Number"),
                       TextFormField(
                         keyboardType: TextInputType.phone,
                         decoration: _customInputDecoration(hint: ""),
-                        onChanged: (val) =>
-                            setState(() => _contactNumber = val),
+                        onChanged: (val) => setState(() => _contact = val),
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
                             return "Kontak tidak boleh kosong!";
@@ -208,6 +223,7 @@ class _VenueFormPageState extends State<VenueFormPage> {
                         },
                       ),
 
+                      // field kategori venue
                       _buildLabel("Category"),
                       DropdownButtonFormField<String>(
                         decoration: _customInputDecoration(),
@@ -238,46 +254,35 @@ class _VenueFormPageState extends State<VenueFormPage> {
                         },
                       ),
 
-                      _buildLabel("Images (comma-separated URLs)"),
+                      // field images venue
+                      _buildLabel("Images"),
                       TextFormField(
                         decoration: _customInputDecoration(
                           hint:
                               "https://example.com/img1.jpg, https://example.com/img2.jpg",
                         ),
                         maxLines: 3,
-                        onChanged: (val) => setState(() => _imagesCsv = val),
+                        onChanged: (val) => setState(() => _images = val),
                         validator: (val) {
                           if (val == null || val.isEmpty) {
                             return "Masukkan URL gambar!";
                           }
-                          if (val != null && val.isNotEmpty) {
-                            final urls = val
-                                .split(',')
-                                .map((e) => e.trim())
-                                .where((e) => e.isNotEmpty);
-                            for (var url in urls) {
-                              if (!Uri.tryParse(url)!.isAbsolute) {
-                                return "Pastikan semua URL valid!";
-                              }
+                          final urls = val
+                              .split(',')
+                              .map((e) => e.trim())
+                              .where((e) => e.isNotEmpty);
+                          for (var url in urls) {
+                            final uri = Uri.tryParse(url);
+                            if (uri == null || !uri.isAbsolute) {
+                              return "Pastikan semua URL valid!";
                             }
                           }
                           return null;
                         },
                       ),
-                      const SizedBox(height: 6),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Text(
-                          "Pisahkan dengan koma (,) untuk multiple images",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ),
 
-                      _buildLabel("Thumbnail (Image URL)"),
+                      // field thumbnail venue
+                      _buildLabel("Thumbnail"),
                       TextFormField(
                         decoration: _customInputDecoration(hint: ""),
                         maxLines: 4,
@@ -294,6 +299,7 @@ class _VenueFormPageState extends State<VenueFormPage> {
 
                       const SizedBox(height: 30),
 
+                      // submit form button
                       Center(
                         child: SizedBox(
                           width: 150,
@@ -312,46 +318,50 @@ class _VenueFormPageState extends State<VenueFormPage> {
                               ),
                             ),
                             onPressed: () async {
+                              // validasi
                               if (_formKey.currentState!.validate()) {
-                                List<String> images = _imagesCsv
+                                List<String> images = _images
                                     .split(',')
                                     .map((e) => e.trim())
                                     .where((e) => e.isNotEmpty)
                                     .toList();
 
+                                // json encode data form
                                 final payload = jsonEncode({
                                   "name": _name,
                                   "description": _description,
                                   "location": _location,
                                   "thumbnail": _thumbnail,
                                   "images": images,
-                                  "contact_number": _contactNumber,
+                                  "contact_number": _contact,
                                   "category": _category,
                                 });
 
+                                // kirim data ke backend
                                 try {
                                   final response = await request.postJson(
                                     "http://localhost:8000/venue/create-venue-flutter/",
                                     payload,
                                   );
 
+                                  // tampilkan snackbar sesuai response
                                   if (context.mounted) {
                                     if (response != null &&
                                         response['status'] == 'success') {
                                       ScaffoldMessenger.of(
                                         context,
                                       ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
+                                        SnackBar(
+                                          content: const Text(
                                             "Venue berhasil dibuat!",
                                           ),
-                                          backgroundColor: Colors.green,
+                                          backgroundColor: Colors.purple[800],
                                         ),
                                       );
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => MyHomePage(),
+                                          builder: (context) => VenueFormPage(),
                                         ),
                                       );
                                     } else {

@@ -8,8 +8,10 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:shimmer/shimmer.dart';
 
 class VenueEntryListPage extends StatefulWidget {
+  // variable untuk menandai current page/active page
   final String drawerPage;
 
+  // constructor
   const VenueEntryListPage({super.key, this.drawerPage = 'book venue'});
 
   @override
@@ -17,6 +19,7 @@ class VenueEntryListPage extends StatefulWidget {
 }
 
 class _VenueEntryListPageState extends State<VenueEntryListPage> {
+  // fetch venue
   Future<List<VenueEntry>> fetchNews(CookieRequest request) async {
     final response = await request.get('http://localhost:8000/venue/api/json/');
 
@@ -31,6 +34,7 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
     return listVenues;
   }
 
+  // widget untuk menampilkan shimmer loading card
   Widget _buildShimmerCard() {
     return Shimmer.fromColors(
       baseColor: Colors.grey.shade300,
@@ -54,7 +58,9 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
                   ),
                 ),
               ),
+
               const SizedBox(height: 12),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
@@ -87,7 +93,10 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
         elevation: 5,
         shadowColor: Colors.black.withOpacity(0.5),
       ),
+
+      // left drawer
       drawer: LeftDrawer(currentPage: widget.drawerPage),
+
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -102,101 +111,113 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
             stops: [0.0, 0.35, 0.7, 1.0],
           ),
         ),
-        child: FutureBuilder(
-          future: fetchNews(request),
-          builder: (context, AsyncSnapshot snapshot) {
-            if (snapshot.data == null) {
-              return ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                itemCount: 3,
-                itemBuilder: (_, __) => _buildShimmerCard(),
-              );
-            } else {
-              if (!snapshot.hasData) {
-                return const Column(
-                  children: [
-                    Text(
-                      'There are no news in football news yet.',
-                      style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
-                    ),
-                    SizedBox(height: 8),
-                  ],
+        child: RefreshIndicator(
+          onRefresh: () => fetchNews(request),
+          child: FutureBuilder(
+            future: fetchNews(request),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (snapshot.data == null) {
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  itemCount: 3,
+                  itemBuilder: (_, __) => _buildShimmerCard(),
                 );
               } else {
-                return CustomScrollView(
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(25, 30, 16, 8),
-                        child: ShaderMask(
-                          shaderCallback: (bounds) =>
-                              const LinearGradient(
-                                colors: [Color(0xFF4338CA), Color(0xFF6B21A8)],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                              ).createShader(
-                                Rect.fromLTWH(
-                                  0,
-                                  0,
-                                  bounds.width,
-                                  bounds.height,
+                if (!snapshot.hasData) {
+                  return const Column(
+                    children: [
+                      Text(
+                        'There are no news in football news yet.',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xff59A5D8),
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                    ],
+                  );
+                } else {
+                  return CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(25, 30, 16, 8),
+                          child: ShaderMask(
+                            shaderCallback: (bounds) =>
+                                const LinearGradient(
+                                  colors: [
+                                    Color(0xFF4338CA),
+                                    Color(0xFF6B21A8),
+                                  ],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ).createShader(
+                                  Rect.fromLTWH(
+                                    0,
+                                    0,
+                                    bounds.width,
+                                    bounds.height,
+                                  ),
                                 ),
-                              ),
-                          child: const Padding(
-                            padding: EdgeInsets.only(right: 2),
-                            child: Text(
-                              'Book Your Venues!',
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                            // judul halaman
+                            child: const Padding(
+                              padding: EdgeInsets.only(right: 2),
+                              child: Text(
+                                'Book Your Venues!',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(25, 0, 16, 16),
-                        child: Text(
-                          'Found The Best Sports Venues In Your Area with gas.in!',
-                          style: TextStyle(fontSize: 18, color: Colors.black),
+                      // description halaman
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(25, 0, 16, 16),
+                          child: Text(
+                            'Found The Best Sports Venues In Your Area with gas.in!',
+                            style: TextStyle(fontSize: 18, color: Colors.black),
+                          ),
                         ),
                       ),
-                    ),
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final venue = snapshot.data![index];
-                        final heroTag = 'venue-${venue.id}';
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 30.0,
-                            vertical: 6.0,
-                          ),
-                          child: VenueEntryCard(
-                            venue: venue,
-                            heroTag: heroTag,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => VenueDetailPage(
-                                    venue: venue,
-                                    heroTag: heroTag,
+                      // list venue entry
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final venue = snapshot.data![index];
+                          final heroTag = 'venue-${venue.id}';
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 30.0,
+                              vertical: 6.0,
+                            ),
+                            child: VenueEntryCard(
+                              venue: venue,
+                              heroTag: heroTag,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => VenueDetailPage(
+                                      venue: venue,
+                                      heroTag: heroTag,
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      }, childCount: snapshot.data!.length),
-                    ),
-                  ],
-                );
+                                );
+                              },
+                            ),
+                          );
+                        }, childCount: snapshot.data!.length),
+                      ),
+                    ],
+                  );
+                }
               }
-            }
-          },
+            },
+          ),
         ),
       ),
     );

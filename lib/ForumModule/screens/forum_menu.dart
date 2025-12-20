@@ -44,87 +44,130 @@ class _ForumCommunityState extends State<ForumCommunity> {
     }
   }
 
-    @override
-    Widget build(BuildContext context) {
-      final request = context.watch<CookieRequest>();
+  @override
+  Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
 
-      return Scaffold(
-        drawer: LeftDrawer(),
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          foregroundColor: Color(0xFF1A1B4B),
-          elevation: 0,
-          title: const Text(
-            'Community Forum',
-            style: TextStyle(
-              color: Color(0xFF1A1B4B),
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
+    return Scaffold(
+      drawer: LeftDrawer(),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Color(0xFF1A1B4B),
+        elevation: 0,
+        title: const Text(
+          'Community Forum',
+          style: TextStyle(
+            color: Color(0xFF1A1B4B),
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
         ),
-
-        // body
-        body: SizedBox.expand(
-          child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFFFFFFFF),
-                  Color(0xFFF3E8FF),
-                ],
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: GestureDetector(
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PostFormPage()),
+                );
+                setState(() {});
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                decoration: ShapeDecoration(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.deepPurple,
+                      Colors.deepPurple.withValues(alpha: 0.7),
+                    ],
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.add, size: 18, color: Colors.white),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Add Post',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            child: Column(
-              children: [
-                // filter
-                Container(
-                  margin: const EdgeInsets.all(16),
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _buildFilterButton(
-                          'For You',
-                          'all',
-                          _currentFilter == 'all',
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildFilterButton(
-                          'My Post',
-                          'my',
-                          _currentFilter == 'my',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+          ),
+        ],
+      ),
 
-                // post list
-                Expanded(
-                  child: _buildPostList(request, _currentFilter),
-                ),
-              ],
+      // body
+      body: SizedBox.expand(
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFFFFFFFF), Color(0xFFF3E8FF)],
             ),
           ),
+          child: Column(
+            children: [
+              // filter
+              Container(
+                margin: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _buildFilterButton(
+                        'For You',
+                        'all',
+                        _currentFilter == 'all',
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildFilterButton(
+                        'My Post',
+                        'my',
+                        _currentFilter == 'my',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // post list
+              Expanded(child: _buildPostList(request, _currentFilter)),
+            ],
+          ),
         ),
-      );
-    }
+      ),
+    );
+  }
 
   Widget _buildFilterButton(String label, String filter, bool isSelected) {
     return GestureDetector(
@@ -132,9 +175,7 @@ class _ForumCommunityState extends State<ForumCommunity> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(0xFFD4B5E8)
-              : const Color(0xFFE8D5F2),
+          color: isSelected ? const Color(0xFFD4B5E8) : const Color(0xFFE8D5F2),
           borderRadius: BorderRadius.circular(25),
         ),
         child: Text(

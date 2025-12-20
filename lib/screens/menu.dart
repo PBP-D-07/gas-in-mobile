@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_in/EventModule/screens/discover_events.dart';
 import 'package:gas_in/theme/app_text.dart';
 import 'package:gas_in/widgets/left_drawer.dart';
 import 'package:gas_in/widgets/preview_menu_card.dart';
@@ -587,7 +588,7 @@ class ItemCard extends StatelessWidget {
         if (item.name == "Events") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ForumCommunity()),
+            MaterialPageRoute(builder: (context) => DiscoverEventsPage()),
           );
         }
         if (item.name == "Venue") {

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:gas_in/theme/app_text.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
@@ -122,24 +123,37 @@ class _EditPostPageState extends State<EditPostPage> {
         foregroundColor: const Color(0xFF1A1B4B),
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
+      body: SizedBox.expand(
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFFFFFFF),
+              Color(0xFFF3E8FF),
             ],
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 40),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+
               children: [
                 // Header
                 const Text(
@@ -158,110 +172,82 @@ class _EditPostPageState extends State<EditPostPage> {
                 const SizedBox(height: 24),
 
                 // description
-                const Text(
-                  'Description',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1B4B),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
+                TextFormField(
                   controller: _descController,
                   maxLines: 5,
                   decoration: InputDecoration(
+                    labelText: "Post Description",
+                    labelStyle: AppText.bodyM.copyWith(
+                      color: Colors.deepPurple,
+                    ),
                     hintText: "Update your post description",
-                    hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
-                    filled: true,
-                    fillColor: const Color(0xFFF5F5F5),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-                    ),
+                    hintStyle: AppText.bodyS,
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
-                        color: Color(0xFF4A4E9E),
+                        color: Colors.deepPurpleAccent,
                         width: 2,
                       ),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    contentPadding: const EdgeInsets.all(16),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        color: Colors.deepPurple,
+                        width: 1.2,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    border: const OutlineInputBorder(),
                   ),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF1A1B4B),
-                  ),
+                  style: AppText.bodyM,
                 ),
+
 
                 const SizedBox(height: 24),
 
                 // thumbnail
-                const Text(
-                  'Thumbnail URL (Optional)',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1B4B),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
+                TextFormField(
                   controller: _thumbController,
                   decoration: InputDecoration(
+                    labelText: "Thumbnail URL (Optional)",
+                    labelStyle: AppText.bodyM.copyWith(
+                      color: Colors.deepPurple,
+                    ),
                     hintText: "Enter image URL",
-                    hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
-                    prefixIcon: const Icon(
-                      Icons.image_outlined,
-                      color: Color(0xFF4A4E9E),
-                    ),
-                    filled: true,
-                    fillColor: const Color(0xFFF5F5F5),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-                    ),
+                    hintStyle: AppText.bodyS,
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
-                        color: Color(0xFF4A4E9E),
+                        color: Colors.deepPurpleAccent,
                         width: 2,
                       ),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    contentPadding: const EdgeInsets.all(16),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        color: Colors.deepPurple,
+                        width: 1.2,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    border: const OutlineInputBorder(),
                   ),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF1A1B4B),
-                  ),
+                  style: AppText.bodyM,
                 ),
 
                 const SizedBox(height: 32),
 
                 // save button
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
+                Center(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4A4E9E),
+                      backgroundColor: Colors.deepPurple,
                       foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                        vertical: 14,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      elevation: 2,
-                      shadowColor: const Color(
-                        0xFF4A4E9E,
-                      ).withValues(alpha: 0.3),
-                      disabledBackgroundColor: Colors.grey[400],
                     ),
                     onPressed: _isLoading ? null : _updatePost,
                     child: _isLoading
@@ -275,15 +261,13 @@ class _EditPostPageState extends State<EditPostPage> {
                               ),
                             ),
                           )
-                        : const Text(
-                            "Save Changes",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        : Text(
+                            "Save",
+                            style: AppText.button,
                           ),
                   ),
                 ),
+
 
                 const SizedBox(height: 12),
               ],
@@ -291,6 +275,8 @@ class _EditPostPageState extends State<EditPostPage> {
           ),
         ),
       ),
+      )
+      )
     );
   }
 

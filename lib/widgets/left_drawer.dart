@@ -10,19 +10,20 @@ import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class LeftDrawer extends StatelessWidget {
+  // variable untuk menandai current page/active page
   final String currentPage;
 
+  // constructor
   const LeftDrawer({super.key, this.currentPage = 'Home'});
 
   @override
   Widget build(BuildContext context) {
-    final rawRouteName = ModalRoute.of(context)?.settings.name;
-    final activeKey = (rawRouteName ?? currentPage)
+    final routeName = ModalRoute.of(context)?.settings.name;
+    final activeKey = (routeName ?? currentPage)
         .toString()
         .toLowerCase()
         .trim();
     const Color activeColor = Color(0xFF101850);
-    const Color logoutColor = Colors.redAccent;
 
     return Drawer(
       backgroundColor: Colors.white,
@@ -31,6 +32,8 @@ class LeftDrawer extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         children: [
           const SizedBox(height: 60),
+
+          // header logo
           Row(
             children: [
               Image.asset('assets/logo_biru.png', width: 50),
@@ -49,8 +52,10 @@ class LeftDrawer extends StatelessWidget {
               ),
             ],
           ),
+
           const SizedBox(height: 20),
 
+          // home menu
           _buildDrawerItem(
             title: 'Home',
             isActive: activeKey == 'home',
@@ -65,6 +70,7 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
 
+          // create event menu
           _buildDrawerItem(
             title: 'Create Event',
             isActive: activeKey == 'create event',
@@ -79,6 +85,7 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
 
+          // edit event menu
           _buildDrawerItem(
             title: 'Edit Event',
             isActive: activeKey == 'edit event',
@@ -94,6 +101,7 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
 
+          // event detail menu
           _buildDrawerItem(
             title: 'Event Detail',
             isActive: activeKey == 'event detail',
@@ -110,6 +118,7 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
 
+          // venue book menu
           _buildDrawerItem(
             title: 'Book Venue',
             isActive: activeKey == 'book venue',
@@ -124,6 +133,7 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
 
+          // venue form menu
           _buildDrawerItem(
             title: 'Create Venue',
             isActive: activeKey == 'create venue',
@@ -139,9 +149,12 @@ class LeftDrawer extends StatelessWidget {
           ),
 
           const SizedBox(height: 10),
+
           const Divider(color: Colors.grey, thickness: 0.5),
+
           const SizedBox(height: 10),
 
+          // logout menu
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
@@ -164,20 +177,21 @@ class LeftDrawer extends StatelessWidget {
     );
   }
 
+  // widget untuk membangun item drawer
   Widget _buildDrawerItem({
     required String title,
     required bool isActive,
     required VoidCallback onTap,
   }) {
-    const Color activeBg = Color(0xFF101850);
+    const Color activeBG = Color(0xFF101850);
     const Color activeText = Colors.white;
-    const Color inactiveText = Color(0xFF101850);
+    const Color nonactiveText = Color(0xFF101850);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 2),
       decoration: isActive
           ? BoxDecoration(
-              color: activeBg,
+              color: activeBG,
               borderRadius: BorderRadius.circular(30),
             )
           : null,
@@ -186,7 +200,7 @@ class LeftDrawer extends StatelessWidget {
         title: Text(
           title,
           style: TextStyle(
-            color: isActive ? activeText : inactiveText,
+            color: isActive ? activeText : nonactiveText,
             fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
             fontSize: 16,
           ),

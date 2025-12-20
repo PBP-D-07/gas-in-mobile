@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gas_in/VenueModule/models/venue_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class VenueEntryCard extends StatelessWidget {
+  // variables
   final VenueEntry venue;
   final VoidCallback onTap;
   final String? heroTag;
 
+  // constructor
   const VenueEntryCard({
     super.key,
     required this.venue,
@@ -42,6 +45,7 @@ class VenueEntryCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // image
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(6.0),
@@ -54,6 +58,7 @@ class VenueEntryCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // category
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10,
@@ -72,8 +77,10 @@ class VenueEntryCard extends StatelessWidget {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 10),
 
+                    // name
                     Text(
                       venue.name,
                       maxLines: 1,
@@ -84,8 +91,10 @@ class VenueEntryCard extends StatelessWidget {
                         color: Colors.black87,
                       ),
                     ),
+
                     const SizedBox(height: 6),
 
+                    // description
                     Text(
                       venue.description.isEmpty
                           ? "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
@@ -110,13 +119,16 @@ class VenueEntryCard extends StatelessWidget {
     );
   }
 
+  // widget untuk menampilkan gambar dengan hero animation jika heroTag tidak null
   Widget _buildImage() {
     final imageWidget = venue.thumbnail.trim().isNotEmpty
-        ? Image.network(
-            'http://localhost:8000/api/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
+        ? CachedNetworkImage(
+            imageUrl:
+                'http://localhost:8000/api/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
             width: double.infinity,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) =>
+            placeholder: (context, url) => Container(color: Colors.grey[300]),
+            errorWidget: (context, url, error) =>
                 Image.asset('assets/venue.jpg', fit: BoxFit.cover),
           )
         : Image.asset(
@@ -125,7 +137,9 @@ class VenueEntryCard extends StatelessWidget {
             fit: BoxFit.cover,
           );
 
-    if (heroTag == null) return imageWidget;
+    if (heroTag == null) {
+      return imageWidget;
+    }
 
     return Hero(tag: heroTag!, child: imageWidget);
   }

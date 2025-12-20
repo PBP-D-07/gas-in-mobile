@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gas_in/VenueModule/models/venue_model.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class VenueDetailPage extends StatelessWidget {
+  // variables
   final VenueEntry venue;
   final String? heroTag;
 
+  // constructor
   const VenueDetailPage({super.key, required this.venue, this.heroTag});
 
+  // format date
   String _formatDate(DateTime date) {
     final months = [
       'Jan',
@@ -27,6 +31,7 @@ class VenueDetailPage extends StatelessWidget {
     return '${date.day} ${months[date.month - 1]} ${date.year}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 
+  // widget untuk membuka WhatsApp
   Future<void> _openWhatsApp(BuildContext context, String number) async {
     try {
       final cleaned = number.replaceAll(RegExp(r'[^0-9+]'), '');
@@ -48,13 +53,16 @@ class VenueDetailPage extends StatelessWidget {
     }
   }
 
+  // widget untuk menampilkan hero image
   Widget _buildHeroImage() {
     final imageWidget = venue.thumbnail.trim().isNotEmpty
-        ? Image.network(
-            'http://localhost:8000/api/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
+        ? CachedNetworkImage(
+            imageUrl:
+                'http://localhost:8000/api/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
             width: double.infinity,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) =>
+            placeholder: (context, url) => Container(color: Colors.grey[300]),
+            errorWidget: (context, url, error) =>
                 Image.asset('assets/venue.jpg', fit: BoxFit.cover),
           )
         : Image.asset(
@@ -63,7 +71,9 @@ class VenueDetailPage extends StatelessWidget {
             fit: BoxFit.cover,
           );
 
-    if (heroTag == null) return imageWidget;
+    if (heroTag == null) {
+      return imageWidget;
+    }
 
     return Hero(tag: heroTag!, child: imageWidget);
   }
@@ -96,6 +106,7 @@ class VenueDetailPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // hero image
                 AspectRatio(aspectRatio: 16 / 9, child: _buildHeroImage()),
 
                 Padding(
@@ -106,6 +117,7 @@ class VenueDetailPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // nama venue
                       Text(
                         venue.name,
                         style: const TextStyle(
@@ -113,10 +125,12 @@ class VenueDetailPage extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+
                       const SizedBox(height: 8),
 
                       Row(
                         children: [
+                          // category
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 10.0,
@@ -136,6 +150,8 @@ class VenueDetailPage extends StatelessWidget {
                           ),
 
                           const SizedBox(width: 12),
+
+                          // waktu dibuat
                           Text(
                             _formatDate(venue.createdAt),
                             style: TextStyle(
@@ -147,6 +163,8 @@ class VenueDetailPage extends StatelessWidget {
                       ),
 
                       const SizedBox(height: 12),
+
+                      // owner username
                       Row(
                         children: [
                           const Icon(
@@ -167,6 +185,7 @@ class VenueDetailPage extends StatelessWidget {
 
                       const SizedBox(height: 12),
 
+                      // location
                       Row(
                         children: [
                           const Icon(
@@ -183,15 +202,22 @@ class VenueDetailPage extends StatelessWidget {
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 8),
+
+                      // contact number
                       Row(
                         children: [
+                          // icon phone
                           const Icon(
                             Icons.phone_outlined,
                             size: 18,
                             color: Colors.black54,
                           ),
+
                           const SizedBox(width: 6),
+
+                          // contoct to whatsapp
                           GestureDetector(
                             onTap: () =>
                                 _openWhatsApp(context, venue.contactNumber),
@@ -200,7 +226,10 @@ class VenueDetailPage extends StatelessWidget {
                               style: const TextStyle(fontSize: 14),
                             ),
                           ),
+
                           const SizedBox(width: 8),
+
+                          // copy to clipboard
                           IconButton(
                             onPressed: () {
                               final text = venue.contactNumber;
@@ -209,8 +238,9 @@ class VenueDetailPage extends StatelessWidget {
                                 ScaffoldMessenger.of(context)
                                   ..hideCurrentSnackBar()
                                   ..showSnackBar(
-                                    const SnackBar(
+                                    SnackBar(
                                       content: Text('Contact copied'),
+                                      backgroundColor: Colors.purple[800],
                                     ),
                                   );
                               }
@@ -223,9 +253,10 @@ class VenueDetailPage extends StatelessWidget {
 
                       const SizedBox(height: 12),
 
+                      // image gallery
                       if (venue.images.isNotEmpty) ...[
                         const Text(
-                          'Gallery',
+                          'Venue Gallery',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(height: 8),
@@ -268,10 +299,23 @@ class VenueDetailPage extends StatelessWidget {
 
                       const Divider(),
 
-                      Text(
-                        venue.description.isNotEmpty ? venue.description : '-',
-                        style: const TextStyle(fontSize: 16.0, height: 1.6),
-                        textAlign: TextAlign.justify,
+                      // description
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Description:',
+                            style: TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            venue.description.isNotEmpty
+                                ? venue.description
+                                : '-',
+                            style: const TextStyle(fontSize: 16.0, height: 1.6),
+                            textAlign: TextAlign.justify,
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 24),
                     ],

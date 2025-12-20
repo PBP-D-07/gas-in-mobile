@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:gas_in/EventModule/screens/saved_search.dart'; // Untuk navigasi ke Saved Searches
-
-// Ganti dengan path model yang benar
-// import '../models/event/event_model.dart'; 
-// import '../models/event/saved_search_model.dart'; 
-
-// Ganti dengan path warna yang benar
-const Color primaryColor = Color(0xFF5533FF); 
-const Color secondaryColor = Color(0xFF0D1B36);
-const Color lightPurple = Color(0xFFE0B0FF); 
-const Color darkButton = Color(0xFF0D1B36); 
-const Color accentColor = Color(0xFFF06292); 
+import 'package:gas_in/EventModule/screens/saved_search.dart';
+import 'package:gas_in/EventModule/widgets/save_filter_dialog.dart';
+import 'package:gas_in/EventMakerModule/screens/create_event.dart';
+import 'package:gas_in/widgets/left_drawer.dart';
+import 'package:intl/intl.dart';
 
 class DiscoverEventsPage extends StatefulWidget {
   const DiscoverEventsPage({super.key});
@@ -22,184 +15,218 @@ class DiscoverEventsPage extends StatefulWidget {
 }
 
 class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
-  // TODO: Tambahkan variabel state untuk filter (lokasi, kategori)
   String? selectedLocation;
   String? selectedCategory;
-  TextEditingController savedSearchNameController = TextEditingController();
+  
+  List<dynamic> filteredEvents = [];
+  bool isLoading = false;
 
-  // TODO: Tambahkan fungsi fetchFilteredEvents
-  // ...
+  @override
+  void initState() {
+    super.initState();
+    fetchFilteredEvents();
+  }
 
-  // Fungsi untuk menampilkan modal "Saved Current Filter"
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<void> fetchFilteredEvents() async {
+    setState(() => isLoading = true);
+    final request = context.read<CookieRequest>();
+
+    try {
+      String url = 'http://localhost:8000/event/api/events/?';
+      if (selectedLocation != null && selectedLocation!.isNotEmpty) {
+        url += 'location=$selectedLocation&';
+      }
+      if (selectedCategory != null && selectedCategory!.isNotEmpty) {
+        url += 'category=$selectedCategory&';
+      }
+
+      print('Fetching events from: $url');
+      final response = await request.get(url);
+      print('Response: $response');
+      
+      setState(() {
+        if (response is Map && response['data'] != null) {
+          filteredEvents = response['data'] is List ? response['data'] : [];
+        } else if (response is List) {
+          filteredEvents = response;
+        } else {
+          filteredEvents = [];
+        }
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching events: $e');
+      setState(() => isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    }
+  }
+
+  void resetFilters() {
+    setState(() {
+      selectedLocation = null;
+      selectedCategory = null;
+    });
+    fetchFilteredEvents();
+  }
+
   void _showSaveFilterModal(CookieRequest request) {
-    if ((selectedLocation == null || selectedLocation!.isEmpty) && 
+    if ((selectedLocation == null || selectedLocation!.isEmpty) &&
         (selectedCategory == null || selectedCategory!.isEmpty)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pilih minimal satu filter sebelum menyimpan!'))
+        const SnackBar(
+          content: Text('Pilih minimal satu filter sebelum menyimpan!'),
+          backgroundColor: Colors.orange,
+        ),
       );
       return;
     }
-    
-    savedSearchNameController.clear();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          contentPadding: const EdgeInsets.all(24),
-          title: const Text(
-            "Saved Current Filter",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Lorem Ipsum Dolor Sit Amet"),
-              const SizedBox(height: 16),
-              TextField(
-                controller: savedSearchNameController,
-                decoration: InputDecoration(
-                  hintText: "Nama Filter",
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15)
+        return SaveFilterDialog(
+          location: selectedLocation,
+          category: selectedCategory,
+          onSaved: () {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Filter berhasil disimpan!'),
+                  backgroundColor: Colors.green,
                 ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Tombol CANCEL (Merah)
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: accentColor,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                      child: const Text('Cancel', style: TextStyle(color: Colors.white)),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  // Tombol SAVE (Biru Tua)
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => _saveFilter(request, context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: darkButton,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                      child: const Text('Save', style: TextStyle(color: Colors.white)),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+              );
+            }
+          },
         );
       },
     );
   }
 
-  // Fungsi untuk memanggil API save filter
-  void _saveFilter(CookieRequest request, BuildContext dialogContext) async {
-    final name = savedSearchNameController.text.trim();
-    if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Nama filter tidak boleh kosong!'))
-      );
-      return;
-    }
-    
-    // TODO: Kirim POST request ke /event/api/saved-search/create/
-    final response = await request.post(
-      "http://localhost:8000/event/api/saved-search/create/",
-      {
-        'name': name,
-        'location': selectedLocation,
-        'category': selectedCategory,
-      }
-    );
+  String getCategoryLabel(String? category) {
+    if (category == null || category.isEmpty) return '';
 
-    Navigator.pop(dialogContext); // Tutup modal
-    
-    if (response['message'] == 'Saved search created successfully') {
-       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Filter berhasil disimpan!'))
-      );
-    } else {
-       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal menyimpan filter: ${response['message'] ?? 'Unknown Error'}'))
-      );
-    }
+    const categories = {
+      'running': 'Lari',
+      'badminton': 'Badminton',
+      'futsal': 'Futsal',
+      'football': 'Sepak Bola',
+      'basketball': 'Basket',
+      'cycling': 'Bersepeda',
+      'volleyball': 'Voli',
+      'yoga': 'Yoga',
+      'padel': 'Padel',
+      'other': 'Lainnya',
+    };
+    return categories[category] ?? category;
   }
-
-  // TODO: Tambahkan fungsi resetFilters
-  // ...
 
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
-      // Background yang sesuai desain
-      backgroundColor: Colors.white, 
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        // Kosongkan AppBar atau atur minimalis jika desain tidak menampilkan
-        toolbarHeight: 0,
-        elevation: 0,
+        foregroundColor: Colors.white,
         backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF4338CA), // Indigo 700
+                Color(0xFF6B21A8), // Purple 800
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        title: const Text('Discover Events'),
       ),
+      drawer: const LeftDrawer(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
               const Text(
                 'Discover Events',
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
               const Text(
-                'Lorem Ipsum Dolor Sit Amet',
+                'Temukan event olahraga yang sesuai dengan minat Anda',
                 style: TextStyle(color: Colors.grey, fontSize: 16),
               ),
               const SizedBox(height: 20),
 
-              // Tombol Aksi (Add Event & See Filter Saved)
+              // Action Buttons
               Row(
                 children: [
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        // TODO: Navigasi ke halaman Add Event
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CreateEventPage(),
+                          ),
+                        ).then((_) => fetchFilteredEvents());
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: darkButton,
+                        backgroundColor: Colors.deepPurple,
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      child: const Text('Add Event', style: TextStyle(color: Colors.white, fontSize: 16)),
+                      child: const Text(
+                        'Add Event',
+                        style: TextStyle(fontSize: 16),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.push(
+                      onPressed: () async {
+                        final result = await Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const SavedSearchesPage()),
+                          MaterialPageRoute(
+                            builder: (context) => const SavedSearchesPage(),
+                          ),
                         );
+
+                        if (result != null && result is Map) {
+                          setState(() {
+                            selectedLocation = result['location'];
+                            selectedCategory = result['category'];
+                          });
+                          fetchFilteredEvents();
+                        }
                       },
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: darkButton, width: 2),
+                        side: const BorderSide(color: Colors.deepPurple, width: 2),
                         padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      child: const Text('See Filter Saved', style: TextStyle(color: darkButton, fontSize: 16)),
+                      child: const Text(
+                        'See Filter Saved',
+                        style: TextStyle(color: Colors.deepPurple, fontSize: 16),
+                      ),
                     ),
                   ),
                 ],
@@ -223,43 +250,65 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Filter Events', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    const Text(
+                      'Filter Events',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 15),
-                    
+
                     // Filter Lokasi
-                    const Text('Lokasi', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                    const Text(
+                      'Lokasi',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                     _buildFilterDropdown('location', (value) {
                       setState(() {
                         selectedLocation = value;
-                        // TODO: Panggil fetchFilteredEvents
                       });
+                      fetchFilteredEvents();
                     }),
                     const SizedBox(height: 15),
 
                     // Filter Kategori
-                    const Text('Kategori Olahraga', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                    const Text(
+                      'Kategori Olahraga',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                     _buildFilterDropdown('category', (value) {
                       setState(() {
                         selectedCategory = value;
-                        // TODO: Panggil fetchFilteredEvents
                       });
+                      fetchFilteredEvents();
                     }),
                     const SizedBox(height: 20),
 
-                    // Tombol Reset dan Save
+                    // Reset and Save Buttons
                     Row(
                       children: [
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () {
-                              // TODO: Panggil resetFilters
-                            },
+                            onPressed: resetFilters,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: lightPurple, // Warna Ungu Muda
+                              backgroundColor: Colors.deepPurple.shade50,
+                              foregroundColor: Colors.deepPurple,
                               padding: const EdgeInsets.symmetric(vertical: 15),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
-                            child: const Text('Reset Filter', style: TextStyle(color: secondaryColor, fontSize: 16)),
+                            child: const Text(
+                              'Reset Filter',
+                              style: TextStyle(fontSize: 16),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -267,25 +316,77 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                           child: ElevatedButton(
                             onPressed: () => _showSaveFilterModal(request),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: darkButton, // Warna Biru Tua
+                              backgroundColor: Colors.deepPurple,
+                              foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 15),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
-                            child: const Text('Save', style: TextStyle(color: Colors.white, fontSize: 16)),
+                            child: const Text(
+                              'Save',
+                              style: TextStyle(fontSize: 16),
+                            ),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 15),
-                    const Text('Menampilkan P event', style: TextStyle(color: Colors.grey)), // Ganti dengan angka event sebenarnya
+                    Text(
+                      'Menampilkan ${filteredEvents.length} event',
+                      style: const TextStyle(color: Colors.grey),
+                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 30),
 
-              // Event Cards (Contoh)
-              // TODO: Ganti dengan FutureBuilder untuk menampilkan Event Card sebenarnya
-              _buildEventCardExample(context),
+              // Event List
+              isLoading
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(50.0),
+                        child: CircularProgressIndicator(
+                          color: Colors.deepPurple,
+                        ),
+                      ),
+                    )
+                  : filteredEvents.isEmpty
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(50.0),
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.event_busy,
+                                  size: 80,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(height: 16),
+                                const Text(
+                                  'Tidak ada event ditemukan',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  'Coba ubah filter atau buat event baru',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: filteredEvents.length,
+                          itemBuilder: (context, index) {
+                            return _buildEventCard(filteredEvents[index]);
+                          },
+                        ),
             ],
           ),
         ),
@@ -294,31 +395,60 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
   }
 
   Widget _buildFilterDropdown(String type, Function(String?) onChanged) {
-    // List opsi yang sesuai dengan desain Django Anda
-    final List<String> locationOptions = ['Jakarta', 'Bogor', 'Depok', 'Tangerang', 'Bekasi'];
-    final List<String> categoryOptions = ['running', 'badminton', 'futsal', 'football', 'basketball'];
-    
-    List<String> options = type == 'location' ? locationOptions : categoryOptions;
-    
+    final List<String> locationOptions = [
+      'Jakarta',
+      'Bogor',
+      'Depok',
+      'Tangerang',
+      'Bekasi'
+    ];
+    final List<Map<String, String>> categoryOptions = [
+      {'value': 'running', 'label': 'Lari'},
+      {'value': 'badminton', 'label': 'Badminton'},
+      {'value': 'futsal', 'label': 'Futsal'},
+      {'value': 'football', 'label': 'Sepak Bola'},
+      {'value': 'basketball', 'label': 'Basket'},
+      {'value': 'cycling', 'label': 'Bersepeda'},
+      {'value': 'volleyball', 'label': 'Voli'},
+      {'value': 'yoga', 'label': 'Yoga'},
+      {'value': 'padel', 'label': 'Padel'},
+      {'value': 'other', 'label': 'Lainnya'},
+    ];
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
+        border: Border.all(color: Colors.deepPurple),
         borderRadius: BorderRadius.circular(12),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           isExpanded: true,
           value: type == 'location' ? selectedLocation : selectedCategory,
-          hint: Text(type == 'location' ? 'Semua Lokasi' : 'Semua Kategori'),
+          hint: Text(
+            type == 'location' ? 'Semua Lokasi' : 'Semua Kategori',
+          ),
           items: [
-            DropdownMenuItem(value: null, child: Text(type == 'location' ? 'Semua Lokasi' : 'Semua Kategori')),
-            ...options.map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
+            DropdownMenuItem(
+              value: null,
+              child: Text(
+                type == 'location' ? 'Semua Lokasi' : 'Semua Kategori',
+              ),
+            ),
+            if (type == 'location')
+              ...locationOptions.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList()
+            else
+              ...categoryOptions.map((cat) {
+                return DropdownMenuItem<String>(
+                  value: cat['value'],
+                  child: Text(cat['label']!),
+                );
+              }).toList(),
           ],
           onChanged: onChanged,
         ),
@@ -326,22 +456,62 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
     );
   }
 
-  // Widget Event Card contoh (Hanya untuk desain)
-  Widget _buildEventCardExample(BuildContext context) {
+  Widget _buildEventCard(dynamic event) {
+    final String name = event['name'] ?? 'No Name';
+    final String description = event['description'] ?? '';
+    final String location = event['location'] ?? '';
+    final String category = event['category'] ?? '';
+    final String? thumbnail = event['thumbnail'];
+    
+    DateTime? eventDate;
+    try {
+      if (event['date'] != null) {
+        eventDate = DateTime.parse(event['date']);
+      }
+    } catch (e) {
+      eventDate = null;
+    }
+
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-            child: Image.asset(
-              'assets/badminton_court.jpg', // Ganti dengan asset atau network image
-              height: 180,
-              width: double.infinity,
-              fit: BoxFit.cover,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(12),
             ),
+            child: thumbnail != null
+                ? Image.network(
+                    'http://localhost:8000$thumbnail',
+                    height: 180,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 180,
+                        color: Colors.grey[300],
+                        child: const Icon(
+                          Icons.image_not_supported,
+                          size: 50,
+                          color: Colors.grey,
+                        ),
+                      );
+                    },
+                  )
+                : Container(
+                    height: 180,
+                    color: Colors.grey[300],
+                    child: const Icon(
+                      Icons.image,
+                      size: 50,
+                      color: Colors.grey,
+                    ),
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.all(15.0),
@@ -349,24 +519,62 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: primaryColor.withOpacity(0.1),
+                    color: Colors.deepPurple.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text(
-                    'Badminton', 
-                    style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 12),
+                  child: Text(
+                    getCategoryLabel(category),
+                    style: const TextStyle(
+                      color: Colors.deepPurple,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Lorem ipsum dolor sit amet',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                const Text(
-                  'Lorem ipsum dolor sit amet',
-                  style: TextStyle(color: Colors.grey),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                    const SizedBox(width: 4),
+                    Text(
+                      location,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+                if (eventDate != null) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                      const SizedBox(width: 4),
+                      Text(
+                        DateFormat('EEEE, dd MMM yyyy HH:mm', 'id_ID')
+                            .format(eventDate),
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ],
+                const SizedBox(height: 8),
+                Text(
+                  description,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.grey),
                 ),
               ],
             ),

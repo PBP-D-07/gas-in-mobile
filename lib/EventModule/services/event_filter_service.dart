@@ -4,8 +4,8 @@ import 'package:gas_in/EventModule/models/event_filter_model.dart';
 class EventFilterService {
   static const String baseUrl = 'http://localhost:8000/event/api';
 
-  // Get filtered events
-  static Future<Map<String, dynamic>> getFilteredEvents(
+  // Get filtered events - return raw response
+  static Future<dynamic> getFilteredEvents(
     CookieRequest request, {
     String? location,
     String? category,
@@ -89,7 +89,7 @@ class EventFilterService {
       'futsal': 'Futsal',
       'football': 'Sepak Bola',
       'basketball': 'Basket',
-      'cycling': 'Sepeda',
+      'cycling': 'Bersepeda',
       'volleyball': 'Voli',
       'yoga': 'Yoga',
       'padel': 'Padel',

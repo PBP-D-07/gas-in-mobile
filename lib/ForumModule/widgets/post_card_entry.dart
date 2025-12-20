@@ -125,7 +125,6 @@ class _PostEntryCardState extends State<PostEntryCard> {
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
                       color: Color(0xFF1A1B4B),
                       height: 1.3,
                     ),

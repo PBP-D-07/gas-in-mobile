@@ -22,13 +22,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF5B21B6), // Deep Purple
-              Color(0xFF7C3AED), // Purple
+              Colors.deepPurple,
+              Colors.deepPurple.withValues(alpha: 0.7),
             ],
           ),
         ),

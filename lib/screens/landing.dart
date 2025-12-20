@@ -26,11 +26,14 @@ class _LandingPageState extends State<LandingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF4338CA), Color(0xFF6B21A8)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
+            colors: [
+              Colors.deepPurple,
+              Colors.deepPurple.withValues(alpha: 0.7),
+            ],
           ),
         ),
         child: Center(

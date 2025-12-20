@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_in/theme/app_text.dart';
 import 'package:gas_in/widgets/left_drawer.dart';
 import 'package:gas_in/widgets/preview_menu_card.dart';
 import 'package:gas_in/VenueModule/models/venue_model.dart';
@@ -8,6 +9,9 @@ import 'package:gas_in/EventMakerModule/screens/event_detail.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:gas_in/ForumModule/screens/forumMenu.dart';
+import 'package:gas_in/ForumModule/models/post_entry.dart';
+import 'package:gas_in/ForumModule/widgets/post_card_entry.dart';
+import 'package:gas_in/ForumModule/screens/post_detail.dart';
 import 'package:gas_in/screens/login.dart'; // Update this path to your LoginPage location
 
 class MyHomePage extends StatelessWidget {
@@ -68,6 +72,32 @@ class MyHomePage extends StatelessWidget {
     }
   }
 
+  // fetch forum posts
+  Future<List<PostEntry>> fetchPost(CookieRequest request) async {
+    final url =
+        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/forum/json/?filter=all';
+
+    try {
+      final data = await request.get(url);
+
+      if (data is Map && data.containsKey('error')) {
+        throw Exception(data['message'] ?? 'Failed to load posts');
+      }
+
+      List<PostEntry> listPost = [];
+      for (var d in data) {
+        if (d != null) {
+          listPost.add(PostEntry.fromJson(d));
+        }
+      }
+
+      return listPost;
+    } catch (e) {
+      print('Error fetching posts: $e');
+      return [];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
@@ -92,16 +122,17 @@ class MyHomePage extends StatelessWidget {
                     Image.asset("assets/logo.png", width: 24),
                     const SizedBox(width: 8),
                     ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        colors: [Color(0xFF4338CA), Color(0xFF6B21A8)],
+                      shaderCallback: (bounds) => LinearGradient(
+                        colors: [
+                          Colors.deepPurple,
+                          Colors.deepPurple.withValues(alpha: 0.7),
+                        ],
                       ).createShader(bounds),
-                      child: const Text(
+                      child: Text(
                         'GAS.in',
-                        style: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
+                        style: AppText.h5.copyWith(
                           color: Colors.white,
+                          fontStyle: FontStyle.italic,
                         ),
                       ),
                     ),
@@ -363,6 +394,68 @@ class MyHomePage extends StatelessWidget {
                 },
               ),
             ),
+
+            const SizedBox(height: 10),
+
+            // header section untuk forum
+            _buildSectionHeader(
+              context: context,
+              title: "Forum",
+              subtitle: "Join the community discussion",
+              onSeeAllTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    settings: const RouteSettings(name: 'forum'),
+                    builder: (context) => const ForumCommunity(),
+                  ),
+                );
+              },
+            ),
+
+            // preview card untuk forum
+            FutureBuilder(
+              future: fetchPost(request),
+              builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Padding(
+                    padding: EdgeInsets.all(24.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: _buildEmptyState('No forum posts available.'),
+                  );
+                } else {
+                  return ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: snapshot.data!.length > 5
+                        ? 5
+                        : snapshot.data!.length,
+                    itemBuilder: (_, index) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12.0),
+                      child: PostEntryCard(
+                        post: snapshot.data![index],
+                        onTap: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  PostDetailPage(post: snapshot.data![index]),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+
+            const SizedBox(height: 32),
           ],
         ),
       ),
@@ -394,8 +487,11 @@ class MyHomePage extends StatelessWidget {
                 ),
                 child: ShaderMask(
                   shaderCallback: (bounds) =>
-                      const LinearGradient(
-                        colors: [Color(0xFF4338CA), Color(0xFF6B21A8)],
+                      LinearGradient(
+                        colors: [
+                          Colors.deepPurple,
+                          Colors.deepPurple.withValues(alpha: 0.7),
+                        ],
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                       ).createShader(

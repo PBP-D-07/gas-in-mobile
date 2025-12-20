@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gas_in/screens/pop_up_logo.dart';
+import 'package:gas_in/theme/app_theme.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -23,8 +24,7 @@ class MyApp extends StatelessWidget {
       },
       child: MaterialApp(
         title: 'gas.in',
-        theme: ThemeData(
-          useMaterial3: true,
+        theme: AppTheme.getThemeData().copyWith(
           colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.deepPurple,
           ).copyWith(secondary: Colors.deepPurpleAccent[400]),

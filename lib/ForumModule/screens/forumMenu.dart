@@ -65,26 +65,46 @@ class _ForumCommunityState extends State<ForumCommunity> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: ElevatedButton.icon(
-              onPressed: () async {
+            child: GestureDetector(
+              onTap: () async {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const PostFormPage()),
                 );
                 setState(() {});
               },
-              icon: const Icon(Icons.add, size: 18),
-              label: const Text('Add Post'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4A4E9E),
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
+              child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 8,
+                ),
+                decoration: ShapeDecoration(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.deepPurple,
+                      Colors.deepPurple.withValues(alpha: 0.7),
+                    ],
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.add, size: 18, color: Colors.white),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Add Post',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

@@ -148,10 +148,10 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
                           padding: const EdgeInsets.fromLTRB(25, 30, 16, 8),
                           child: ShaderMask(
                             shaderCallback: (bounds) =>
-                                const LinearGradient(
+                                LinearGradient(
                                   colors: [
-                                    Color(0xFF4338CA),
-                                    Color(0xFF6B21A8),
+                                    Colors.deepPurple,
+                                    Colors.deepPurple.withValues(alpha: 0.7),
                                   ],
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,

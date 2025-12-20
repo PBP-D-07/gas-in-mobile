@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gas_in/EventMakerModule/screens/edit_event.dart';
-import 'package:gas_in/EventMakerModule/screens/event_detail.dart';
 import 'package:gas_in/screens/menu.dart';
 import 'package:gas_in/EventMakerModule/screens/create_event.dart';
 import 'package:gas_in/VenueModule/screens/venue_entry_list.dart';
 import 'package:gas_in/VenueModule/screens/venue_form.dart';
+import 'package:gas_in/ForumModule/screens/postlist_form.dart';
 import 'package:gas_in/screens/login.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -84,40 +83,6 @@ class LeftDrawer extends StatelessWidget {
               );
             },
           ),
-
-          // edit event menu
-          _buildDrawerItem(
-            title: 'Edit Event',
-            isActive: activeKey == 'edit event',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditEventPage(
-                    eventId: "124346bb-e8b6-49aa-ae46-f2ac1d37c229",
-                  ),
-                ),
-              );
-            },
-          ),
-
-          // event detail menu
-          _buildDrawerItem(
-            title: 'Event Detail',
-            isActive: activeKey == 'event detail',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  settings: const RouteSettings(name: 'event detail'),
-                  builder: (context) => EventDetailPage(
-                    eventId: "124346bb-e8b6-49aa-ae46-f2ac1d37c229",
-                  ),
-                ),
-              );
-            },
-          ),
-
           // venue book menu
           _buildDrawerItem(
             title: 'Book Venue',
@@ -143,6 +108,20 @@ class LeftDrawer extends StatelessWidget {
                 MaterialPageRoute(
                   settings: const RouteSettings(name: 'create venue'),
                   builder: (context) => VenueFormPage(),
+                ),
+              );
+            },
+          ),
+          
+          _buildDrawerItem(
+            title: 'Create Post',
+            isActive: activeKey == 'create post',
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  settings: const RouteSettings(name: 'create post'),
+                  builder: (context) => PostFormPage(),
                 ),
               );
             },

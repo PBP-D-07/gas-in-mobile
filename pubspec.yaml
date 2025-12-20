@@ -43,6 +43,7 @@ dependencies:
   url_launcher: ^6.1.7
   shimmer: ^3.0.0
   cached_network_image: ^3.3.0
+  google_fonts: ^6.1.0
 
 dev_dependencies:
   flutter_test:

@@ -278,33 +278,36 @@ class _LoginPageState extends State<LoginPage> {
 
                         // Sign Up Link
                         Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const RegisterPage(),
-                                ),
-                              );
-                            },
-                            child: RichText(
-                              text: const TextSpan(
-                                text: 'Don\'t have an Account? ',
+                          child: Wrap(
+                            children: [
+                              const Text(
+                                "Don't have an Account? ",
                                 style: TextStyle(
                                   color: Color(0xFF64748B),
                                   fontSize: 16,
                                 ),
-                                children: [
-                                  TextSpan(
-                                    text: 'Sign Up',
-                                    style: TextStyle(
-                                      color: Color(0xFF5B21B6),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
                               ),
-                            ),
+                              InkWell(
+                                borderRadius: BorderRadius.circular(4),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const RegisterPage(),
+                                    ),
+                                  );
+                                },
+                                child: const Text(
+                                  'Sign Up',
+                                  style: TextStyle(
+                                    color: Color(0xFF5B21B6),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],

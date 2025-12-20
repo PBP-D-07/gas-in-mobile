@@ -75,8 +75,9 @@ class MyHomePage extends StatelessWidget {
       backgroundColor: const Color(0xFFFDF7FF),
       appBar: AppBar(
         backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        elevation: 4,
+        shadowColor: Colors.black.withValues(alpha: 0.2),
         titleSpacing: 0,
         iconTheme: const IconThemeData(color: Colors.black87),
         title: Row(
@@ -151,7 +152,9 @@ class MyHomePage extends StatelessWidget {
                               ),
                             );
                             Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (context) => LoginPage()),
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ),
                             );
                           }
                         },
@@ -169,7 +172,7 @@ class MyHomePage extends StatelessWidget {
                             style: TextStyle(
                               color: Colors.grey[800],
                               fontWeight: FontWeight.w500,
-                              fontSize: 16
+                              fontSize: 16,
                             ),
                           ),
                         ],

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gas_in/AdminModule/widgets/left_drawer.dart';
+import 'package:gas_in/widgets/left_drawer.dart';
 import 'package:gas_in/ForumModule/models/post_entry.dart';
 import 'package:gas_in/ForumModule/screens/post_detail.dart';
 import 'package:gas_in/ForumModule/screens/postlist_form.dart';

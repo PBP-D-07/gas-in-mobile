@@ -285,31 +285,36 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                         const SizedBox(height: 24),
-
-                        // Sign In Link
                         Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: RichText(
-                              text: const TextSpan(
-                                text: 'Already have an Account? ',
+                          child: Wrap(
+                            children: [
+                              const Text(
+                                "Already have an Account? ",
                                 style: TextStyle(
                                   color: Color(0xFF64748B),
                                   fontSize: 16,
                                 ),
-                                children: [
-                                  TextSpan(
-                                    text: 'Sign In',
-                                    style: TextStyle(
-                                      color: Color(0xFF5B21B6),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
                               ),
-                            ),
+                              InkWell(
+                                borderRadius: BorderRadius.circular(4),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const LoginPage(),
+                                    ),
+                                  );
+                                },
+                                child: const Text(
+                                  'Sign In',
+                                  style: TextStyle(
+                                    color: Color(0xFF5B21B6),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],

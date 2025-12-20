@@ -93,7 +93,7 @@ class _VenueFormPageState extends State<VenueFormPage> {
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF1A237E),
         elevation: 5,
-        shadowColor: Colors.black.withOpacity(0.5),
+        shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
       // left drawer
       drawer: const LeftDrawer(),
@@ -149,10 +149,10 @@ class _VenueFormPageState extends State<VenueFormPage> {
               Container(
                 padding: const EdgeInsets.all(20.0),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),

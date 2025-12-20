@@ -91,7 +91,7 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF1A237E),
         elevation: 5,
-        shadowColor: Colors.black.withOpacity(0.5),
+        shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
 
       // left drawer

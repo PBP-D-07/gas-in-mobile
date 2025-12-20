@@ -4,7 +4,7 @@ import 'package:gas_in/ForumModule/screens/edit_post.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 
-class PostDetailPage extends StatefulWidget {  
+class PostDetailPage extends StatefulWidget {
   final PostEntry post;
 
   const PostDetailPage({super.key, required this.post});
@@ -13,14 +13,13 @@ class PostDetailPage extends StatefulWidget {
   State<PostDetailPage> createState() => _PostDetailPageState();
 }
 
-class _PostDetailPageState extends State<PostDetailPage> {  
+class _PostDetailPageState extends State<PostDetailPage> {
   final _commentController = TextEditingController();
   late List<Comment> _comments;
   bool _isLiked = false;
   int _likeCount = 0;
   int _views = 0;
   bool _thumbnailValid = true;
-
 
   @override
   void initState() {
@@ -53,14 +52,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
         ),
         backgroundColor: backgroundColor,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
     );
   }
-
 
   Future<void> _checkLikeStatus() async {
     final request = context.read<CookieRequest>();
@@ -82,10 +78,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
   Future<void> _toggleLike() async {
     final request = context.read<CookieRequest>();
     if (!request.loggedIn) {
-      _showSnackBar(
-        message: 'Please login to like posts',
-        icon: Icons.login,
-      );
+      _showSnackBar(message: 'Please login to like posts', icon: Icons.login);
       return;
     }
 
@@ -122,10 +115,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
   Future<void> _addComment() async {
     final request = context.read<CookieRequest>();
     if (!request.loggedIn) {
-      _showSnackBar(
-        message: 'Please login to comment',
-        icon: Icons.login,
-      );
+      _showSnackBar(message: 'Please login to comment', icon: Icons.login);
       return;
     }
 
@@ -231,18 +221,27 @@ class _PostDetailPageState extends State<PostDetailPage> {
     if (result != null && mounted) {
       setState(() {
         widget.post.description = result["description"];
-        widget.post.thumbnail =
-            result["thumbnail"]?.trim().isEmpty == true
-                ? null
-                : result["thumbnail"];
+        widget.post.thumbnail = result["thumbnail"]?.trim().isEmpty == true
+            ? null
+            : result["thumbnail"];
       });
     }
   }
 
   String _formatDate(DateTime date) {
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${date.day} ${months[date.month - 1]} ${date.year}, '
         '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
@@ -304,7 +303,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -346,7 +345,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         if (widget.post.isHot == true)
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
                             margin: const EdgeInsets.only(bottom: 12),
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
@@ -357,8 +358,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: const [
-                                Icon(Icons.local_fire_department,
-                                    size: 16, color: Colors.white),
+                                Icon(
+                                  Icons.local_fire_department,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
                                 SizedBox(width: 4),
                                 Text(
                                   'HOT POST',
@@ -392,7 +396,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
                               radius: 20,
                               backgroundColor: const Color(0xFFD4B5E8),
                               child: Text(
-                                (widget.post.ownerUsername ?? 'U')[0].toUpperCase(),
+                                (widget.post.ownerUsername ?? 'U')[0]
+                                    .toUpperCase(),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF4A4E9E),
@@ -425,7 +430,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
                             // Category Badge
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFFFE4D6),
                                 borderRadius: BorderRadius.circular(12),
@@ -451,7 +458,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                             const SizedBox(width: 20),
                             _buildStatItem(Icons.favorite, '$_likeCount'),
                             const SizedBox(width: 20),
-                            _buildStatItem(Icons.comment, '${_comments.length}'),
+                            _buildStatItem(
+                              Icons.comment,
+                              '${_comments.length}',
+                            ),
                           ],
                         ),
 
@@ -487,7 +497,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -512,7 +522,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFE8D5F2),
                             borderRadius: BorderRadius.circular(12),
@@ -537,9 +549,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       decoration: BoxDecoration(
                         color: const Color(0xFFF5F5F5),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: const Color(0xFFE0E0E0),
-                        ),
+                        border: Border.all(color: const Color(0xFFE0E0E0)),
                       ),
                       child: Row(
                         children: [
@@ -642,8 +652,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                       children: [
                                         CircleAvatar(
                                           radius: 18,
-                                          backgroundColor:
-                                              const Color(0xFFD4B5E8),
+                                          backgroundColor: const Color(
+                                            0xFFD4B5E8,
+                                          ),
                                           child: Text(
                                             comment.user[0].toUpperCase(),
                                             style: const TextStyle(
@@ -669,7 +680,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                               ),
                                               Text(
                                                 _formatCommentDate(
-                                                    comment.createdAt),
+                                                  comment.createdAt,
+                                                ),
                                                 style: TextStyle(
                                                   fontSize: 12,
                                                   color: Colors.grey[600],

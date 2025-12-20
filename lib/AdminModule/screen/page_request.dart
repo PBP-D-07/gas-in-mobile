@@ -25,12 +25,12 @@ class _PageRequestState extends State<PageRequest> {
 
   Future<void> _loadEvents() async {
     final request = context.read<CookieRequest>();
-    
+
     setState(() => isLoading = true);
-    
+
     try {
       final response = await request.get('http://localhost:8000/admin/json/');
-      
+
       if (response != null) {
         setState(() {
           pendingEvents = (response['pending_events'] as List)
@@ -53,13 +53,13 @@ class _PageRequestState extends State<PageRequest> {
 
   Future<void> _updateEventStatus(String eventId, String status) async {
     final request = context.read<CookieRequest>();
-    
+
     try {
       final response = await request.post(
         'http://localhost:8000/admin/events/update-status/$eventId/',
         {'status': status},
       );
-      
+
       if (response['success'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -81,13 +81,13 @@ class _PageRequestState extends State<PageRequest> {
 
   Future<void> _deleteEvent(String eventId) async {
     final request = context.read<CookieRequest>();
-    
+
     try {
       final response = await request.post(
         'http://localhost:8000/admin/events/delete/$eventId/',
         {},
       );
-      
+
       if (response['success'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -120,7 +120,7 @@ class _PageRequestState extends State<PageRequest> {
               color: Colors.deepPurpleAccent,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -222,13 +222,13 @@ class _PageRequestState extends State<PageRequest> {
                         _buildColumn(
                           title: 'Request Screening',
                           count: pendingEvents.length,
-                          color: const Color(0xFFFFFDE7), 
+                          color: const Color(0xFFFFFDE7),
                           borderColor: Colors.yellowAccent,
                           events: pendingEvents,
                           status: 'pending',
                         ),
                         const SizedBox(height: 16),
-                        
+
                         // Request In Progress (Approved)
                         _buildColumn(
                           title: 'Request Approve',
@@ -239,7 +239,7 @@ class _PageRequestState extends State<PageRequest> {
                           status: 'approved',
                         ),
                         const SizedBox(height: 16),
-                        
+
                         // Request Closed (Rejected)
                         _buildColumn(
                           title: 'Request Rejected',
@@ -273,7 +273,7 @@ class _PageRequestState extends State<PageRequest> {
         border: Border.all(color: borderColor, width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -284,13 +284,7 @@ class _PageRequestState extends State<PageRequest> {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(
-                icon,
-                color: borderColor,
-                size: 28,
-              ),
-            ],
+            children: [Icon(icon, color: borderColor, size: 28)],
           ),
           const SizedBox(height: 16),
           Text(
@@ -307,7 +301,7 @@ class _PageRequestState extends State<PageRequest> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: borderColor.withOpacity(0.8),
+              color: borderColor.withValues(alpha: 0.8),
             ),
           ),
         ],
@@ -384,10 +378,7 @@ class _PageRequestState extends State<PageRequest> {
               child: Center(
                 child: Text(
                   'No events',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey, fontSize: 14),
                 ),
               ),
             ),
@@ -405,7 +396,7 @@ class _PageRequestState extends State<PageRequest> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -491,7 +482,10 @@ class _PageRequestState extends State<PageRequest> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text('✓ Approve', style: TextStyle(fontSize: 12)),
+                    child: const Text(
+                      '✓ Approve',
+                      style: TextStyle(fontSize: 12),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -506,7 +500,10 @@ class _PageRequestState extends State<PageRequest> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text('✗ Reject', style: TextStyle(fontSize: 12)),
+                    child: const Text(
+                      '✗ Reject',
+                      style: TextStyle(fontSize: 12),
+                    ),
                   ),
                 ),
               ],

@@ -28,7 +28,7 @@ class PreviewCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(6.0),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF4338CA).withOpacity(0.08),
+            color: const Color(0xFF4338CA).withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 10),
             spreadRadius: 0,

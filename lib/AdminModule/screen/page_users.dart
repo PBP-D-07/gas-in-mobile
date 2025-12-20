@@ -27,7 +27,7 @@ class _PageUsersState extends State<PageUsers> {
 
   Future<void> _loadUsers() async {
     final request = context.read<CookieRequest>();
-    
+
     if (!request.loggedIn) {
       setState(() {
         isLoading = false;
@@ -35,7 +35,7 @@ class _PageUsersState extends State<PageUsers> {
       });
       return;
     }
-    
+
     setState(() {
       isLoading = true;
       errorMessage = null;
@@ -44,16 +44,20 @@ class _PageUsersState extends State<PageUsers> {
     try {
       final fetchedUsers = await UserService.getAllUsers(request);
       setState(() {
-        users = fetchedUsers.map((user) => {
-          'username': user.username,
-          'role': user.role,
-          'registered': user.formattedDate,
-        }).toList();
-        
+        users = fetchedUsers
+            .map(
+              (user) => {
+                'username': user.username,
+                'role': user.role,
+                'registered': user.formattedDate,
+              },
+            )
+            .toList();
+
         // Pisahkan admin dan user
         adminUsers = users.where((u) => u['role'] == 'Admin').toList();
         regularUsers = users.where((u) => u['role'] == 'User').toList();
-        
+
         isLoading = false;
       });
     } catch (e) {
@@ -66,11 +70,11 @@ class _PageUsersState extends State<PageUsers> {
 
   Future<void> _promoteUser(String username) async {
     final request = context.read<CookieRequest>();
-    
+
     try {
       final result = await UserService.promoteUser(request, username);
       await _loadUsers();
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -83,7 +87,9 @@ class _PageUsersState extends State<PageUsers> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString().replaceAll('Exception: ', '')}'),
+            content: Text(
+              'Error: ${e.toString().replaceAll('Exception: ', '')}',
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -93,11 +99,11 @@ class _PageUsersState extends State<PageUsers> {
 
   Future<void> _demoteUser(String username) async {
     final request = context.read<CookieRequest>();
-    
+
     try {
       final result = await UserService.demoteUser(request, username);
       await _loadUsers();
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -110,7 +116,9 @@ class _PageUsersState extends State<PageUsers> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString().replaceAll('Exception: ', '')}'),
+            content: Text(
+              'Error: ${e.toString().replaceAll('Exception: ', '')}',
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -131,7 +139,7 @@ class _PageUsersState extends State<PageUsers> {
               color: Colors.deepPurpleAccent,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -231,49 +239,49 @@ class _PageUsersState extends State<PageUsers> {
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : errorMessage != null
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              errorMessage!,
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: _loadUsers,
-                              child: const Text('Retry'),
-                            ),
-                          ],
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          errorMessage!,
+                          style: const TextStyle(color: Colors.red),
                         ),
-                      )
-                    : SingleChildScrollView(
-                        padding: const EdgeInsets.all(24),
-                        child: Column(
-                          children: [
-                            // Admin Users Section
-                            _buildUserSection(
-                              title: 'Admin Users',
-                              count: adminUsers.length,
-                              color: const Color(0xFFFFEBEE),
-                              borderColor: Colors.redAccent,
-                              users: adminUsers,
-                              isAdmin: true,
-                            ),
-                            const SizedBox(height: 16),
-                            
-                            // Regular Users Section
-                            _buildUserSection(
-                              title: 'Regular Users',
-                              count: regularUsers.length,
-                              color: const Color(0xFFE8F5E9),
-                              borderColor: Colors.greenAccent,
-                              users: regularUsers,
-                              isAdmin: false,
-                            ),
-                          ],
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: _loadUsers,
+                          child: const Text('Retry'),
                         ),
-                      ),
+                      ],
+                    ),
+                  )
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        // Admin Users Section
+                        _buildUserSection(
+                          title: 'Admin Users',
+                          count: adminUsers.length,
+                          color: const Color(0xFFFFEBEE),
+                          borderColor: Colors.redAccent,
+                          users: adminUsers,
+                          isAdmin: true,
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Regular Users Section
+                        _buildUserSection(
+                          title: 'Regular Users',
+                          count: regularUsers.length,
+                          color: const Color(0xFFE8F5E9),
+                          borderColor: Colors.greenAccent,
+                          users: regularUsers,
+                          isAdmin: false,
+                        ),
+                      ],
+                    ),
+                  ),
           ),
         ],
       ),
@@ -295,7 +303,7 @@ class _PageUsersState extends State<PageUsers> {
         border: Border.all(color: borderColor, width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -306,13 +314,7 @@ class _PageUsersState extends State<PageUsers> {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(
-                icon,
-                color: borderColor,
-                size: 28,
-              ),
-            ],
+            children: [Icon(icon, color: borderColor, size: 28)],
           ),
           const SizedBox(height: 16),
           Text(
@@ -329,7 +331,7 @@ class _PageUsersState extends State<PageUsers> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: borderColor.withOpacity(0.8),
+              color: borderColor.withValues(alpha: 0.8),
             ),
           ),
         ],
@@ -416,10 +418,7 @@ class _PageUsersState extends State<PageUsers> {
               child: Center(
                 child: Text(
                   'No ${isAdmin ? 'admin' : 'regular'} users',
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
                 ),
               ),
             ),
@@ -437,7 +436,7 @@ class _PageUsersState extends State<PageUsers> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -451,8 +450,8 @@ class _PageUsersState extends State<PageUsers> {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundColor: isAdmin 
-                    ? const Color(0xFFEF5350) 
+                backgroundColor: isAdmin
+                    ? const Color(0xFFEF5350)
                     : const Color(0xFF4CAF50),
                 child: Text(
                   user['username'][0].toUpperCase(),
@@ -485,8 +484,8 @@ class _PageUsersState extends State<PageUsers> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: isAdmin 
-                                ? const Color(0xFFFFCDD2) 
+                            color: isAdmin
+                                ? const Color(0xFFFFCDD2)
                                 : const Color(0xFFC8E6C9),
                             borderRadius: BorderRadius.circular(6),
                           ),
@@ -494,8 +493,8 @@ class _PageUsersState extends State<PageUsers> {
                             user['role'],
                             style: TextStyle(
                               fontSize: 11,
-                              color: isAdmin 
-                                  ? const Color(0xFFC62828) 
+                              color: isAdmin
+                                  ? const Color(0xFFC62828)
                                   : const Color(0xFF2E7D32),
                               fontWeight: FontWeight.w600,
                             ),
@@ -517,10 +516,7 @@ class _PageUsersState extends State<PageUsers> {
               const SizedBox(width: 6),
               Text(
                 'Registered: ${user['registered']}',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),
@@ -546,8 +542,8 @@ class _PageUsersState extends State<PageUsers> {
                 style: const TextStyle(fontSize: 12),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: isAdmin 
-                    ? const Color(0xFFFF9800) 
+                backgroundColor: isAdmin
+                    ? const Color(0xFFFF9800)
                     : const Color(0xFF4CAF50),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 10),

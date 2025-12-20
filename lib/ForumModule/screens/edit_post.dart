@@ -28,7 +28,9 @@ class _EditPostPageState extends State<EditPostPage> {
   void initState() {
     super.initState();
     _descController = TextEditingController(text: widget.initialDescription);
-    _thumbController = TextEditingController(text: widget.initialThumbnail ?? "");
+    _thumbController = TextEditingController(
+      text: widget.initialThumbnail ?? "",
+    );
   }
 
   Future<void> _updatePost() async {
@@ -37,9 +39,9 @@ class _EditPostPageState extends State<EditPostPage> {
     final request = context.read<CookieRequest>();
 
     try {
-      final response = await request.postJson( 
+      final response = await request.postJson(
         'http://localhost:8000/forum/flutter/update/${widget.postId}/',
-        jsonEncode({  
+        jsonEncode({
           "description": _descController.text,
           "thumbnail": _thumbController.text,
         }),
@@ -52,15 +54,12 @@ class _EditPostPageState extends State<EditPostPage> {
           "description": _descController.text,
           "thumbnail": _thumbController.text,
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
               children: const [
-                Icon(
-                  Icons.check_circle,
-                  color: Colors.white,
-                ),
+                Icon(Icons.check_circle, color: Colors.white),
                 SizedBox(width: 12),
                 Text("Post updated successfully!"),
               ],
@@ -77,10 +76,7 @@ class _EditPostPageState extends State<EditPostPage> {
           SnackBar(
             content: Row(
               children: [
-                const Icon(
-                  Icons.error_outline,
-                  color: Colors.white,
-                ),
+                const Icon(Icons.error_outline, color: Colors.white),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(response["error"] ?? "Failed to update post"),
@@ -101,14 +97,9 @@ class _EditPostPageState extends State<EditPostPage> {
         SnackBar(
           content: Row(
             children: [
-              const Icon(
-                Icons.error_outline,
-                color: Colors.white,
-              ),
+              const Icon(Icons.error_outline, color: Colors.white),
               const SizedBox(width: 12),
-              Expanded(
-                child: Text("Error: $e"),
-              ),
+              Expanded(child: Text("Error: $e")),
             ],
           ),
           backgroundColor: Colors.red,
@@ -139,7 +130,7 @@ class _EditPostPageState extends State<EditPostPage> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -162,10 +153,7 @@ class _EditPostPageState extends State<EditPostPage> {
                 const SizedBox(height: 8),
                 Text(
                   'Update your post content and thumbnail',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 24),
 
@@ -184,23 +172,16 @@ class _EditPostPageState extends State<EditPostPage> {
                   maxLines: 5,
                   decoration: InputDecoration(
                     hintText: "Update your post description",
-                    hintStyle: TextStyle(
-                      color: Colors.grey[400],
-                      fontSize: 14,
-                    ),
+                    hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
                     filled: true,
                     fillColor: const Color(0xFFF5F5F5),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFFE0E0E0),
-                      ),
+                      borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFFE0E0E0),
-                      ),
+                      borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -233,10 +214,7 @@ class _EditPostPageState extends State<EditPostPage> {
                   controller: _thumbController,
                   decoration: InputDecoration(
                     hintText: "Enter image URL",
-                    hintStyle: TextStyle(
-                      color: Colors.grey[400],
-                      fontSize: 14,
-                    ),
+                    hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
                     prefixIcon: const Icon(
                       Icons.image_outlined,
                       color: Color(0xFF4A4E9E),
@@ -245,15 +223,11 @@ class _EditPostPageState extends State<EditPostPage> {
                     fillColor: const Color(0xFFF5F5F5),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFFE0E0E0),
-                      ),
+                      borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFFE0E0E0),
-                      ),
+                      borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -284,7 +258,9 @@ class _EditPostPageState extends State<EditPostPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       elevation: 2,
-                      shadowColor: const Color(0xFF4A4E9E).withOpacity(0.3),
+                      shadowColor: const Color(
+                        0xFF4A4E9E,
+                      ).withValues(alpha: 0.3),
                       disabledBackgroundColor: Colors.grey[400],
                     ),
                     onPressed: _isLoading ? null : _updatePost,
@@ -294,7 +270,9 @@ class _EditPostPageState extends State<EditPostPage> {
                             width: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
                             ),
                           )
                         : const Text(

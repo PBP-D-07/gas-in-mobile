@@ -16,7 +16,7 @@ class _PostFormPageState extends State<PostFormPage> {
   final _formKey = GlobalKey<FormState>();
 
   String _description = "";
-  String _category = "running"; 
+  String _category = "running";
   String _thumbnail = "";
 
   // category
@@ -50,7 +50,7 @@ class _PostFormPageState extends State<PostFormPage> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -73,10 +73,7 @@ class _PostFormPageState extends State<PostFormPage> {
                   const SizedBox(height: 8),
                   Text(
                     'Create a new post to share with the community',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                   const SizedBox(height: 24),
 
@@ -102,15 +99,11 @@ class _PostFormPageState extends State<PostFormPage> {
                       fillColor: const Color(0xFFF5F5F5),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Color(0xFFE0E0E0),
-                        ),
+                        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Color(0xFFE0E0E0),
-                        ),
+                        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -121,9 +114,7 @@ class _PostFormPageState extends State<PostFormPage> {
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Colors.red,
-                        ),
+                        borderSide: const BorderSide(color: Colors.red),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -143,8 +134,9 @@ class _PostFormPageState extends State<PostFormPage> {
                         _description = value;
                       });
                     },
-                    validator: (value) =>
-                        value == null || value.isEmpty ? "Description is required" : null,
+                    validator: (value) => value == null || value.isEmpty
+                        ? "Description is required"
+                        : null,
                   ),
 
                   const SizedBox(height: 24),
@@ -165,15 +157,11 @@ class _PostFormPageState extends State<PostFormPage> {
                       fillColor: const Color(0xFFF5F5F5),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Color(0xFFE0E0E0),
-                        ),
+                        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Color(0xFFE0E0E0),
-                        ),
+                        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -260,15 +248,11 @@ class _PostFormPageState extends State<PostFormPage> {
                       fillColor: const Color(0xFFF5F5F5),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Color(0xFFE0E0E0),
-                        ),
+                        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Color(0xFFE0E0E0),
-                        ),
+                        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -304,7 +288,9 @@ class _PostFormPageState extends State<PostFormPage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         elevation: 2,
-                        shadowColor: const Color(0xFF4A4E9E).withOpacity(0.3),
+                        shadowColor: const Color(
+                          0xFF4A4E9E,
+                        ).withValues(alpha: 0.3),
                       ),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
@@ -342,7 +328,8 @@ class _PostFormPageState extends State<PostFormPage> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ForumCommunity()),
+                                builder: (context) => ForumCommunity(),
+                              ),
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(

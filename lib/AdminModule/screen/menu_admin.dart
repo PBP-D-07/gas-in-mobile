@@ -33,10 +33,7 @@ class AdminPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'Admin Dashboard',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFF6C5CE7),
         elevation: 0,
@@ -55,7 +52,7 @@ class AdminPage extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       const Color(0xFF6C5CE7),
-                      const Color(0xFF6C5CE7).withOpacity(0.8),
+                      const Color(0xFF6C5CE7).withValues(alpha: 0.8),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -63,7 +60,7 @@ class AdminPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF6C5CE7).withOpacity(0.3),
+                      color: const Color(0xFF6C5CE7).withValues(alpha: 0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -74,7 +71,7 @@ class AdminPage extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
@@ -124,10 +121,14 @@ class AdminPage extends StatelessWidget {
               const SizedBox(height: 16),
 
               // Action Cards - Vertical Layout
-              ...items.map((item) => Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: ItemCard(item),
-              )).toList(),
+              ...items
+                  .map(
+                    (item) => Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: ItemCard(item),
+                    ),
+                  )
+                  .toList(),
             ],
           ),
         ),

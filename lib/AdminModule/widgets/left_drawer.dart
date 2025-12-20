@@ -21,14 +21,14 @@ class LeftDrawer extends StatelessWidget {
                 gradient: LinearGradient(
                   colors: [
                     const Color(0xFF6C5CE7),
-                    const Color(0xFF6C5CE7).withOpacity(0.8),
+                    const Color(0xFF6C5CE7).withValues(alpha: 0.8),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF6C5CE7).withOpacity(0.3),
+                    color: const Color(0xFF6C5CE7).withValues(alpha: 0.3),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -40,7 +40,7 @@ class LeftDrawer extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
@@ -61,15 +61,12 @@ class LeftDrawer extends StatelessWidget {
                   const SizedBox(height: 8),
                   const Text(
                     'Pusat info users dan events ada disini!',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white70,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.white70),
                   ),
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 16),
 
             // Menu Items with Modern Cards
@@ -85,9 +82,7 @@ class LeftDrawer extends StatelessWidget {
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => AdminPage(),
-                        ),
+                        MaterialPageRoute(builder: (context) => AdminPage()),
                       );
                     },
                   ),
@@ -100,9 +95,7 @@ class LeftDrawer extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => PageUsers(),
-                        ),
+                        MaterialPageRoute(builder: (context) => PageUsers()),
                       );
                     },
                   ),
@@ -115,9 +108,7 @@ class LeftDrawer extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => PageRequest(),
-                        ),
+                        MaterialPageRoute(builder: (context) => PageRequest()),
                       );
                     },
                   ),
@@ -149,7 +140,7 @@ class LeftDrawer extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -160,14 +151,10 @@ class LeftDrawer extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 24,
-                ),
+                child: Icon(icon, color: color, size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -182,7 +169,7 @@ class LeftDrawer extends StatelessWidget {
               ),
               Icon(
                 Icons.arrow_forward_ios,
-                color: Colors.grey.withOpacity(0.5),
+                color: Colors.grey.withValues(alpha: 0.5),
                 size: 16,
               ),
             ],

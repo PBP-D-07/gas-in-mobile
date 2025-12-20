@@ -17,7 +17,7 @@ class DiscoverEventsPage extends StatefulWidget {
 class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
   String? selectedLocation;
   String? selectedCategory;
-  
+
   List<dynamic> filteredEvents = [];
   bool isLoading = false;
 
@@ -48,7 +48,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
       print('Fetching events from: $url');
       final response = await request.get(url);
       print('Response: $response');
-      
+
       setState(() {
         if (response is Map && response['data'] != null) {
           filteredEvents = response['data'] is List ? response['data'] : [];
@@ -63,9 +63,9 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
       print('Error fetching events: $e');
       setState(() => isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       }
     }
   }
@@ -217,7 +217,10 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                         }
                       },
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.deepPurple, width: 2),
+                        side: const BorderSide(
+                          color: Colors.deepPurple,
+                          width: 2,
+                        ),
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -225,7 +228,10 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                       ),
                       child: const Text(
                         'See Filter Saved',
-                        style: TextStyle(color: Colors.deepPurple, fontSize: 16),
+                        style: TextStyle(
+                          color: Colors.deepPurple,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ),
@@ -241,7 +247,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
+                      color: Colors.grey.withValues(alpha: 0.1),
                       spreadRadius: 2,
                       blurRadius: 5,
                     ),
@@ -352,41 +358,41 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                       ),
                     )
                   : filteredEvents.isEmpty
-                      ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(50.0),
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.event_busy,
-                                  size: 80,
-                                  color: Colors.grey[400],
-                                ),
-                                const SizedBox(height: 16),
-                                const Text(
-                                  'Tidak ada event ditemukan',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                const Text(
-                                  'Coba ubah filter atau buat event baru',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ],
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(50.0),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.event_busy,
+                              size: 80,
+                              color: Colors.grey[400],
                             ),
-                          ),
-                        )
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: filteredEvents.length,
-                          itemBuilder: (context, index) {
-                            return _buildEventCard(filteredEvents[index]);
-                          },
+                            const SizedBox(height: 16),
+                            const Text(
+                              'Tidak ada event ditemukan',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              'Coba ubah filter atau buat event baru',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
                         ),
+                      ),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: filteredEvents.length,
+                      itemBuilder: (context, index) {
+                        return _buildEventCard(filteredEvents[index]);
+                      },
+                    ),
             ],
           ),
         ),
@@ -400,7 +406,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
       'Bogor',
       'Depok',
       'Tangerang',
-      'Bekasi'
+      'Bekasi',
     ];
     final List<Map<String, String>> categoryOptions = [
       {'value': 'running', 'label': 'Lari'},
@@ -425,9 +431,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
         child: DropdownButton<String>(
           isExpanded: true,
           value: type == 'location' ? selectedLocation : selectedCategory,
-          hint: Text(
-            type == 'location' ? 'Semua Lokasi' : 'Semua Kategori',
-          ),
+          hint: Text(type == 'location' ? 'Semua Lokasi' : 'Semua Kategori'),
           items: [
             DropdownMenuItem(
               value: null,
@@ -462,7 +466,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
     final String location = event['location'] ?? '';
     final String category = event['category'] ?? '';
     final String? thumbnail = event['thumbnail'];
-    
+
     DateTime? eventDate;
     try {
       if (event['date'] != null) {
@@ -475,16 +479,12 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(12),
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
             child: thumbnail != null
                 ? Image.network(
                     'http://localhost:8000$thumbnail',
@@ -524,7 +524,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.deepPurple.withOpacity(0.1),
+                    color: Colors.deepPurple.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -549,21 +549,24 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                   children: [
                     const Icon(Icons.location_on, size: 16, color: Colors.grey),
                     const SizedBox(width: 4),
-                    Text(
-                      location,
-                      style: const TextStyle(color: Colors.grey),
-                    ),
+                    Text(location, style: const TextStyle(color: Colors.grey)),
                   ],
                 ),
                 if (eventDate != null) ...[
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                      const Icon(
+                        Icons.calendar_today,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
                       const SizedBox(width: 4),
                       Text(
-                        DateFormat('EEEE, dd MMM yyyy HH:mm', 'id_ID')
-                            .format(eventDate),
+                        DateFormat(
+                          'EEEE, dd MMM yyyy HH:mm',
+                          'id_ID',
+                        ).format(eventDate),
                         style: const TextStyle(color: Colors.grey),
                       ),
                     ],

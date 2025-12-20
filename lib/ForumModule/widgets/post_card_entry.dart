@@ -5,11 +5,7 @@ class PostEntryCard extends StatefulWidget {
   final PostEntry post;
   final VoidCallback onTap;
 
-  const PostEntryCard({
-    super.key,
-    required this.post,
-    required this.onTap,
-  });
+  const PostEntryCard({super.key, required this.post, required this.onTap});
 
   @override
   State<PostEntryCard> createState() => _PostEntryCardState();
@@ -35,7 +31,8 @@ class _PostEntryCardState extends State<PostEntryCard> {
 
   @override
   Widget build(BuildContext context) {
-    final hasThumbnail = _thumbnailValid &&
+    final hasThumbnail =
+        _thumbnailValid &&
         widget.post.thumbnail != null &&
         widget.post.thumbnail!.trim().isNotEmpty;
 
@@ -47,7 +44,7 @@ class _PostEntryCardState extends State<PostEntryCard> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -86,7 +83,7 @@ class _PostEntryCardState extends State<PostEntryCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Hot Badge 
+                  // Hot Badge
                   if (widget.post.isHot == true)
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -136,7 +133,7 @@ class _PostEntryCardState extends State<PostEntryCard> {
 
                   const SizedBox(height: 16),
 
-                  // Author Info Row 
+                  // Author Info Row
                   Row(
                     children: [
                       // Profile Picture Circle Avatar
@@ -179,7 +176,7 @@ class _PostEntryCardState extends State<PostEntryCard> {
                         ),
                       ),
 
-                      // Category Badge 
+                      // Category Badge
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
@@ -203,7 +200,7 @@ class _PostEntryCardState extends State<PostEntryCard> {
 
                   const SizedBox(height: 16),
 
-                  // Stats Row 
+                  // Stats Row
                   Row(
                     children: [
                       _buildStatItem(

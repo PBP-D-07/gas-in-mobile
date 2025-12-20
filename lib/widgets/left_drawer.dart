@@ -150,14 +150,14 @@ class LeftDrawer extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          const Divider(color: Colors.grey, thickness: 0.5),
+          Divider(color: Colors.purple[100], thickness: 0.5),
 
           const SizedBox(height: 10),
 
           // logout menu
           ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Logout'),
+            leading: const Icon(Icons.logout, color: Colors.red),
+            title: const Text('Logout', style: TextStyle(color: Colors.red)),
             onTap: () async {
               Navigator.pop(context);
               final request = context.read<CookieRequest>();

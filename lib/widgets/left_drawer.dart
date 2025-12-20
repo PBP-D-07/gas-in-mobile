@@ -102,7 +102,7 @@ class LeftDrawer extends StatelessWidget {
             title: 'Create Post',
             isActive: activeKey == 'create post',
             onTap: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(
                   settings: const RouteSettings(name: 'create post'),

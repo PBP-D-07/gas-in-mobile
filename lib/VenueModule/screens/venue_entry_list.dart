@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gas_in/VenueModule/models/venue_model.dart';
 import 'package:gas_in/widgets/left_drawer.dart';
 import 'package:gas_in/VenueModule/screens/venue_detail.dart';
+import 'package:gas_in/VenueModule/screens/venue_form.dart';
 import 'package:gas_in/VenueModule/widgets/venue_entry_card.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -187,6 +188,70 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
                           child: Text(
                             'Found The Best Sports Venues In Your Area with gas.in!',
                             style: TextStyle(fontSize: 18, color: Colors.black),
+                          ),
+                        ),
+                      ),
+
+                      // add venue button
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(25, 0, 16, 16),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF4338CA), Color(0xFF6B21A8)],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                              borderRadius: BorderRadius.circular(30),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(
+                                    0xFF4338CA,
+                                  ).withValues(alpha: 0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(30),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => VenueFormPage(),
+                                    ),
+                                  );
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 12,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      Icon(
+                                        Icons.add_circle_outline,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        'Add New Venue',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),

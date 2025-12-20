@@ -97,12 +97,28 @@ class _CreateEventPageState extends State<CreateEventPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Create New Event",
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+              ShaderMask(
+                shaderCallback: (bounds) =>
+                    LinearGradient(
+                      colors: [
+                        Colors.deepPurple,
+                        Colors.deepPurple.withValues(alpha: 0.7),
+                      ],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ).createShader(
+                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                    ),
+                child: const Padding(
+                  padding: EdgeInsets.only(right: 2),
+                  child: Text(
+                    'Create New Event',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 8),

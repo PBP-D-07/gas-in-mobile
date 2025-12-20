@@ -244,6 +244,8 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const SizedBox(height: 24),
+
             Center(
               child: Column(
                 children: [

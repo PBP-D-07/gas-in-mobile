@@ -114,11 +114,13 @@ class _VenueFormPageState extends State<VenueFormPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-
               ShaderMask(
                 shaderCallback: (bounds) =>
-                    const LinearGradient(
-                      colors: [Color(0xFF4338CA), Color(0xFF6B21A8)],
+                    LinearGradient(
+                      colors: [
+                        Colors.deepPurple,
+                        Colors.deepPurple.withValues(alpha: 0.7),
+                      ],
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
                     ).createShader(

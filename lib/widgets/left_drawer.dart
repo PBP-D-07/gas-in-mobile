@@ -83,20 +83,6 @@ class LeftDrawer extends StatelessWidget {
               );
             },
           ),
-          // venue book menu
-          _buildDrawerItem(
-            title: 'Book Venue',
-            isActive: activeKey == 'book venue',
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  settings: const RouteSettings(name: 'book venue'),
-                  builder: (context) => VenueEntryListPage(),
-                ),
-              );
-            },
-          ),
 
           // venue form menu
           _buildDrawerItem(
@@ -112,7 +98,7 @@ class LeftDrawer extends StatelessWidget {
               );
             },
           ),
-          
+
           _buildDrawerItem(
             title: 'Create Post',
             isActive: activeKey == 'create post',

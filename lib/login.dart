@@ -223,7 +223,7 @@ class _LoginPageState extends State<LoginPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          isAdmin ? AdminPage() : const MyHomePage(),
+                                          isAdmin ? AdminPage() : MyHomePage(),
                                           //MyHomePage(),
                                     ),
                                   );

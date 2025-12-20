@@ -1,3 +1,4 @@
+import 'package:gas_in/AdminModule/screen/menu_admin.dart';
 import 'package:gas_in/screens/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:gas_in/register.dart';
@@ -222,8 +223,8 @@ class _LoginPageState extends State<LoginPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          // isAdmin ? const AdminPage() : const MyHomePage(),
-                                          MyHomePage(),
+                                          isAdmin ? AdminPage() : const MyHomePage(),
+                                          //MyHomePage(),
                                     ),
                                   );
                                   ScaffoldMessenger.of(context)

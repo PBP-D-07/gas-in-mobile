@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gas_in/widgets/left_drawer.dart';
 import 'package:gas_in/ForumModule/models/post_entry.dart';
 import 'package:gas_in/ForumModule/screens/post_detail.dart';
-import 'package:gas_in/ForumModule/screens/postlist_form.dart';
 import 'package:gas_in/ForumModule/widgets/post_card_entry.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -44,87 +43,82 @@ class _ForumCommunityState extends State<ForumCommunity> {
     }
   }
 
-    @override
-    Widget build(BuildContext context) {
-      final request = context.watch<CookieRequest>();
+  @override
+  Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
 
-      return Scaffold(
-        drawer: LeftDrawer(),
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          foregroundColor: Color(0xFF1A1B4B),
-          elevation: 0,
-          title: const Text(
-            'Community Forum',
-            style: TextStyle(
-              color: Color(0xFF1A1B4B),
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
+    return Scaffold(
+      drawer: LeftDrawer(),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Color(0xFF1A1B4B),
+        elevation: 0,
+        title: const Text(
+          'Community Forum',
+          style: TextStyle(
+            color: Color(0xFF1A1B4B),
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
         ),
+      ),
 
-        // body
-        body: SizedBox.expand(
-          child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFFFFFFFF),
-                  Color(0xFFF3E8FF),
-                ],
+      // body
+      body: SizedBox.expand(
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFFFFFFFF), Color(0xFFF3E8FF)],
+            ),
+          ),
+          child: Column(
+            children: [
+              // filter
+              Container(
+                margin: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _buildFilterButton(
+                        'For You',
+                        'all',
+                        _currentFilter == 'all',
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildFilterButton(
+                        'My Post',
+                        'my',
+                        _currentFilter == 'my',
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            child: Column(
-              children: [
-                // filter
-                Container(
-                  margin: const EdgeInsets.all(16),
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _buildFilterButton(
-                          'For You',
-                          'all',
-                          _currentFilter == 'all',
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildFilterButton(
-                          'My Post',
-                          'my',
-                          _currentFilter == 'my',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
 
-                // post list
-                Expanded(
-                  child: _buildPostList(request, _currentFilter),
-                ),
-              ],
-            ),
+              // post list
+              Expanded(child: _buildPostList(request, _currentFilter)),
+            ],
           ),
         ),
-      );
-    }
+      ),
+    );
+  }
 
   Widget _buildFilterButton(String label, String filter, bool isSelected) {
     return GestureDetector(
@@ -132,9 +126,7 @@ class _ForumCommunityState extends State<ForumCommunity> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(0xFFD4B5E8)
-              : const Color(0xFFE8D5F2),
+          color: isSelected ? const Color(0xFFD4B5E8) : const Color(0xFFE8D5F2),
           borderRadius: BorderRadius.circular(25),
         ),
         child: Text(

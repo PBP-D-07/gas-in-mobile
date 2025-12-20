@@ -137,22 +137,17 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
+        foregroundColor: Color(0xFF1A1B4B),
         elevation: 0,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xFF4338CA), // Indigo 700
-                Color(0xFF6B21A8), // Purple 800
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+        title: const Text(
+          'Discover Events',
+          style: TextStyle(
+            color: Color(0xFF1A1B4B),
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
         ),
-        title: const Text('Discover Events'),
       ),
       drawer: const LeftDrawer(),
       body: SingleChildScrollView(
@@ -161,14 +156,39 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Discover Events',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start, // ⬅️ PENTING
+                children: [
+                  ShaderMask(
+                    shaderCallback: (bounds) =>
+                        LinearGradient(
+                          colors: [
+                            Colors.deepPurple,
+                            Colors.deepPurple.withValues(alpha: 0.7),
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ).createShader(
+                          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                        ),
+                    child: const Text(
+                      'Discover Exciting Events Near You',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+              const SizedBox(height: 10),
+
+                  Text(
+                    'Explore sports events near you.',
+                    style: TextStyle(fontSize: 18, color: Colors.black),
+                  ),
+                ],
               ),
-              const Text(
-                'Temukan event olahraga yang sesuai dengan minat Anda',
-                style: TextStyle(color: Colors.grey, fontSize: 16),
-              ),
+
               const SizedBox(height: 20),
 
               // Action Buttons
@@ -274,6 +294,8 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+                    const SizedBox(height: 8),
+
                     _buildFilterDropdown('location', (value) {
                       setState(() {
                         selectedLocation = value;
@@ -290,6 +312,8 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+                    const SizedBox(height: 8),
+
                     _buildFilterDropdown('category', (value) {
                       setState(() {
                         selectedCategory = value;
@@ -446,14 +470,14 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                   value: value,
                   child: Text(value),
                 );
-              }).toList()
+              })
             else
               ...categoryOptions.map((cat) {
                 return DropdownMenuItem<String>(
                   value: cat['value'],
                   child: Text(cat['label']!),
                 );
-              }).toList(),
+              }),
           ],
           onChanged: onChanged,
         ),
@@ -477,113 +501,130 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
       eventDate = null;
     }
 
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-            child: thumbnail != null
-                ? Image.network(
-                    'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id$thumbnail',
-                    height: 180,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
+    return SizedBox(
+      width: double.infinity, // ⬅️ PENTING
+      child: Card(
+        elevation: 4,
+        margin: const EdgeInsets.only(bottom: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                height: 180,
+                child: thumbnail != null
+                    ? Image.network(
+                        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id$thumbnail',
+                        height: 180,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 180,
+                            color: Colors.grey[300],
+                            child: const Icon(
+                              Icons.image_not_supported,
+                              size: 50,
+                              color: Colors.grey,
+                            ),
+                          );
+                        },
+                      )
+                    : Container(
                         height: 180,
                         color: Colors.grey[300],
                         child: const Icon(
-                          Icons.image_not_supported,
+                          Icons.image,
                           size: 50,
                           color: Colors.grey,
                         ),
-                      );
-                    },
-                  )
-                : Container(
-                    height: 180,
-                    color: Colors.grey[300],
-                    child: const Icon(
-                      Icons.image,
-                      size: 50,
-                      color: Colors.grey,
+                      ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.deepPurple.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      getCategoryLabel(category),
+                      style: const TextStyle(
+                        color: Colors.deepPurple,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    getCategoryLabel(category),
+                  const SizedBox(height: 8),
+                  Text(
+                    name,
                     style: const TextStyle(
-                      color: Colors.deepPurple,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      fontSize: 12,
                     ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, size: 16, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Text(location, style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
-                if (eventDate != null) ...[
                   const SizedBox(height: 4),
                   Row(
                     children: [
                       const Icon(
-                        Icons.calendar_today,
+                        Icons.location_on,
                         size: 16,
                         color: Colors.grey,
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        DateFormat(
-                          'EEEE, dd MMM yyyy HH:mm',
-                          'id_ID',
-                        ).format(eventDate),
+                        location,
                         style: const TextStyle(color: Colors.grey),
                       ),
                     ],
                   ),
+                  if (eventDate != null) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.calendar_today,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          DateFormat(
+                            'EEEE, dd MMM yyyy HH:mm',
+                            'id_ID',
+                          ).format(eventDate),
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ],
+                  const SizedBox(height: 8),
+                  Text(
+                    description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.grey),
+                  ),
                 ],
-                const SizedBox(height: 8),
-                Text(
-                  description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.grey),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

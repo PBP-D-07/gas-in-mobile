@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:typed_data';
+import 'package:gas_in/theme/app_theme.dart';
 
 class EditEventPage extends StatefulWidget {
   final String eventId;
@@ -92,467 +93,453 @@ class _EditEventPageState extends State<EditEventPage> {
 
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Colors.white,
-
-        // Hapus backgroundColor, ganti pakai gradient
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.deepPurple,
-                Colors.deepPurple.withValues(alpha: 0.7),
-              ],
-            ),
-          ),
-        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
+        title: const Text(''),
+        backgroundColor: Colors.white,
+        foregroundColor: const Color(0xFF1A237E),
+        elevation: 5,
+        shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ShaderMask(
-                shaderCallback: (bounds) =>
-                    LinearGradient(
-                      colors: [
-                        Colors.deepPurple,
-                        Colors.deepPurple.withValues(alpha: 0.7),
-                      ],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ).createShader(
-                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                    ),
-                child: const Padding(
-                  padding: EdgeInsets.only(right: 2),
-                  child: Text(
-                    'Edit Event',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                    ),
+      body: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Create New Event',
+                  style: AppTheme.heading1.copyWith(
+                    color: const Color(0xFF0F1B5C),
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                "Update your event details",
-                style: TextStyle(fontSize: 14, color: Colors.grey),
-              ),
-              const SizedBox(height: 24),
-              // NAME
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: "Event Name",
-                  labelStyle: TextStyle(color: Colors.deepPurple),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.deepPurpleAccent,
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.deepPurple,
-                      width: 1.2,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 8),
+                const Text(
+                  "Update your event details",
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
-                validator: (value) => (value == null || value.isEmpty)
-                    ? "Nama can't be empty!"
-                    : null,
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 24),
 
-              // DESCRIPTION
-              TextFormField(
-                controller: _descriptionController,
-                maxLines: 4,
-                decoration: InputDecoration(
-                  labelText: "Description",
-                  labelStyle: TextStyle(color: Colors.deepPurple),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.deepPurpleAccent,
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.deepPurple,
-                      width: 1.2,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) => (value == null || value.isEmpty)
-                    ? "Description can't be empty"
-                    : null,
-              ),
-              const SizedBox(height: 16),
-
-              // LOCATION
-              TextFormField(
-                controller: _locationController,
-                decoration: InputDecoration(
-                  labelText: "Location",
-                  labelStyle: TextStyle(color: Colors.deepPurple),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.deepPurpleAccent,
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.deepPurple,
-                      width: 1.2,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) => (value == null || value.isEmpty)
-                    ? "Location is required!"
-                    : null,
-              ),
-              const SizedBox(height: 16),
-
-              // DATE PICKER
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.deepPurple, width: 1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: ListTile(
-                  iconColor: Colors.deepPurple,
-                  textColor: Colors.deepPurple,
-                  title: Text(
-                    formatDate(_selectedDate),
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  trailing: const Icon(
-                    Icons.calendar_month,
-                    color: Colors.deepPurple,
-                  ),
-                  onTap: () async {
-                    // DATE PICKER
-                    DateTime? picked = await showDatePicker(
-                      context: context,
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime(
-                        DateTime.now().year + 20,
-                        DateTime.now().month,
-                        DateTime.now().day,
+                // NAME
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: "Event Name",
+                    labelStyle: TextStyle(color: Colors.deepPurple),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.deepPurpleAccent,
+                        width: 2,
                       ),
-                      initialDate: DateTime.now(),
-                      builder: (context, child) {
-                        return Theme(
-                          data: Theme.of(context).copyWith(
-                            colorScheme: const ColorScheme.light(
-                              primary: Colors.deepPurple,
-                              onPrimary: Colors.white,
-                            ),
-                            datePickerTheme: const DatePickerThemeData(
-                              dayStyle: TextStyle(color: Colors.deepPurple),
-                            ),
-                          ),
-                          child: child!,
-                        );
-                      },
-                    );
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.deepPurple,
+                        width: 1.2,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? "Nama can't be empty!"
+                      : null,
+                ),
+                const SizedBox(height: 16),
 
-                    if (picked != null) {
-                      // TIME PICKER
-                      TimeOfDay? time = await showTimePicker(
-                        // ignore: use_build_context_synchronously
+                // DESCRIPTION
+                TextFormField(
+                  controller: _descriptionController,
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                    labelText: "Description",
+                    labelStyle: TextStyle(color: Colors.deepPurple),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.deepPurpleAccent,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.deepPurple,
+                        width: 1.2,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? "Description can't be empty"
+                      : null,
+                ),
+                const SizedBox(height: 16),
+
+                // LOCATION
+                TextFormField(
+                  controller: _locationController,
+                  decoration: InputDecoration(
+                    labelText: "Location",
+                    labelStyle: TextStyle(color: Colors.deepPurple),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.deepPurpleAccent,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.deepPurple,
+                        width: 1.2,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? "Location is required!"
+                      : null,
+                ),
+                const SizedBox(height: 16),
+
+                // DATE PICKER
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.deepPurple, width: 1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ListTile(
+                    iconColor: Colors.deepPurple,
+                    textColor: Colors.deepPurple,
+                    title: Text(
+                      formatDate(_selectedDate),
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    trailing: const Icon(
+                      Icons.calendar_month,
+                      color: Colors.deepPurple,
+                    ),
+                    onTap: () async {
+                      // DATE PICKER
+                      DateTime? picked = await showDatePicker(
                         context: context,
-                        initialTime: TimeOfDay.now(),
-                        initialEntryMode:
-                            TimePickerEntryMode.input, // scroll mode
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(
+                          DateTime.now().year + 20,
+                          DateTime.now().month,
+                          DateTime.now().day,
+                        ),
+                        initialDate: DateTime.now(),
                         builder: (context, child) {
-                          return MediaQuery(
-                            data: MediaQuery.of(
-                              context,
-                            ).copyWith(alwaysUse24HourFormat: true),
-                            child: Theme(
-                              data: Theme.of(context).copyWith(
-                                colorScheme: const ColorScheme.light(
-                                  primary: Colors.deepPurple,
-                                  onPrimary: Colors.white,
-                                ),
-                                timePickerTheme: TimePickerThemeData(
-                                  dialHandColor: Colors.deepPurple,
-                                  dialBackgroundColor:
-                                      Colors.deepPurple.shade50,
-                                  hourMinuteTextStyle:
-                                      WidgetStateTextStyle.resolveWith((
-                                        states,
-                                      ) {
-                                        if (states.contains(
-                                          WidgetState.selected,
-                                        )) {
-                                          return const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 32,
-                                          );
-                                        }
-                                        return const TextStyle(
-                                          color: Colors.deepPurple,
-                                          fontSize: 32,
-                                        );
-                                      }),
-                                ),
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: const ColorScheme.light(
+                                primary: Colors.deepPurple,
+                                onPrimary: Colors.white,
                               ),
-                              child: child!,
+                              datePickerTheme: const DatePickerThemeData(
+                                dayStyle: TextStyle(color: Colors.deepPurple),
+                              ),
                             ),
+                            child: child!,
                           );
                         },
                       );
 
-                      if (time != null) {
-                        setState(() {
-                          _selectedDate = DateTime(
-                            picked.year,
-                            picked.month,
-                            picked.day,
-                            time.hour,
-                            time.minute,
-                          );
-                        });
-                      }
-                    }
-                  },
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // CATEGORY
-              DropdownButtonFormField<String>(
-                initialValue: _category,
-                decoration: InputDecoration(
-                  labelText: "Category",
-                  labelStyle: TextStyle(color: Colors.deepPurple),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.deepPurpleAccent,
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.deepPurple,
-                      width: 1.2,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  border: OutlineInputBorder(),
-                ),
-                dropdownColor: Colors.white,
-                items: _categories
-                    .map(
-                      (cat) => DropdownMenuItem(
-                        value: cat,
-                        child: Text(cat[0].toUpperCase() + cat.substring(1)),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (value) => _category = value!,
-              ),
-
-              const SizedBox(height: 16),
-
-              // THUMBNAIL PICKER
-              Text("Thumbnail", style: TextStyle(color: Colors.deepPurple)),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () async {
-                  final picked = await _picker.pickImage(
-                    source: ImageSource.gallery,
-                    imageQuality: 70,
-                  );
-                  if (picked != null) {
-                    setState(() {
-                      _thumbnailFile = File(picked.path);
-                    });
-                  }
-                },
-                child: Container(
-                  width: double.infinity,
-                  height: 180,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.deepPurple, width: 1),
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.white,
-                  ),
-                  child: _thumbnailFile == null
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.image,
-                              size: 50,
-                              color: Colors.deepPurple,
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              "Tap to upload image",
-                              style: TextStyle(
-                                color: Colors.deepPurple,
-                                fontWeight: FontWeight.w500,
+                      if (picked != null) {
+                        // TIME PICKER
+                        TimeOfDay? time = await showTimePicker(
+                          // ignore: use_build_context_synchronously
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                          initialEntryMode:
+                              TimePickerEntryMode.input, // scroll mode
+                          builder: (context, child) {
+                            return MediaQuery(
+                              data: MediaQuery.of(
+                                context,
+                              ).copyWith(alwaysUse24HourFormat: true),
+                              child: Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: const ColorScheme.light(
+                                    primary: Colors.deepPurple,
+                                    onPrimary: Colors.white,
+                                  ),
+                                  timePickerTheme: TimePickerThemeData(
+                                    dialHandColor: Colors.deepPurple,
+                                    dialBackgroundColor:
+                                        Colors.deepPurple.shade50,
+                                    hourMinuteTextStyle:
+                                        WidgetStateTextStyle.resolveWith((
+                                          states,
+                                        ) {
+                                          if (states.contains(
+                                            WidgetState.selected,
+                                          )) {
+                                            return const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 32,
+                                            );
+                                          }
+                                          return const TextStyle(
+                                            color: Colors.deepPurple,
+                                            fontSize: 32,
+                                          );
+                                        }),
+                                  ),
+                                ),
+                                child: child!,
                               ),
-                            ),
-                          ],
-                        )
-                      : ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.file(
-                            _thumbnailFile!,
-                            width: double.infinity,
-                            height: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                ),
-              ),
+                            );
+                          },
+                        );
 
-              const SizedBox(height: 24),
-
-              // SUBMIT BUTTON
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 14,
-                    ),
+                        if (time != null) {
+                          setState(() {
+                            _selectedDate = DateTime(
+                              picked.year,
+                              picked.month,
+                              picked.day,
+                              time.hour,
+                              time.minute,
+                            );
+                          });
+                        }
+                      }
+                    },
                   ),
-                  onPressed: () async {
-                    final requestProvider = context.read<CookieRequest>();
+                ),
 
-                    if (!requestProvider.loggedIn) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            "Anda harus login terlebih dahulu untuk mengedit event.",
-                          ),
+                const SizedBox(height: 16),
+
+                // CATEGORY
+                DropdownButtonFormField<String>(
+                  initialValue: _category,
+                  decoration: InputDecoration(
+                    labelText: "Category",
+                    labelStyle: TextStyle(color: Colors.deepPurple),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.deepPurpleAccent,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.deepPurple,
+                        width: 1.2,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    border: OutlineInputBorder(),
+                  ),
+                  dropdownColor: Colors.white,
+                  items: _categories
+                      .map(
+                        (cat) => DropdownMenuItem(
+                          value: cat,
+                          child: Text(cat[0].toUpperCase() + cat.substring(1)),
                         ),
-                      );
-                      return;
-                    }
+                      )
+                      .toList(),
+                  onChanged: (value) => _category = value!,
+                ),
 
-                    if (!_formKey.currentState!.validate()) return;
+                const SizedBox(height: 16),
 
-                    if (_thumbnailFile == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Please choose a thumbnail first"),
-                        ),
-                      );
-                      return;
-                    }
-
-                    final url = Uri.parse(
-                      "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event-maker/api/edit/${widget.eventId}/",
+                // THUMBNAIL PICKER
+                Text("Thumbnail", style: TextStyle(color: Colors.deepPurple)),
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: () async {
+                    final picked = await _picker.pickImage(
+                      source: ImageSource.gallery,
+                      imageQuality: 70,
                     );
-
-                    var multipartRequest = http.MultipartRequest("POST", url);
-
-                    final cookieHeader = request.headers['cookie'];
-                    if (cookieHeader != null) {
-                      multipartRequest.headers['cookie'] = cookieHeader;
-                    }
-
-                    final csrfToken = request.headers['X-CSRFToken'];
-                    if (csrfToken != null) {
-                      multipartRequest.headers['X-CSRFToken'] = csrfToken;
-                    }
-
-                    multipartRequest.fields['name'] = _nameController.text;
-                    multipartRequest.fields['description'] =
-                        _descriptionController.text;
-                    multipartRequest.fields['location'] =
-                        _locationController.text;
-
-                    multipartRequest.fields['date'] = DateFormat(
-                      "yyyy-MM-ddTHH:mm",
-                    ).format(_selectedDate);
-
-                    multipartRequest.fields['category'] = _category;
-
-                    // === Thumbnail ===
-                    if (kIsWeb) {
-                      multipartRequest.files.add(
-                        http.MultipartFile.fromBytes(
-                          'thumbnail',
-                          _webThumbnailBytes!,
-                          filename: "thumbnail.jpg",
-                        ),
-                      );
-                    } else {
-                      multipartRequest.files.add(
-                        await http.MultipartFile.fromPath(
-                          'thumbnail',
-                          _thumbnailFile!.path,
-                        ),
-                      );
-                    }
-
-                    // === Send request ===
-                    final response = await multipartRequest.send();
-                    final respStr = await response.stream.bytesToString();
-                    final respJson = jsonDecode(respStr);
-
-                    if (!context.mounted) return;
-
-                    if (response.statusCode == 200) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Event updated successfully"),
-                        ),
-                      );
-
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => MyHomePage()),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            respJson['message'] ?? "Failed to edit event",
-                          ),
-                        ),
-                      );
+                    if (picked != null) {
+                      setState(() {
+                        _thumbnailFile = File(picked.path);
+                      });
                     }
                   },
-                  child: const Text("Save", style: TextStyle(fontSize: 16)),
+                  child: Container(
+                    width: double.infinity,
+                    height: 180,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.deepPurple, width: 1),
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.white,
+                    ),
+                    child: _thumbnailFile == null
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.image,
+                                size: 50,
+                                color: Colors.deepPurple,
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                "Tap to upload image",
+                                style: TextStyle(
+                                  color: Colors.deepPurple,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          )
+                        : ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.file(
+                              _thumbnailFile!,
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                  ),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 24),
+
+                // SUBMIT BUTTON
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                        vertical: 14,
+                      ),
+                    ),
+                    onPressed: () async {
+                      final requestProvider = context.read<CookieRequest>();
+
+                      if (!requestProvider.loggedIn) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Anda harus login terlebih dahulu untuk mengedit event.",
+                            ),
+                          ),
+                        );
+                        return;
+                      }
+
+                      if (!_formKey.currentState!.validate()) return;
+
+                      if (_thumbnailFile == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Please choose a thumbnail first"),
+                          ),
+                        );
+                        return;
+                      }
+
+                      final url = Uri.parse(
+                        "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event-maker/api/edit/${widget.eventId}/",
+                      );
+
+                      var multipartRequest = http.MultipartRequest("POST", url);
+
+                      final cookieHeader = request.headers['cookie'];
+                      if (cookieHeader != null) {
+                        multipartRequest.headers['cookie'] = cookieHeader;
+                      }
+
+                      final csrfToken = request.headers['X-CSRFToken'];
+                      if (csrfToken != null) {
+                        multipartRequest.headers['X-CSRFToken'] = csrfToken;
+                      }
+
+                      multipartRequest.fields['name'] = _nameController.text;
+                      multipartRequest.fields['description'] =
+                          _descriptionController.text;
+                      multipartRequest.fields['location'] =
+                          _locationController.text;
+
+                      multipartRequest.fields['date'] = DateFormat(
+                        "yyyy-MM-ddTHH:mm",
+                      ).format(_selectedDate);
+
+                      multipartRequest.fields['category'] = _category;
+
+                      // === Thumbnail ===
+                      if (kIsWeb) {
+                        multipartRequest.files.add(
+                          http.MultipartFile.fromBytes(
+                            'thumbnail',
+                            _webThumbnailBytes!,
+                            filename: "thumbnail.jpg",
+                          ),
+                        );
+                      } else {
+                        multipartRequest.files.add(
+                          await http.MultipartFile.fromPath(
+                            'thumbnail',
+                            _thumbnailFile!.path,
+                          ),
+                        );
+                      }
+
+                      // === Send request ===
+                      final response = await multipartRequest.send();
+                      final respStr = await response.stream.bytesToString();
+                      final respJson = jsonDecode(respStr);
+
+                      if (!context.mounted) return;
+
+                      if (response.statusCode == 200) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Event updated successfully"),
+                          ),
+                        );
+
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => MyHomePage()),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              respJson['message'] ?? "Failed to edit event",
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    child: const Text("Save", style: TextStyle(fontSize: 16)),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

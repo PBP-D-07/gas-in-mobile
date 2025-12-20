@@ -90,11 +90,17 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
     final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Book Venues'),
         backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF1A237E),
-        elevation: 5,
-        shadowColor: Colors.black.withValues(alpha: 0.5),
+        foregroundColor: Color(0xFF1A1B4B),
+        elevation: 0,
+        title: const Text(
+          'Book Venues',
+          style: TextStyle(
+            color: Color(0xFF1A1B4B),
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
       ),
 
       // left drawer
@@ -195,13 +201,16 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
                       // add venue button
                       SliverToBoxAdapter(
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(25, 0, 16, 16),
+                          padding: const EdgeInsets.fromLTRB(25, 0, 25, 16),
                           child: Container(
                             decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF4338CA), Color(0xFF6B21A8)],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Colors.deepPurple,
+                                  Colors.deepPurple.withValues(alpha: 0.7),
+                                ],
                               ),
                               borderRadius: BorderRadius.circular(30),
                               boxShadow: [

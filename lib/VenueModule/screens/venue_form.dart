@@ -3,6 +3,7 @@ import 'package:gas_in/widgets/left_drawer.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:gas_in/theme/app_theme.dart';
 
 class VenueFormPage extends StatefulWidget {
   const VenueFormPage({super.key});
@@ -122,31 +123,12 @@ class _VenueFormPageState extends State<VenueFormPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              ShaderMask(
-                shaderCallback: (bounds) =>
-                    LinearGradient(
-                      colors: [
-                        Colors.deepPurple,
-                        Colors.deepPurple.withValues(alpha: 0.7),
-                      ],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ).createShader(
-                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                    ),
-                child: const Padding(
-                  padding: EdgeInsets.only(right: 2),
-                  child: Text(
-                    'Create New Venue',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                    ),
-                  ),
+              Text(
+                'Create New Venue',
+                style: AppTheme.heading1.copyWith(
+                  color: const Color(0xFF0F1B5C),
                 ),
               ),
-
               const SizedBox(height: 8),
 
               const Text(
@@ -157,14 +139,15 @@ class _VenueFormPageState extends State<VenueFormPage> {
               const SizedBox(height: 30),
 
               Container(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
                     ),
                   ],
                 ),
@@ -311,97 +294,85 @@ class _VenueFormPageState extends State<VenueFormPage> {
 
                       // submit form button
                       Center(
-                        child: SizedBox(
-                          width: 150,
-                          height: 40,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFE0B3FF),
-                              foregroundColor: Colors.black,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(22),
-                              ),
-                              textStyle: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                              ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepPurple,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 40,
+                              vertical: 14,
                             ),
-                            onPressed: () async {
-                              // validasi
-                              if (_formKey.currentState!.validate()) {
-                                List<String> images = _images
-                                    .split(',')
-                                    .map((e) => e.trim())
-                                    .where((e) => e.isNotEmpty)
-                                    .toList();
+                          ),
+                          onPressed: () async {
+                            // validasi
+                            if (_formKey.currentState!.validate()) {
+                              List<String> images = _images
+                                  .split(',')
+                                  .map((e) => e.trim())
+                                  .where((e) => e.isNotEmpty)
+                                  .toList();
 
-                                // json encode data form
-                                final payload = jsonEncode({
-                                  "name": _name,
-                                  "description": _description,
-                                  "location": _location,
-                                  "thumbnail": _thumbnail,
-                                  "images": images,
-                                  "contact_number": _contact,
-                                  "category": _category,
-                                });
+                              // json encode data form
+                              final payload = jsonEncode({
+                                "name": _name,
+                                "description": _description,
+                                "location": _location,
+                                "thumbnail": _thumbnail,
+                                "images": images,
+                                "contact_number": _contact,
+                                "category": _category,
+                              });
 
-                                // kirim data ke backend
-                                try {
-                                  final response = await request.postJson(
-                                    "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/venue/create-venue-flutter/",
-                                    payload,
-                                  );
+                              // kirim data ke backend
+                              try {
+                                final response = await request.postJson(
+                                  "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/venue/create-venue-flutter/",
+                                  payload,
+                                );
 
-                                  // tampilkan snackbar sesuai response
-                                  if (context.mounted) {
-                                    if (response != null &&
-                                        response['status'] == 'success') {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: const Text(
-                                            "Venue berhasil dibuat!",
-                                          ),
-                                          backgroundColor: Colors.purple[800],
-                                        ),
-                                      );
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => VenueFormPage(),
-                                        ),
-                                      );
-                                    } else {
-                                      final errorMsg =
-                                          response?['message'] ??
-                                          'Gagal membuat venue.';
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(errorMsg),
-                                          backgroundColor: Colors.red,
-                                        ),
-                                      );
-                                    }
-                                  }
-                                } catch (e) {
-                                  if (context.mounted) {
+                                // tampilkan snackbar sesuai response
+                                if (context.mounted) {
+                                  if (response != null &&
+                                      response['status'] == 'success') {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text("Error: $e"),
+                                        content: const Text(
+                                          "Venue berhasil dibuat!",
+                                        ),
+                                        backgroundColor: Colors.purple[800],
+                                      ),
+                                    );
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => VenueFormPage(),
+                                      ),
+                                    );
+                                  } else {
+                                    final errorMsg =
+                                        response?['message'] ??
+                                        'Gagal membuat venue.';
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(errorMsg),
                                         backgroundColor: Colors.red,
                                       ),
                                     );
                                   }
                                 }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Error: $e"),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
                               }
-                            },
-                            child: const Text("Add Venue"),
-                          ),
+                            }
+                          },
+                          child: const Text("Add Venue"),
                         ),
                       ),
                     ],

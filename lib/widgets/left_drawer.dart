@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gas_in/screens/menu.dart';
-import 'package:gas_in/EventMakerModule/screens/create_event.dart';
-import 'package:gas_in/VenueModule/screens/venue_form.dart';
-import 'package:gas_in/ForumModule/screens/postlist_form.dart';
+import 'package:gas_in/EventModule/screens/discover_events.dart';
+import 'package:gas_in/ForumModule/screens/forum_menu.dart';
+import 'package:gas_in/VenueModule/screens/venue_entry_list.dart';
+import 'package:gas_in/screens/menu.dart'; 
 import 'package:gas_in/screens/login.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -70,14 +70,14 @@ class LeftDrawer extends StatelessWidget {
 
           // create event menu
           _buildDrawerItem(
-            title: 'Create Event',
-            isActive: activeKey == 'create event',
+            title: 'Discover Events',
+            isActive: activeKey == 'event',
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  settings: const RouteSettings(name: 'create event'),
-                  builder: (context) => CreateEventPage(),
+                  settings: const RouteSettings(name: 'event'),
+                  builder: (context) => DiscoverEventsPage(),
                 ),
               );
             },
@@ -85,28 +85,28 @@ class LeftDrawer extends StatelessWidget {
 
           // venue form menu
           _buildDrawerItem(
-            title: 'Create Venue',
-            isActive: activeKey == 'create venue',
+            title: 'Book Venues',
+            isActive: activeKey == 'venue',
             onTap: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(
-                  settings: const RouteSettings(name: 'create venue'),
-                  builder: (context) => VenueFormPage(),
+                  settings: const RouteSettings(name: 'venue'),
+                  builder: (context) => VenueEntryListPage(),
                 ),
               );
             },
           ),
 
           _buildDrawerItem(
-            title: 'Create Post',
-            isActive: activeKey == 'create post',
+            title: 'Community Forum',
+            isActive: activeKey == 'forum',
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  settings: const RouteSettings(name: 'create post'),
-                  builder: (context) => PostFormPage(),
+                  settings: const RouteSettings(name: 'forum'),
+                  builder: (context) => ForumCommunity(),
                 ),
               );
             },

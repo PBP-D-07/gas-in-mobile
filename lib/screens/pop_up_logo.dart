@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gas_in/screens/login.dart'; // Import login page kamu
+import 'package:gas_in/screens/onboarding.dart'; // Import login page kamu
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -49,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen>
         Navigator.of(context).pushReplacement(
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
-                const LoginPage(),
+                const OnboardingPage(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
                   return FadeTransition(opacity: animation, child: child);

@@ -199,6 +199,7 @@ class LeftDrawer extends StatelessWidget {
           : null,
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         title: Text(
           title,
           style: TextStyle(

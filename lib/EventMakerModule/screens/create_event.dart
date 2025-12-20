@@ -472,7 +472,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     }
 
                     final url = Uri.parse(
-                      "http://localhost:8000/event-maker/api/create/",
+                      "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event-maker/api/create/",
                     );
 
                     var multipartRequest = http.MultipartRequest("POST", url);

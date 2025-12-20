@@ -40,7 +40,7 @@ class _EditPostPageState extends State<EditPostPage> {
 
     try {
       final response = await request.postJson(
-        'http://localhost:8000/forum/flutter/update/${widget.postId}/',
+        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/forum/flutter/update/${widget.postId}/',
         jsonEncode({
           "description": _descController.text,
           "thumbnail": _thumbController.text,

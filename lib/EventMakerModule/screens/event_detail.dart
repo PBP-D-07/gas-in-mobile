@@ -30,13 +30,13 @@ class _EventDetailPageState extends State<EventDetailPage> {
   String getFullImageUrl(String? thumbnail) {
     if (thumbnail == null) return "";
     if (thumbnail.startsWith("http")) return thumbnail;
-    return "http://localhost:8000$thumbnail";
+    return "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id$thumbnail";
   }
 
   Future<Map<String, dynamic>?> fetchCurrentUser() async {
     final request = context.read<CookieRequest>();
     final response = await request.get(
-      "http://localhost:8000/auth/current-user/",
+      "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/auth/current-user/",
     );
 
     if (response['data'] != null) {
@@ -46,7 +46,9 @@ class _EventDetailPageState extends State<EventDetailPage> {
   }
 
   Future<EventMaker> fetchEventMaker(String id) async {
-    final url = Uri.parse("http://localhost:8000/event-maker/$id/");
+    final url = Uri.parse(
+      "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event-maker/$id/",
+    );
 
     final response = await http.get(url);
 
@@ -58,7 +60,9 @@ class _EventDetailPageState extends State<EventDetailPage> {
   }
 
   Future<void> deleteEvent(String id) async {
-    final url = Uri.parse("http://localhost:8000/event-maker/api/delete/$id/");
+    final url = Uri.parse(
+      "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event-maker/api/delete/$id/",
+    );
 
     final response = await http.post(url);
 
@@ -83,7 +87,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
     final request = context.read<CookieRequest>();
 
     final response = await request.post(
-      "http://localhost:8000/event-maker/api/join/$id/",
+      "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event-maker/api/join/$id/",
       jsonEncode({}),
     );
 
@@ -131,7 +135,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back), 
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
       ),

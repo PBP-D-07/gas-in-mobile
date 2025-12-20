@@ -21,7 +21,9 @@ class VenueEntryListPage extends StatefulWidget {
 class _VenueEntryListPageState extends State<VenueEntryListPage> {
   // fetch venue
   Future<List<VenueEntry>> fetchVenue(CookieRequest request) async {
-    final response = await request.get('http://localhost:8000/venue/api/json/');
+    final response = await request.get(
+      'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/venue/api/json/',
+    );
 
     var data = response;
 

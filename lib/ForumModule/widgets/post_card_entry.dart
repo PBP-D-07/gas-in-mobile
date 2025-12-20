@@ -60,7 +60,7 @@ class _PostEntryCardState extends State<PostEntryCard> {
                   top: Radius.circular(16),
                 ),
                 child: Image.network(
-                  'http://localhost:8000/forum/proxy-image/?url=${Uri.encodeComponent(widget.post.thumbnail!)}',
+                  'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/forum/proxy-image/?url=${Uri.encodeComponent(widget.post.thumbnail!)}',
                   width: double.infinity,
                   height: 200,
                   fit: BoxFit.cover,

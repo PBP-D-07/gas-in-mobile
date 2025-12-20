@@ -42,7 +42,7 @@ class _SaveFilterDialogState extends State<SaveFilterDialog> {
       print('Category: ${widget.category ?? ""}');
 
       final response = await request.post(
-        'http://localhost:8000/event/api/saved-search/create/',
+        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event/api/saved-search/create/',
         {
           'name': _nameController.text.trim(),
           'location': widget.location ?? '',
@@ -54,10 +54,10 @@ class _SaveFilterDialogState extends State<SaveFilterDialog> {
 
       if (mounted) {
         Navigator.pop(context);
-        
-        if (response != null && 
+
+        if (response != null &&
             (response['message'] == 'Saved search created successfully' ||
-             response['status'] == 'success')) {
+                response['status'] == 'success')) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Filter berhasil disimpan!'),
@@ -69,7 +69,9 @@ class _SaveFilterDialogState extends State<SaveFilterDialog> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Gagal menyimpan: ${response?['message'] ?? 'Unknown error'}'),
+              content: Text(
+                'Gagal menyimpan: ${response?['message'] ?? 'Unknown error'}',
+              ),
               backgroundColor: Colors.orange,
             ),
           );
@@ -112,9 +114,7 @@ class _SaveFilterDialogState extends State<SaveFilterDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: const Text(
         'Save Current Filter',
         style: TextStyle(fontWeight: FontWeight.bold),

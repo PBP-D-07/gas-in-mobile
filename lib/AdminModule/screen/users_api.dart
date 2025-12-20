@@ -1,17 +1,18 @@
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class UserService {
-  static const String baseUrl = 'http://localhost:8000';
-  
+  static const String baseUrl =
+      'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id';
+
   // Get all users - PAKAI CookieRequest
   static Future<List<User>> getAllUsers(CookieRequest request) async {
     try {
       print('🔍 Fetching users with authenticated request...');
-      
+
       final response = await request.get('$baseUrl/users/');
-      
+
       print('📊 Response: $response');
-      
+
       if (response != null) {
         final List<dynamic> data = response['data'];
         return data.map((json) => User.fromJson(json)).toList();
@@ -26,18 +27,15 @@ class UserService {
 
   // Promote user ke admin - PAKAI CookieRequest
   static Future<Map<String, dynamic>> promoteUser(
-    CookieRequest request, 
-    String username
+    CookieRequest request,
+    String username,
   ) async {
     try {
       print('⬆️ Promoting user: $username');
-      
-      final response = await request.post(
-        '$baseUrl/api/promote-admin/',
-        {
-          'username': username,
-        },
-      );
+
+      final response = await request.post('$baseUrl/api/promote-admin/', {
+        'username': username,
+      });
 
       print('📊 Promote response: $response');
 
@@ -55,17 +53,14 @@ class UserService {
   // Demote admin ke user - PAKAI CookieRequest
   static Future<Map<String, dynamic>> demoteUser(
     CookieRequest request,
-    String username
+    String username,
   ) async {
     try {
       print('⬇️ Demoting user: $username');
-      
-      final response = await request.post(
-        '$baseUrl/api/demote-admin/',
-        {
-          'username': username,
-        },
-      );
+
+      final response = await request.post('$baseUrl/api/demote-admin/', {
+        'username': username,
+      });
 
       print('📊 Demote response: $response');
 
@@ -114,7 +109,7 @@ class User {
   }
 
   String get role => isAdmin ? 'Admin' : 'User';
-  
+
   String get formattedDate {
     try {
       final date = DateTime.parse(createdAt);

@@ -294,7 +294,7 @@ class _PostFormPageState extends State<PostFormPage> {
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           final response = await request.postJson(
-                            "http://localhost:8000/forum/create-flutter/",
+                            "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/forum/create-flutter/",
                             jsonEncode({
                               "description": _description,
                               "thumbnail": _thumbnail,

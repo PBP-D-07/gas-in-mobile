@@ -2,7 +2,8 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:gas_in/EventModule/models/event_filter_model.dart';
 
 class EventFilterService {
-  static const String baseUrl = 'http://localhost:8000/event/api';
+  static const String baseUrl =
+      'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event/api';
 
   // Get filtered events - return raw response
   static Future<dynamic> getFilteredEvents(
@@ -37,14 +38,11 @@ class EventFilterService {
     String? location,
     String? category,
   }) async {
-    final response = await request.post(
-      '$baseUrl/saved-search/create/',
-      {
-        'name': name,
-        'location': location ?? '',
-        'category': category ?? '',
-      },
-    );
+    final response = await request.post('$baseUrl/saved-search/create/', {
+      'name': name,
+      'location': location ?? '',
+      'category': category ?? '',
+    });
     return response;
   }
 
@@ -68,21 +66,18 @@ class EventFilterService {
     String? location,
     String? category,
   }) async {
-    final response = await request.post(
-      '$baseUrl/saved-search/$id/update/',
-      {
-        'name': name,
-        'location': location ?? '',
-        'category': category ?? '',
-      },
-    );
+    final response = await request.post('$baseUrl/saved-search/$id/update/', {
+      'name': name,
+      'location': location ?? '',
+      'category': category ?? '',
+    });
     return response;
   }
 
   // Get category label in Indonesian
   static String getCategoryLabel(String? category) {
     if (category == null || category.isEmpty) return '';
-    
+
     const categories = {
       'running': 'Lari',
       'badminton': 'Badminton',

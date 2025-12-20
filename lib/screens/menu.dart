@@ -7,7 +7,7 @@ import 'package:gas_in/VenueModule/screens/venue_entry_list.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:gas_in/ForumModule/screens/forumMenu.dart';
-
+import 'package:gas_in/screens/login.dart'; // Update this path to your LoginPage location
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
@@ -18,9 +18,27 @@ class MyHomePage extends StatelessWidget {
     ItemHomepage("Forum", Icons.newspaper, Colors.deepPurple),
   ];
 
+  // fetch current user
+  Future<Map<String, dynamic>?> fetchCurrentUser(CookieRequest request) async {
+    try {
+      final response = await request.get(
+        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/auth/current-user/',
+      );
+      if (response is Map && response['data'] != null) {
+        return response['data'];
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching current user: $e');
+      return null;
+    }
+  }
+
   // fetch venue
   Future<List<VenueEntry>> fetchVenue(CookieRequest request) async {
-    final response = await request.get('http://localhost:8000/venue/api/json/');
+    final response = await request.get(
+      'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/venue/api/json/',
+    );
     List<VenueEntry> listVenues = [];
     for (var d in response) {
       if (d != null) {
@@ -34,7 +52,7 @@ class MyHomePage extends StatelessWidget {
   Future<List<dynamic>> fetchEvent(CookieRequest request) async {
     try {
       final response = await request.get(
-        'http://localhost:8000/event-maker/all/',
+        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event-maker/all/',
       );
 
       if (response is Map && response['data'] is List) {
@@ -63,34 +81,6 @@ class MyHomePage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black87),
         title: Row(
           children: [
-            Center(
-              child: Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16.0),
-                    child: Text(
-                      'Selamat datang di gas.in',
-                      style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 18.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  GridView.count(
-                    padding: const EdgeInsets.all(20),
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 3,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: items.map((ItemHomepage item) {
-                      return ItemCard(item);
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
             Expanded(
               child: Center(
                 child: Row(
@@ -117,15 +107,96 @@ class MyHomePage extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: Text(
-                "Login",
-                style: TextStyle(
-                  color: Colors.grey[800],
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+            FutureBuilder<Map<String, dynamic>?>(
+              future: fetchCurrentUser(request),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Padding(
+                    padding: EdgeInsets.only(right: 16),
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  );
+                } else if (snapshot.hasData && snapshot.data != null) {
+                  final user = snapshot.data!;
+                  final username = user['username'] ?? 'User';
+                  return PopupMenuButton(
+                    offset: const Offset(0, 50),
+                    borderRadius: BorderRadius.circular(6),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: Row(
+                          children: [
+                            const Icon(Icons.logout, color: Colors.red),
+                            const SizedBox(width: 12),
+                            const Text(
+                              "Logout",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        onTap: () async {
+                          await request.logout(
+                            'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/auth/logout/',
+                          );
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("You have been logged out"),
+                              ),
+                            );
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context) => LoginPage()),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.person, color: Colors.grey[800]),
+                          const SizedBox(width: 8),
+                          Text(
+                            username,
+                            style: TextStyle(
+                              color: Colors.grey[800],
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: GestureDetector(
+                      onTap: () {
+                        // Navigate to login page
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Navigate to login")),
+                        );
+                      },
+                      child: Text(
+                        "Login",
+                        style: TextStyle(
+                          color: Colors.grey[800],
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              },
             ),
           ],
         ),
@@ -136,8 +207,26 @@ class MyHomePage extends StatelessWidget {
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Center(
+              child: Column(
+                children: [
+                  GridView.count(
+                    padding: const EdgeInsets.all(20),
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    crossAxisCount: 3,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: items.map((ItemHomepage item) {
+                      return ItemCard(item);
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+
             const SizedBox(height: 24),
 
             // header section untuk event
@@ -329,66 +418,88 @@ class MyHomePage extends StatelessWidget {
 }
 
 class ItemHomepage {
- final String name;
- final IconData icon;
- final Color color;
+  final String name;
+  final IconData icon;
+  final Color color;
 
- ItemHomepage(this.name, this.icon, this.color);
+  ItemHomepage(this.name, this.icon, this.color);
 }
 
 class ItemCard extends StatelessWidget {
+  final ItemHomepage item;
 
-  final ItemHomepage item; 
-
-  const ItemCard(this.item, {super.key}); 
+  const ItemCard(this.item, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: item.color,
-      // Membuat sudut kartu melengkung.
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        // Aksi ketika kartu ditekan.
-        onTap: () {
-          // Menampilkan pesan SnackBar saat kartu ditekan.
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!"))
-            );
-          if (item.name == "Forum") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder:  (context) => ForumCommunity(),
-              )
-            );
-          }
-        },
-        // Container untuk menyimpan Icon dan Text
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          child: Center(
-            child: Column(
-              // Menyusun ikon dan teks di tengah kartu.
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  item.icon,
-                  color: Colors.white,
-                  size: 30.0,
-                ),
-                const Padding(padding: EdgeInsets.all(3)),
-                Text(
-                  item.name,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white),
+    return GestureDetector(
+      onTap: () {
+        // Menampilkan pesan SnackBar saat kartu ditekan.
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!")),
+          );
+        if (item.name == "Forum") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ForumCommunity()),
+          );
+        }
+        if (item.name == "Events") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ForumCommunity()),
+          );
+        }
+        if (item.name == "Venue") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => VenueEntryListPage()),
+          );
+        }
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Circular button dengan gradient
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [item.color, item.color.withValues(alpha: 0.7)],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: item.color.withValues(alpha: 0.4),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
+            child: Center(
+              child: Icon(item.icon, color: Colors.white, size: 40.0),
+            ),
           ),
-        ),
+          const SizedBox(height: 12),
+          // Text under the button
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(
+              item.name,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Color(0xFF1A1A2E),
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

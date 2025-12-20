@@ -37,7 +37,8 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
     final request = context.read<CookieRequest>();
 
     try {
-      String url = 'http://localhost:8000/event/api/events/?';
+      String url =
+          'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event/api/events/?';
       if (selectedLocation != null && selectedLocation!.isNotEmpty) {
         url += 'location=$selectedLocation&';
       }
@@ -487,7 +488,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
             child: thumbnail != null
                 ? Image.network(
-                    'http://localhost:8000$thumbnail',
+                    'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id$thumbnail',
                     height: 180,
                     width: double.infinity,
                     fit: BoxFit.cover,

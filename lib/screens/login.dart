@@ -206,11 +206,11 @@ class _LoginPageState extends State<LoginPage> {
                           height: 56,
                           child: ElevatedButton(
                             onPressed: () async {
-                              String username = _usernameController.text;
-                              String password = _passwordController.text;
+                              String username = _usernameController.text.trim();
+                              String password = _passwordController.text.trim();
 
                               final response = await request.login(
-                                "http://localhost:8000/auth/login/",
+                                "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/auth/login/",
                                 {'username': username, 'password': password},
                               );
 
@@ -224,7 +224,7 @@ class _LoginPageState extends State<LoginPage> {
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           isAdmin ? AdminPage() : MyHomePage(),
-                                          //MyHomePage(),
+                                      //MyHomePage(),
                                     ),
                                   );
                                   ScaffoldMessenger.of(context)
@@ -266,7 +266,7 @@ class _LoginPageState extends State<LoginPage> {
                               elevation: 0,
                             ),
                             child: const Text(
-                              'Login Account',
+                              'Login',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,

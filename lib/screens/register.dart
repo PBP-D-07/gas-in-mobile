@@ -19,7 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
-    
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -48,7 +48,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
               ),
-              
+
               // White Card Content
               Expanded(
                 child: Container(
@@ -84,7 +84,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                         const SizedBox(height: 40),
-                        
+
                         // Username Field
                         const Text(
                           'Username',
@@ -130,7 +130,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        
+
                         // Password Field
                         const Text(
                           'Password',
@@ -177,7 +177,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        
+
                         // Confirm Password Field
                         const Text(
                           'Confirm Password',
@@ -224,7 +224,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                         const SizedBox(height: 40),
-                        
+
                         // Register Button
                         SizedBox(
                           width: double.infinity,
@@ -233,17 +233,18 @@ class _RegisterPageState extends State<RegisterPage> {
                             onPressed: () async {
                               String username = _usernameController.text;
                               String password1 = _passwordController.text;
-                              String password2 = _confirmPasswordController.text;
+                              String password2 =
+                                  _confirmPasswordController.text;
 
                               final response = await request.postJson(
-                                "http://localhost:8000/auth/register/",
+                                "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/auth/register/",
                                 jsonEncode({
                                   "username": username,
                                   "password1": password1,
                                   "password2": password2,
                                 }),
                               );
-                              
+
                               if (context.mounted) {
                                 if (response['status'] == 'success') {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -284,7 +285,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        
+
                         // Sign In Link
                         Center(
                           child: GestureDetector(

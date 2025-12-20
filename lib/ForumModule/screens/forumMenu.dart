@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_in/AdminModule/widgets/left_drawer.dart';
 import 'package:gas_in/ForumModule/models/post_entry.dart';
 import 'package:gas_in/ForumModule/screens/post_detail.dart';
 import 'package:gas_in/ForumModule/screens/postlist_form.dart';
@@ -16,23 +17,27 @@ class ForumCommunity extends StatefulWidget {
 class _ForumCommunityState extends State<ForumCommunity> {
   String _currentFilter = 'all';
 
-  Future<List<PostEntry>> fetchPost(CookieRequest request, String filter) async {
-    final url = 'http://localhost:8000/forum/json/?filter=$filter';
+  Future<List<PostEntry>> fetchPost(
+    CookieRequest request,
+    String filter,
+  ) async {
+    final url =
+        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/forum/json/?filter=$filter';
 
     try {
       final data = await request.get(url);
-      
+
       if (data is Map && data.containsKey('error')) {
         throw Exception(data['message'] ?? 'Failed to load posts');
       }
-      
+
       List<PostEntry> listPost = [];
       for (var d in data) {
         if (d != null) {
           listPost.add(PostEntry.fromJson(d));
         }
       }
-      
+
       return listPost;
     } catch (e) {
       rethrow;
@@ -42,18 +47,13 @@ class _ForumCommunityState extends State<ForumCommunity> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFFE8D5F2),
+      drawer: LeftDrawer(),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.black),
-          onPressed: () {
-            // Menu action
-          },
-        ),
         title: const Text(
           'Community Forum',
           style: TextStyle(
@@ -69,9 +69,7 @@ class _ForumCommunityState extends State<ForumCommunity> {
               onPressed: () async {
                 await Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const PostFormPage(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const PostFormPage()),
                 );
                 setState(() {});
               },
@@ -84,7 +82,10 @@ class _ForumCommunityState extends State<ForumCommunity> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
               ),
             ),
           ),
@@ -96,7 +97,10 @@ class _ForumCommunityState extends State<ForumCommunity> {
           Container(
             color: Colors.white,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 12.0,
+              ),
               child: Row(
                 children: [
                   Expanded(
@@ -118,11 +122,9 @@ class _ForumCommunityState extends State<ForumCommunity> {
               ),
             ),
           ),
-          
+
           // Post List
-          Expanded(
-            child: _buildPostList(request, _currentFilter),
-          ),
+          Expanded(child: _buildPostList(request, _currentFilter)),
         ],
       ),
     );
@@ -160,11 +162,7 @@ class _ForumCommunityState extends State<ForumCommunity> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.login,
-              size: 80,
-              color: Colors.grey,
-            ),
+            const Icon(Icons.login, size: 80, color: Colors.grey),
             const SizedBox(height: 16),
             const Text(
               'Please login to see your posts',
@@ -181,7 +179,10 @@ class _ForumCommunityState extends State<ForumCommunity> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 12,
+                ),
               ),
               child: const Text('Login'),
             ),
@@ -218,9 +219,9 @@ class _ForumCommunityState extends State<ForumCommunity> {
                 const Icon(Icons.inbox, size: 60, color: Colors.grey),
                 const SizedBox(height: 16),
                 Text(
-                  filter == "my" 
-                    ? 'You haven\'t created any posts yet.'
-                    : 'There are no posts in Forum Community yet.',
+                  filter == "my"
+                      ? 'You haven\'t created any posts yet.'
+                      : 'There are no posts in Forum Community yet.',
                   style: const TextStyle(fontSize: 18, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
@@ -239,9 +240,8 @@ class _ForumCommunityState extends State<ForumCommunity> {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PostDetailPage(
-                        post: snapshot.data![index],
-                      ),
+                      builder: (context) =>
+                          PostDetailPage(post: snapshot.data![index]),
                     ),
                   );
                   setState(() {});

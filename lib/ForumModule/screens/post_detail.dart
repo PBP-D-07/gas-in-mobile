@@ -64,7 +64,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
 
     try {
       final response = await request.get(
-        'http://localhost:8000/forum/flutter/check-like/${widget.post.id}/',
+        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/forum/flutter/check-like/${widget.post.id}/',
       );
       setState(() {
         _isLiked = response['liked'] ?? false;
@@ -84,7 +84,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
 
     try {
       final response = await request.post(
-        'http://localhost:8000/forum/flutter/like/${widget.post.id}/',
+        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/forum/flutter/like/${widget.post.id}/',
         {},
       );
       setState(() {
@@ -100,7 +100,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
     final request = context.read<CookieRequest>();
     try {
       final response = await request.post(
-        'http://localhost:8000/forum/view/${widget.post.id}/',
+        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/forum/view/${widget.post.id}/',
         {},
       );
 
@@ -124,7 +124,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
 
     try {
       final response = await request.post(
-        'http://localhost:8000/forum/comment/${widget.post.id}/add/',
+        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/forum/comment/${widget.post.id}/add/',
         {'content': content},
       );
 
@@ -153,7 +153,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
 
     try {
       final response = await request.post(
-        'http://localhost:8000/forum/flutter/delete/${widget.post.id}/',
+        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/forum/flutter/delete/${widget.post.id}/',
         {},
       );
 
@@ -319,7 +319,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         top: Radius.circular(16),
                       ),
                       child: Image.network(
-                        'http://localhost:8000/forum/proxy-image/?url=${Uri.encodeComponent(widget.post.thumbnail!)}',
+                        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/forum/proxy-image/?url=${Uri.encodeComponent(widget.post.thumbnail!)}',
                         width: double.infinity,
                         height: 250,
                         fit: BoxFit.cover,

@@ -94,7 +94,7 @@ class LeftDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => EditEventPage(
-                    eventId: "83dbc83c-7356-43df-a966-2573e77e4e92",
+                    eventId: "124346bb-e8b6-49aa-ae46-f2ac1d37c229",
                   ),
                 ),
               );
@@ -111,7 +111,7 @@ class LeftDrawer extends StatelessWidget {
                 MaterialPageRoute(
                   settings: const RouteSettings(name: 'event detail'),
                   builder: (context) => EventDetailPage(
-                    eventId: "83dbc83c-7356-43df-a966-2573e77e4e92",
+                    eventId: "124346bb-e8b6-49aa-ae46-f2ac1d37c229",
                   ),
                 ),
               );
@@ -162,7 +162,9 @@ class LeftDrawer extends StatelessWidget {
               Navigator.pop(context);
               final request = context.read<CookieRequest>();
               try {
-                await request.get("http://localhost:8000/auth/logout/");
+                await request.get(
+                  "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/auth/logout/",
+                );
               } catch (e) {}
 
               Navigator.pushAndRemoveUntil(

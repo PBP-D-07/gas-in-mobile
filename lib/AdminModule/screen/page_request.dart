@@ -29,7 +29,7 @@ class _PageRequestState extends State<PageRequest> {
     setState(() => isLoading = true);
 
     try {
-      final response = await request.get('http://localhost:8000/admin/json/');
+      final response = await request.get('https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/admin/json/');
 
       if (response != null) {
         setState(() {
@@ -56,7 +56,7 @@ class _PageRequestState extends State<PageRequest> {
 
     try {
       final response = await request.post(
-        'http://localhost:8000/admin/events/update-status/$eventId/',
+        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/admin/events/update-status/$eventId/',
         {'status': status},
       );
 
@@ -84,7 +84,7 @@ class _PageRequestState extends State<PageRequest> {
 
     try {
       final response = await request.post(
-        'http://localhost:8000/admin/events/delete/$eventId/',
+        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/admin/events/delete/$eventId/',
         {},
       );
 

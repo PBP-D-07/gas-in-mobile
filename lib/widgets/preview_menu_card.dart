@@ -53,7 +53,7 @@ class PreviewCard extends StatelessWidget {
                   aspectRatio: 16 / 9,
                   child: thumbnail != null && thumbnail!.trim().isNotEmpty
                       ? Image.network(
-                          'http://localhost:8000/api/proxy-image/?url=${Uri.encodeComponent(thumbnail!)}',
+                          'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/api/proxy-image/?url=${Uri.encodeComponent(thumbnail!)}',
                           width: double.infinity,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>

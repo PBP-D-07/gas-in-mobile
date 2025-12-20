@@ -124,7 +124,7 @@ class VenueEntryCard extends StatelessWidget {
     final imageWidget = venue.thumbnail.trim().isNotEmpty
         ? CachedNetworkImage(
             imageUrl:
-                'http://localhost:8000/api/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
+                'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/api/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
             width: double.infinity,
             fit: BoxFit.cover,
             placeholder: (context, url) => Container(color: Colors.grey[300]),

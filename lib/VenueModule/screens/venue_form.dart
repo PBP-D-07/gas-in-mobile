@@ -340,7 +340,7 @@ class _VenueFormPageState extends State<VenueFormPage> {
                                 // kirim data ke backend
                                 try {
                                   final response = await request.postJson(
-                                    "http://localhost:8000/venue/create-venue-flutter/",
+                                    "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/venue/create-venue-flutter/",
                                     payload,
                                   );
 

@@ -56,7 +56,9 @@ class _EditEventPageState extends State<EditEventPage> {
 
   Future<void> fetchEventData() async {
     final response = await http.get(
-      Uri.parse("http://localhost:8000/event-maker/${widget.eventId}/"),
+      Uri.parse(
+        "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event-maker/${widget.eventId}/",
+      ),
     );
 
     if (response.statusCode == 200) {
@@ -458,7 +460,7 @@ class _EditEventPageState extends State<EditEventPage> {
                     }
 
                     final url = Uri.parse(
-                      "http://localhost:8000/event-maker/api/edit/${widget.eventId}/",
+                      "https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event-maker/api/edit/${widget.eventId}/",
                     );
 
                     var multipartRequest = http.MultipartRequest("POST", url);

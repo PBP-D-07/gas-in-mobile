@@ -58,7 +58,7 @@ class VenueDetailPage extends StatelessWidget {
     final imageWidget = venue.thumbnail.trim().isNotEmpty
         ? CachedNetworkImage(
             imageUrl:
-                'http://localhost:8000/api/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
+                'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/api/proxy-image/?url=${Uri.encodeComponent(venue.thumbnail)}',
             width: double.infinity,
             fit: BoxFit.cover,
             placeholder: (context, url) => Container(color: Colors.grey[300]),
@@ -273,7 +273,7 @@ class VenueDetailPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(8),
                                 child: img.trim().isNotEmpty
                                     ? Image.network(
-                                        'http://localhost:8000/api/proxy-image/?url=${Uri.encodeComponent(img)}',
+                                        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/api/proxy-image/?url=${Uri.encodeComponent(img)}',
                                         width: 140,
                                         height: 100,
                                         fit: BoxFit.cover,

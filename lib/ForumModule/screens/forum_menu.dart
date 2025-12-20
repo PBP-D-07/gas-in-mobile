@@ -109,7 +109,6 @@ class _ForumCommunityState extends State<ForumCommunity> {
         ],
         ),
 
-
         // body
         body: SizedBox.expand(
           child: Container(

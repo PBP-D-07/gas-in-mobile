@@ -51,22 +51,32 @@ class PreviewCard extends StatelessWidget {
                 ),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
-                  child: thumbnail != null && thumbnail!.trim().isNotEmpty
-                      ? Image.network(
-                          'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/api/proxy-image/?url=${Uri.encodeComponent(thumbnail!)}',
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Image.asset(
-                                'assets/venue.jpg',
-                                fit: BoxFit.cover,
-                              ),
-                        )
-                      : Image.asset(
-                          'assets/venue.jpg',
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
+                  child: () {
+                    final raw = thumbnail?.trim();
+                    if (raw == null || raw.isEmpty) {
+                      return Image.asset(
+                        'assets/venue.jpg',
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      );
+                    }
+
+                    // Resolve to absolute URL if API returns relative path
+                    final abs = raw.startsWith('http')
+                        ? raw
+                        : 'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id$raw';
+
+                    final proxied =
+                        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/api/proxy-image/?url=${Uri.encodeComponent(abs)}';
+
+                    return Image.network(
+                      proxied,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          Image.asset('assets/venue.jpg', fit: BoxFit.cover),
+                    );
+                  }(),
                 ),
               ),
 

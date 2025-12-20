@@ -4,6 +4,7 @@ import 'package:gas_in/widgets/preview_menu_card.dart';
 import 'package:gas_in/VenueModule/models/venue_model.dart';
 import 'package:gas_in/VenueModule/screens/venue_detail.dart';
 import 'package:gas_in/VenueModule/screens/venue_entry_list.dart';
+import 'package:gas_in/EventMakerModule/screens/event_detail.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:gas_in/ForumModule/screens/forumMenu.dart';
@@ -151,7 +152,9 @@ class MyHomePage extends StatelessWidget {
                               ),
                             );
                             Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (context) => LoginPage()),
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ),
                             );
                           }
                         },
@@ -169,7 +172,7 @@ class MyHomePage extends StatelessWidget {
                             style: TextStyle(
                               color: Colors.grey[800],
                               fontWeight: FontWeight.w500,
-                              fontSize: 16
+                              fontSize: 16,
                             ),
                           ),
                         ],
@@ -181,7 +184,6 @@ class MyHomePage extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 16),
                     child: GestureDetector(
                       onTap: () {
-                        // Navigate to login page
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Navigate to login")),
                         );
@@ -271,7 +273,25 @@ class MyHomePage extends StatelessWidget {
                           child: EventEntryCard(
                             event: event,
                             onTap: () {
-                              print("Event tapped");
+                              final id = event['id']?.toString();
+                              if (id == null || id.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Event ID not found'),
+                                  ),
+                                );
+                                return;
+                              }
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  settings: const RouteSettings(
+                                    name: 'event detail',
+                                  ),
+                                  builder: (context) =>
+                                      EventDetailPage(eventId: id),
+                                ),
+                              );
                             },
                           ),
                         );
@@ -359,21 +379,37 @@ class MyHomePage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
+              // title
+              DefaultTextStyle.merge(
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w900,
-                  color: Color(0xFF1A1A2E),
                   letterSpacing: -0.5,
                 ),
+                child: ShaderMask(
+                  shaderCallback: (bounds) =>
+                      const LinearGradient(
+                        colors: [Color(0xFF4338CA), Color(0xFF6B21A8)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ).createShader(
+                        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                      ),
+                  child: Text(
+                    title,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
               ),
+
               const SizedBox(height: 4),
+
+              // description
               Text(
                 subtitle,
                 style: TextStyle(
@@ -384,14 +420,19 @@ class MyHomePage extends StatelessWidget {
               ),
             ],
           ),
+
+          // tombol see all navigasi ke page
           GestureDetector(
             onTap: onSeeAllTap,
-            child: Text(
-              'See All',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).primaryColor,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: Text(
+                'See All',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
             ),
           ),

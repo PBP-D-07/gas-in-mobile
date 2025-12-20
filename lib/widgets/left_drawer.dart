@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gas_in/screens/menu.dart';
 import 'package:gas_in/EventMakerModule/screens/create_event.dart';
-import 'package:gas_in/VenueModule/screens/venue_entry_list.dart';
 import 'package:gas_in/VenueModule/screens/venue_form.dart';
 import 'package:gas_in/ForumModule/screens/postlist_form.dart';
 import 'package:gas_in/screens/login.dart';
@@ -83,20 +82,6 @@ class LeftDrawer extends StatelessWidget {
               );
             },
           ),
-          // venue book menu
-          _buildDrawerItem(
-            title: 'Book Venue',
-            isActive: activeKey == 'book venue',
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  settings: const RouteSettings(name: 'book venue'),
-                  builder: (context) => VenueEntryListPage(),
-                ),
-              );
-            },
-          ),
 
           // venue form menu
           _buildDrawerItem(
@@ -112,7 +97,7 @@ class LeftDrawer extends StatelessWidget {
               );
             },
           ),
-          
+
           _buildDrawerItem(
             title: 'Create Post',
             isActive: activeKey == 'create post',

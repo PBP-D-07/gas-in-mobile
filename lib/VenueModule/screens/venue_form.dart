@@ -89,14 +89,22 @@ class _VenueFormPageState extends State<VenueFormPage> {
       extendBodyBehindAppBar: true,
       // appBar dengan drawer
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         title: const Text(''),
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF1A237E),
         elevation: 5,
         shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
+
       // left drawer
       drawer: const LeftDrawer(),
+
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -360,7 +368,7 @@ class _VenueFormPageState extends State<VenueFormPage> {
                                           backgroundColor: Colors.purple[800],
                                         ),
                                       );
-                                      Navigator.pushReplacement(
+                                      Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => VenueFormPage(),

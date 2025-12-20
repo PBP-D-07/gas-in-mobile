@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gas_in/login.dart'; // Import login page kamu
+import 'package:gas_in/screens/login.dart'; // Import login page kamu
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -94,13 +94,11 @@ class _SplashScreenState extends State<SplashScreen>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // Logo standalone dengan shadow
-                      Container(
-                        child: Image.asset(
-                          'assets/logo_gasin.png',
-                          width: 150,
-                          height: 150,
-                          fit: BoxFit.contain,
-                        ),
+                      Image.asset(
+                        'assets/logo_gasin.png',
+                        width: 150,
+                        height: 150,
+                        fit: BoxFit.contain,
                       ),
                       const SizedBox(height: 30),
                       // App name dengan gradient text

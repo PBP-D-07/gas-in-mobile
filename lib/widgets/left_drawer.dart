@@ -5,7 +5,7 @@ import 'package:gas_in/screens/menu.dart';
 import 'package:gas_in/EventMakerModule/screens/create_event.dart';
 import 'package:gas_in/VenueModule/screens/venue_entry_list.dart';
 import 'package:gas_in/VenueModule/screens/venue_form.dart';
-import 'package:gas_in/login.dart';
+import 'package:gas_in/screens/login.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 

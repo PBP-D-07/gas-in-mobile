@@ -1,7 +1,7 @@
 import 'package:gas_in/AdminModule/screen/menu_admin.dart';
 import 'package:gas_in/screens/menu.dart';
 import 'package:flutter/material.dart';
-import 'package:gas_in/register.dart';
+import 'package:gas_in/screens/register.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 

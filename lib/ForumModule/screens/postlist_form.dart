@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gas_in/ForumModule/screens/forumMenu.dart';
-import 'package:gas_in/main.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';

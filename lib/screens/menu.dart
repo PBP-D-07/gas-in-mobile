@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_in/EventModule/screens/discover_events.dart';
 import 'package:gas_in/theme/app_text.dart';
 import 'package:gas_in/widgets/left_drawer.dart';
 import 'package:gas_in/widgets/preview_menu_card.dart';
@@ -8,7 +9,7 @@ import 'package:gas_in/VenueModule/screens/venue_entry_list.dart';
 import 'package:gas_in/EventMakerModule/screens/event_detail.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:gas_in/ForumModule/screens/forumMenu.dart';
+import 'package:gas_in/ForumModule/screens/forum_menu.dart';
 import 'package:gas_in/ForumModule/models/post_entry.dart';
 import 'package:gas_in/ForumModule/widgets/post_card_entry.dart';
 import 'package:gas_in/ForumModule/screens/post_detail.dart';
@@ -587,7 +588,7 @@ class ItemCard extends StatelessWidget {
         if (item.name == "Events") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ForumCommunity()),
+            MaterialPageRoute(builder: (context) => DiscoverEventsPage()),
           );
         }
         if (item.name == "Venue") {

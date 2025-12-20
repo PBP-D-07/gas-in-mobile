@@ -90,7 +90,7 @@ class _VenueEntryListPageState extends State<VenueEntryListPage> {
     final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text(''),
+        title: const Text('Book Venues'),
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF1A237E),
         elevation: 5,

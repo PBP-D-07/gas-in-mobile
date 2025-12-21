@@ -54,10 +54,10 @@ class PreviewCard extends StatelessWidget {
                   child: () {
                     final raw = thumbnail?.trim();
                     if (raw == null || raw.isEmpty) {
-                      return Image.asset(
-                        'assets/venue.jpg',
-                        width: double.infinity,
-                        fit: BoxFit.cover,
+                      return Container(
+                        height: 250,
+                        color: Colors.grey.shade300,
+                        child: const Center(child: Icon(Icons.image, size: 60)),
                       );
                     }
 
@@ -73,8 +73,11 @@ class PreviewCard extends StatelessWidget {
                       proxied,
                       width: double.infinity,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          Image.asset('assets/venue.jpg', fit: BoxFit.cover),
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: 250,
+                        color: Colors.grey.shade300,
+                        child: const Center(child: Icon(Icons.image, size: 60)),
+                      ),
                     );
                   }(),
                 ),

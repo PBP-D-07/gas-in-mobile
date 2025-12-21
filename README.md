@@ -113,4 +113,16 @@ Pengguna dapat membuat akun baru dengan mengisi data seperti:
   Admin berfungsi sebagai gerbang pengawasan yang menilai setiap pengajuan event sebelum ditayangkan ke publik. Ia memastikan seluruh acara telah memenuhi aspek kelayakan, legalitas, serta kelengkapan konten, sehingga hanya event yang sesuai standar yang dapat dipublikasikan.
 
 ### Link Figma
+
 https://www.figma.com/design/HO342H66jYtb8nkXzlqyhW/PBP_D07?node-id=0-1&t=DUoUmW6elHnmc3Rd-1
+
+### Link APK Release
+
+### Link Bonus Video Promosi
+
+### Link Bonus Individu
+
+Nezzaluna Azzahra:
+
+- Advance Widget: https://medium.com/@nezzaluna10/enhance-user-experience-with-user-friendly-animation-loading-state-cba6daa730eb
+- Meningkatkan Performa Aplikasi: https://medium.com/@nezzaluna10/enhance-app-performance-12ee63f0104f

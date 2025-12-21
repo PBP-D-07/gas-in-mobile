@@ -158,7 +158,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // ⬅️ PENTING
+                crossAxisAlignment: CrossAxisAlignment.start, 
                 children: [
                   ShaderMask(
                     shaderCallback: (bounds) =>
@@ -181,7 +181,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                       ),
                     ),
                   ),
-              const SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
                   Text(
                     'Explore sports events near you.',
@@ -192,7 +192,6 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
 
               const SizedBox(height: 20),
 
-              // Action Buttons
               Row(
                 children: [
                   Expanded(
@@ -261,7 +260,6 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
               ),
               const SizedBox(height: 30),
 
-              // Filter Section
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -287,7 +285,6 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                     ),
                     const SizedBox(height: 15),
 
-                    // Filter Lokasi
                     const Text(
                       'Lokasi',
                       style: TextStyle(
@@ -305,7 +302,6 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                     }),
                     const SizedBox(height: 15),
 
-                    // Filter Kategori
                     const Text(
                       'Kategori Olahraga',
                       style: TextStyle(
@@ -323,7 +319,6 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                     }),
                     const SizedBox(height: 20),
 
-                    // Reset and Save Buttons
                     Row(
                       children: [
                         Expanded(
@@ -373,7 +368,6 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
               ),
               const SizedBox(height: 30),
 
-              // Event List
               isLoading
                   ? const Center(
                       child: Padding(
@@ -506,6 +500,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.only(bottom: 16),
+      clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () {
@@ -527,26 +522,25 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
         },
         borderRadius: BorderRadius.circular(12),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Image Section
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(12),
               ),
               child: thumbnail != null && thumbnail.isNotEmpty
                   ? Image.network(
-                      // Handle both relative and absolute URLs
                       thumbnail.startsWith('http')
                           ? thumbnail
                           : 'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id$thumbnail',
                       height: 180,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+                      width: double.infinity, 
+                      fit: BoxFit.cover, 
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) return child;
                         return Container(
                           height: 180,
+                          width: double.infinity,
                           color: Colors.grey[300],
                           child: Center(
                             child: CircularProgressIndicator(
@@ -560,9 +554,9 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                         );
                       },
                       errorBuilder: (context, error, stackTrace) {
-                        print('Error loading image for event $eventId: $error');
                         return Container(
                           height: 180,
+                          width: double.infinity, 
                           color: Colors.grey[300],
                           child: const Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -587,6 +581,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                     )
                   : Container(
                       height: 180,
+                      width: double.infinity,
                       color: Colors.grey[300],
                       child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -602,13 +597,11 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                     ),
             ),
 
-            // Content Section
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Category Badge
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
@@ -629,7 +622,6 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                   ),
                   const SizedBox(height: 8),
 
-                  // Event Name
                   Text(
                     name,
                     style: const TextStyle(
@@ -641,7 +633,6 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                   ),
                   const SizedBox(height: 4),
 
-                  // Location
                   Row(
                     children: [
                       const Icon(
@@ -661,7 +652,6 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                     ],
                   ),
 
-                  // Date
                   if (eventDate != null) ...[
                     const SizedBox(height: 4),
                     Row(
@@ -688,7 +678,6 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                   ],
                   const SizedBox(height: 8),
 
-                  // Description
                   Text(
                     description,
                     maxLines: 2,
@@ -697,7 +686,6 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                   ),
                   const SizedBox(height: 12),
 
-                  // View Details Button
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton.icon(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_in/VenueModule/screens/venue_entry_list.dart';
 import 'package:gas_in/widgets/left_drawer.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
@@ -345,7 +346,8 @@ class _VenueFormPageState extends State<VenueFormPage> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => VenueFormPage(),
+                                        builder: (context) =>
+                                            VenueEntryListPage(),
                                       ),
                                     );
                                   } else {

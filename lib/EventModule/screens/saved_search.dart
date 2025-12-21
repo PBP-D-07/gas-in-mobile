@@ -26,11 +26,11 @@ class _SavedSearchesPageState extends State<SavedSearchesPage> {
 
     try {
       final response = await request.get(
-        'http://localhost:8000/event/api/saved-search/',
+        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event/api/saved-search/',
       );
-      
+
       print('Response from saved searches: $response');
-      
+
       final savedSearchResponse = SavedSearchResponse.fromJson(response);
       setState(() {
         savedSearches = savedSearchResponse.data;
@@ -40,9 +40,9 @@ class _SavedSearchesPageState extends State<SavedSearchesPage> {
       print('Error loading saved searches: $e');
       setState(() => isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       }
     }
   }
@@ -51,9 +51,7 @@ class _SavedSearchesPageState extends State<SavedSearchesPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Hapus Saved Search'),
         content: const Text(
           'Apakah Anda yakin ingin menghapus saved search ini?',
@@ -80,12 +78,12 @@ class _SavedSearchesPageState extends State<SavedSearchesPage> {
     final request = context.read<CookieRequest>();
     try {
       final response = await request.post(
-        'http://localhost:8000/event/api/saved-search/$id/delete/',
+        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event/api/saved-search/$id/delete/',
         {"delete": "true"},
       );
-      
+
       print('Delete response: $response');
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -98,9 +96,9 @@ class _SavedSearchesPageState extends State<SavedSearchesPage> {
     } catch (e) {
       print('Error deleting saved search: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       }
     }
   }
@@ -135,165 +133,151 @@ class _SavedSearchesPageState extends State<SavedSearchesPage> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xFF4338CA), // Indigo 700
-                Color(0xFF6B21A8), // Purple 800
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
+        backgroundColor: Colors.white,
+        foregroundColor: const Color(0xFF1A237E),
+        elevation: 5,
+        shadowColor: Colors.black.withValues(alpha: 0.5),
         title: const Text('My Saved Searches'),
       ),
       body: isLoading
           ? const Center(
-              child: CircularProgressIndicator(
-                color: Colors.deepPurple,
-              ),
+              child: CircularProgressIndicator(color: Colors.deepPurple),
             )
           : savedSearches.isEmpty
-              ? Center(
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: Colors.deepPurple.shade50,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.bookmark_border,
+                        size: 64,
+                        color: Colors.deepPurple.shade200,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'Belum ada saved search',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Simpan filter favorit Anda untuk akses cepat',
+                      style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: savedSearches.length,
+              itemBuilder: (context, index) {
+                final search = savedSearches[index];
+                final filters = <String>[];
+
+                if (search.location.isNotEmpty) {
+                  filters.add('📍 ${search.location}');
+                }
+                if (search.category.isNotEmpty) {
+                  filters.add('🏃 ${getCategoryLabel(search.category)}');
+                }
+
+                return Card(
+                  elevation: 2,
+                  margin: const EdgeInsets.only(bottom: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: Padding(
-                    padding: const EdgeInsets.all(32.0),
+                    padding: const EdgeInsets.all(16),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                search.name,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () => deleteSavedSearch(search.id),
+                              icon: const Icon(Icons.delete_outline),
+                              color: Colors.red,
+                              style: IconButton.styleFrom(
+                                backgroundColor: Colors.red[50],
+                              ),
+                              tooltip: 'Hapus',
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
                         Container(
-                          padding: const EdgeInsets.all(24),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.deepPurple.shade50,
-                            shape: BoxShape.circle,
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Icon(
-                            Icons.bookmark_border,
-                            size: 64,
-                            color: Colors.deepPurple.shade200,
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        const Text(
-                          'Belum ada saved search',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                          child: Text(
+                            filters.isEmpty
+                                ? 'Semua event'
+                                : filters.join(' • '),
+                            style: TextStyle(
+                              color: Colors.deepPurple.shade700,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 12),
-                        Text(
-                          'Simpan filter favorit Anda untuk akses cepat',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () => applySavedSearch(search),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.deepPurple,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text(
+                              'Apply Filter',
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
                           ),
-                          textAlign: TextAlign.center,
                         ),
                       ],
                     ),
                   ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: savedSearches.length,
-                  itemBuilder: (context, index) {
-                    final search = savedSearches[index];
-                    final filters = <String>[];
-
-                    if (search.location.isNotEmpty) {
-                      filters.add('📍 ${search.location}');
-                    }
-                    if (search.category.isNotEmpty) {
-                      filters.add('🏃 ${getCategoryLabel(search.category)}');
-                    }
-
-                    return Card(
-                      elevation: 2,
-                      margin: const EdgeInsets.only(bottom: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    search.name,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () => deleteSavedSearch(search.id),
-                                  icon: const Icon(Icons.delete_outline),
-                                  color: Colors.red,
-                                  style: IconButton.styleFrom(
-                                    backgroundColor: Colors.red[50],
-                                  ),
-                                  tooltip: 'Hapus',
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.deepPurple.shade50,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                filters.isEmpty
-                                    ? 'Semua event'
-                                    : filters.join(' • '),
-                                style: TextStyle(
-                                  color: Colors.deepPurple.shade700,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () => applySavedSearch(search),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.deepPurple,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Apply Filter',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                );
+              },
+            ),
     );
   }
 }

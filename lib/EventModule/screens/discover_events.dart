@@ -138,22 +138,17 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
+        foregroundColor: Color(0xFF1A1B4B),
         elevation: 0,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xFF4338CA), // Indigo 700
-                Color(0xFF6B21A8), // Purple 800
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+        title: const Text(
+          'Discover Events',
+          style: TextStyle(
+            color: Color(0xFF1A1B4B),
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
         ),
-        title: const Text('Discover Events'),
       ),
       drawer: const LeftDrawer(),
       body: SingleChildScrollView(
@@ -162,14 +157,39 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Discover Events',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start, // ⬅️ PENTING
+                children: [
+                  ShaderMask(
+                    shaderCallback: (bounds) =>
+                        LinearGradient(
+                          colors: [
+                            Colors.deepPurple,
+                            Colors.deepPurple.withValues(alpha: 0.7),
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ).createShader(
+                          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                        ),
+                    child: const Text(
+                      'Discover Exciting Events Near You',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+              const SizedBox(height: 10),
+
+                  Text(
+                    'Explore sports events near you.',
+                    style: TextStyle(fontSize: 18, color: Colors.black),
+                  ),
+                ],
               ),
-              const Text(
-                'Temukan event olahraga yang sesuai dengan minat Anda',
-                style: TextStyle(color: Colors.grey, fontSize: 16),
-              ),
+
               const SizedBox(height: 20),
 
               // Action Buttons
@@ -275,6 +295,8 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+                    const SizedBox(height: 8),
+
                     _buildFilterDropdown('location', (value) {
                       setState(() {
                         selectedLocation = value;
@@ -291,6 +313,8 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+                    const SizedBox(height: 8),
+
                     _buildFilterDropdown('category', (value) {
                       setState(() {
                         selectedCategory = value;
@@ -447,14 +471,14 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                   value: value,
                   child: Text(value),
                 );
-              }).toList()
+              })
             else
               ...categoryOptions.map((cat) {
                 return DropdownMenuItem<String>(
                   value: cat['value'],
                   child: Text(cat['label']!),
                 );
-              }).toList(),
+              }),
           ],
           onChanged: onChanged,
         ),

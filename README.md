@@ -117,9 +117,9 @@ Pengguna dapat membuat akun baru dengan mengisi data seperti:
 https://www.figma.com/design/HO342H66jYtb8nkXzlqyhW/PBP_D07?node-id=0-1&t=DUoUmW6elHnmc3Rd-1
 
 ### Link APK Release
-
+[gasin](https://app.bitrise.io/app/58fc1f89-8559-445d-8d1b-f0c2fc092a39/installable-artifacts/f7e009a8733986dc)
 ### Link Bonus Video Promosi
-
+[ads](https://www.canva.com/design/DAG8HoSj-XY/DeVXQswsVIKzKyQlgZZPqQ/edit?utm_content=DAG8HoSj-XY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 ### Link Bonus Individu
 
 Nezzaluna Azzahra:

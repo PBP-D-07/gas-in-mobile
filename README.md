@@ -113,11 +113,10 @@ Pengguna dapat membuat akun baru dengan mengisi data seperti:
   Admin berfungsi sebagai gerbang pengawasan yang menilai setiap pengajuan event sebelum ditayangkan ke publik. Ia memastikan seluruh acara telah memenuhi aspek kelayakan, legalitas, serta kelengkapan konten, sehingga hanya event yang sesuai standar yang dapat dipublikasikan.
 
 ### Link Figma
-
-https://www.figma.com/design/HO342H66jYtb8nkXzlqyhW/PBP_D07?node-id=0-1&t=DUoUmW6elHnmc3Rd-1
+[figma](https://www.figma.com/design/HO342H66jYtb8nkXzlqyhW/PBP_D07?node-id=0-1&t=DUoUmW6elHnmc3Rd-1)
 
 ### Link APK Release
-[gasin](https://app.bitrise.io/app/58fc1f89-8559-445d-8d1b-f0c2fc092a39/installable-artifacts/f7e009a8733986dc)
+[gasin](https://app.bitrise.io/app/58fc1f89-8559-445d-8d1b-f0c2fc092a39/installable-artifacts/f7e009a8733986dc/public-install-page/80083613410c7ba3f4ab706e977280a8)
 ### Link Bonus Video Promosi
 [ads](https://www.canva.com/design/DAG8HoSj-XY/DeVXQswsVIKzKyQlgZZPqQ/edit?utm_content=DAG8HoSj-XY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 ### Link Bonus Individu

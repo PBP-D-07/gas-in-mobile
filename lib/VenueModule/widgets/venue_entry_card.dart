@@ -128,13 +128,16 @@ class VenueEntryCard extends StatelessWidget {
             width: double.infinity,
             fit: BoxFit.cover,
             placeholder: (context, url) => Container(color: Colors.grey[300]),
-            errorWidget: (context, url, error) =>
-                Image.asset('assets/venue.jpg', fit: BoxFit.cover),
+            errorWidget: (context, url, error) => Container(
+              height: 250,
+              color: Colors.grey.shade300,
+              child: const Center(child: Icon(Icons.image, size: 60)),
+            ),
           )
-        : Image.asset(
-            'assets/venue.jpg',
-            width: double.infinity,
-            fit: BoxFit.cover,
+        : Container(
+            height: 250,
+            color: Colors.grey.shade300,
+            child: const Center(child: Icon(Icons.image, size: 60)),
           );
 
     if (heroTag == null) {

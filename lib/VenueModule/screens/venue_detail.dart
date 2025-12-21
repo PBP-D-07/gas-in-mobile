@@ -62,13 +62,16 @@ class VenueDetailPage extends StatelessWidget {
             width: double.infinity,
             fit: BoxFit.cover,
             placeholder: (context, url) => Container(color: Colors.grey[300]),
-            errorWidget: (context, url, error) =>
-                Image.asset('assets/venue.jpg', fit: BoxFit.cover),
+            errorWidget: (context, url, error) => Container(
+              height: 250,
+              color: Colors.grey.shade300,
+              child: const Center(child: Icon(Icons.image, size: 60)),
+            ),
           )
-        : Image.asset(
-            'assets/venue.jpg',
-            width: double.infinity,
-            fit: BoxFit.cover,
+        : Container(
+            height: 250,
+            color: Colors.grey.shade300,
+            child: const Center(child: Icon(Icons.image, size: 60)),
           );
 
     if (heroTag == null) {
@@ -277,18 +280,22 @@ class VenueDetailPage extends StatelessWidget {
                                         width: 140,
                                         height: 100,
                                         fit: BoxFit.cover,
-                                        errorBuilder: (c, e, s) => Image.asset(
-                                          'assets/venue.jpg',
+                                        errorBuilder: (c, e, s) => Container(
                                           width: 140,
                                           height: 100,
-                                          fit: BoxFit.cover,
+                                          color: Colors.grey.shade300,
+                                          child: const Center(
+                                            child: Icon(Icons.image, size: 40),
+                                          ),
                                         ),
                                       )
-                                    : Image.asset(
-                                        'assets/venue.jpg',
+                                    : Container(
                                         width: 140,
                                         height: 100,
-                                        fit: BoxFit.cover,
+                                        color: Colors.grey.shade300,
+                                        child: const Center(
+                                          child: Icon(Icons.image, size: 40),
+                                        ),
                                       ),
                               );
                             },

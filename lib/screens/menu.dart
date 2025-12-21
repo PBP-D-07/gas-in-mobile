@@ -273,9 +273,8 @@ class MyHomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    settings: const RouteSettings(name: 'event detail'),
-                    builder: (context) =>
-                        const VenueEntryListPage(drawerPage: 'event detail'),
+                    settings: const RouteSettings(name: 'discover events'),
+                    builder: (context) => const DiscoverEventsPage(),
                   ),
                 );
               },

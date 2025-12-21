@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_in/EventMakerModule/screens/event_detail.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:gas_in/EventModule/screens/saved_search.dart';
@@ -137,22 +138,17 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
+        foregroundColor: Color(0xFF1A1B4B),
         elevation: 0,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xFF4338CA), // Indigo 700
-                Color(0xFF6B21A8), // Purple 800
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+        title: const Text(
+          'Discover Events',
+          style: TextStyle(
+            color: Color(0xFF1A1B4B),
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
         ),
-        title: const Text('Discover Events'),
       ),
       drawer: const LeftDrawer(),
       body: SingleChildScrollView(
@@ -161,14 +157,39 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Discover Events',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start, // ⬅️ PENTING
+                children: [
+                  ShaderMask(
+                    shaderCallback: (bounds) =>
+                        LinearGradient(
+                          colors: [
+                            Colors.deepPurple,
+                            Colors.deepPurple.withValues(alpha: 0.7),
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ).createShader(
+                          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                        ),
+                    child: const Text(
+                      'Discover Exciting Events Near You',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+              const SizedBox(height: 10),
+
+                  Text(
+                    'Explore sports events near you.',
+                    style: TextStyle(fontSize: 18, color: Colors.black),
+                  ),
+                ],
               ),
-              const Text(
-                'Temukan event olahraga yang sesuai dengan minat Anda',
-                style: TextStyle(color: Colors.grey, fontSize: 16),
-              ),
+
               const SizedBox(height: 20),
 
               // Action Buttons
@@ -274,6 +295,8 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+                    const SizedBox(height: 8),
+
                     _buildFilterDropdown('location', (value) {
                       setState(() {
                         selectedLocation = value;
@@ -290,6 +313,8 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+                    const SizedBox(height: 8),
+
                     _buildFilterDropdown('category', (value) {
                       setState(() {
                         selectedCategory = value;
@@ -446,14 +471,14 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                   value: value,
                   child: Text(value),
                 );
-              }).toList()
+              })
             else
               ...categoryOptions.map((cat) {
                 return DropdownMenuItem<String>(
                   value: cat['value'],
                   child: Text(cat['label']!),
                 );
-              }).toList(),
+              }),
           ],
           onChanged: onChanged,
         ),
@@ -462,6 +487,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
   }
 
   Widget _buildEventCard(dynamic event) {
+    final String eventId = event['id'] ?? '';
     final String name = event['name'] ?? 'No Name';
     final String description = event['description'] ?? '';
     final String location = event['location'] ?? '';
@@ -481,109 +507,223 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
       elevation: 4,
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-            child: thumbnail != null
-                ? Image.network(
-                    'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id$thumbnail',
-                    height: 180,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        height: 180,
-                        color: Colors.grey[300],
-                        child: const Icon(
-                          Icons.image_not_supported,
-                          size: 50,
-                          color: Colors.grey,
-                        ),
-                      );
-                    },
-                  )
-                : Container(
-                    height: 180,
-                    color: Colors.grey[300],
-                    child: const Icon(
-                      Icons.image,
-                      size: 50,
-                      color: Colors.grey,
+      child: InkWell(
+        onTap: () {
+          if (eventId.isNotEmpty) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EventDetailPage(eventId: eventId),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Event ID tidak valid'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image Section
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(12),
+              ),
+              child: thumbnail != null && thumbnail.isNotEmpty
+                  ? Image.network(
+                      // Handle both relative and absolute URLs
+                      thumbnail.startsWith('http')
+                          ? thumbnail
+                          : 'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id$thumbnail',
+                      height: 180,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          height: 180,
+                          color: Colors.grey[300],
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                  : null,
+                              color: Colors.deepPurple,
+                            ),
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        print('Error loading image for event $eventId: $error');
+                        return Container(
+                          height: 180,
+                          color: Colors.grey[300],
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.image_not_supported,
+                                size: 50,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                'Image not available',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    )
+                  : Container(
+                      height: 180,
+                      color: Colors.grey[300],
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.image, size: 50, color: Colors.grey),
+                          SizedBox(height: 8),
+                          Text(
+                            'No image',
+                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+            ),
+
+            // Content Section
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Category Badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.deepPurple.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      getCategoryLabel(category),
+                      style: const TextStyle(
+                        color: Colors.deepPurple,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    getCategoryLabel(category),
+                  const SizedBox(height: 8),
+
+                  // Event Name
+                  Text(
+                    name,
                     style: const TextStyle(
-                      color: Colors.deepPurple,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      fontSize: 12,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, size: 16, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Text(location, style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
-                if (eventDate != null) ...[
                   const SizedBox(height: 4),
+
+                  // Location
                   Row(
                     children: [
                       const Icon(
-                        Icons.calendar_today,
+                        Icons.location_on,
                         size: 16,
                         color: Colors.grey,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        DateFormat(
-                          'EEEE, dd MMM yyyy HH:mm',
-                          'id_ID',
-                        ).format(eventDate),
-                        style: const TextStyle(color: Colors.grey),
+                      Expanded(
+                        child: Text(
+                          location,
+                          style: const TextStyle(color: Colors.grey),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),
+
+                  // Date
+                  if (eventDate != null) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.calendar_today,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            DateFormat(
+                              'EEEE, dd MMM yyyy HH:mm',
+                              'id_ID',
+                            ).format(eventDate),
+                            style: const TextStyle(color: Colors.grey),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                  const SizedBox(height: 8),
+
+                  // Description
+                  Text(
+                    description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // View Details Button
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        if (eventId.isNotEmpty) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  EventDetailPage(eventId: eventId),
+                            ),
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.arrow_forward, size: 16),
+                      label: const Text('View Details'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.deepPurple,
+                      ),
+                    ),
+                  ),
                 ],
-                const SizedBox(height: 8),
-                Text(
-                  description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.grey),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

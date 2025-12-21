@@ -132,7 +132,7 @@ class _PageRequestState extends State<PageRequest> {
                 IconButton(
                   icon: const Icon(
                     Icons.arrow_back,
-                    color: Color(0xFF2D3436),
+                    color: Colors.white,
                     size: 24,
                   ),
                   onPressed: () {
@@ -144,7 +144,7 @@ class _PageRequestState extends State<PageRequest> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE8E5FF),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
@@ -160,7 +160,7 @@ class _PageRequestState extends State<PageRequest> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF2D3436),
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -180,7 +180,7 @@ class _PageRequestState extends State<PageRequest> {
                       title: 'Pending Requests',
                       count: pendingEvents.length,
                       color: const Color(0xFFFFFDE7),
-                      borderColor: Colors.yellowAccent,
+                      borderColor: Colors.lime,
                       icon: Icons.pending_actions,
                     ),
                   ),
@@ -223,7 +223,7 @@ class _PageRequestState extends State<PageRequest> {
                           title: 'Request Screening',
                           count: pendingEvents.length,
                           color: const Color(0xFFFFFDE7),
-                          borderColor: Colors.yellowAccent,
+                          borderColor: Colors.lime,
                           events: pendingEvents,
                           status: 'pending',
                         ),

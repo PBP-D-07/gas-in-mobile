@@ -151,7 +151,7 @@ class _PageUsersState extends State<PageUsers> {
                 IconButton(
                   icon: const Icon(
                     Icons.arrow_back,
-                    color: Color(0xFF2D3436),
+                    color: Colors.white,
                     size: 24,
                   ),
                   onPressed: () {
@@ -163,7 +163,7 @@ class _PageUsersState extends State<PageUsers> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE8E5FF),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
@@ -179,109 +179,91 @@ class _PageUsersState extends State<PageUsers> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF2D3436),
+                      color: Colors.white,
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.refresh, color: Color(0xFF2D3436)),
+                  icon: const Icon(Icons.refresh, color: Colors.white),
                   onPressed: _loadUsers,
                   tooltip: 'Refresh',
                 ),
               ],
             ),
           ),
-
-          // Overview Cards
-          if (!isLoading && errorMessage == null)
-            Container(
-              padding: const EdgeInsets.all(24),
-              child: Row(
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
                 children: [
-                  // Total Users Card
-                  Expanded(
-                    child: _buildOverviewCard(
-                      title: 'Total Users',
-                      count: users.length,
-                      color: const Color(0xFFE3F2FD),
-                      borderColor: Colors.blueAccent,
-                      icon: Icons.people,
+                  // Overview Cards (IKUT SCROLL)
+                  if (!isLoading && errorMessage == null)
+                    Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _buildOverviewCard(
+                              title: 'Total Users',
+                              count: users.length,
+                              color: const Color(0xFFE3F2FD),
+                              borderColor: Colors.blueAccent,
+                              icon: Icons.people,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildOverviewCard(
+                              title: 'Admin Users',
+                              count: adminUsers.length,
+                              color: const Color(0xFFFFEBEE),
+                              borderColor: Colors.redAccent,
+                              icon: Icons.admin_panel_settings,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildOverviewCard(
+                              title: 'Regular Users',
+                              count: regularUsers.length,
+                              color: const Color(0xFFE8F5E9),
+                              borderColor: Colors.greenAccent,
+                              icon: Icons.person,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Admin Users Card
-                  Expanded(
-                    child: _buildOverviewCard(
-                      title: 'Admin Users',
-                      count: adminUsers.length,
-                      color: const Color(0xFFFFEBEE),
-                      borderColor: Colors.redAccent,
-                      icon: Icons.admin_panel_settings,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Regular Users Card
-                  Expanded(
-                    child: _buildOverviewCard(
-                      title: 'Regular Users',
-                      count: regularUsers.length,
-                      color: const Color(0xFFE8F5E9),
-                      borderColor: Colors.greenAccent,
-                      icon: Icons.person,
-                    ),
+
+                  // CONTENT
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : Column(
+                            children: [
+                              _buildUserSection(
+                                title: 'Admin Users',
+                                count: adminUsers.length,
+                                color: const Color(0xFFFFEBEE),
+                                borderColor: Colors.redAccent,
+                                users: adminUsers,
+                                isAdmin: true,
+                              ),
+                              const SizedBox(height: 16),
+                              _buildUserSection(
+                                title: 'Regular Users',
+                                count: regularUsers.length,
+                                color: const Color(0xFFE8F5E9),
+                                borderColor: Colors.greenAccent,
+                                users: regularUsers,
+                                isAdmin: false,
+                              ),
+                            ],
+                          ),
                   ),
                 ],
               ),
             ),
-
-          // Content
-          Expanded(
-            child: isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : errorMessage != null
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          errorMessage!,
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: _loadUsers,
-                          child: const Text('Retry'),
-                        ),
-                      ],
-                    ),
-                  )
-                : SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      children: [
-                        // Admin Users Section
-                        _buildUserSection(
-                          title: 'Admin Users',
-                          count: adminUsers.length,
-                          color: const Color(0xFFFFEBEE),
-                          borderColor: Colors.redAccent,
-                          users: adminUsers,
-                          isAdmin: true,
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Regular Users Section
-                        _buildUserSection(
-                          title: 'Regular Users',
-                          count: regularUsers.length,
-                          color: const Color(0xFFE8F5E9),
-                          borderColor: Colors.greenAccent,
-                          users: regularUsers,
-                          isAdmin: false,
-                        ),
-                      ],
-                    ),
-                  ),
           ),
         ],
       ),

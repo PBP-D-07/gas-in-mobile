@@ -35,6 +35,7 @@ class AdminPage extends StatelessWidget {
           'Admin Dashboard',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
+        foregroundColor: Colors.white,
         backgroundColor: const Color(0xFF6C5CE7),
         elevation: 0,
       ),
@@ -128,7 +129,6 @@ class AdminPage extends StatelessWidget {
                       child: ItemCard(item),
                     ),
                   )
-                  .toList(),
             ],
           ),
         ),

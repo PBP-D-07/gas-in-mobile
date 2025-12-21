@@ -118,10 +118,15 @@ Pengguna dapat membuat akun baru dengan mengisi data seperti:
 ### Link APK Release
 https://app.bitrise.io/app/58fc1f89-8559-445d-8d1b-f0c2fc092a39/installable-artifacts/f7e009a8733986dc/public-install-page/80083613410c7ba3f4ab706e977280a8
 ### Link Bonus Video Promosi
-https://www.canva.com/design/DAG8HoSj-XY/DeVXQswsVIKzKyQlgZZPqQ/edit?utm_content=DAG8HoSj-XY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+https://drive.google.com/file/d/1VZLs0YoLfQCKojIZZV7PyJ-O5lZctPkl/view?usp=sharing
 ### Link Bonus Individu
 
 Nezzaluna Azzahra:
 
 - Advance Widget: https://medium.com/@nezzaluna10/enhance-user-experience-with-user-friendly-animation-loading-state-cba6daa730eb
 - Meningkatkan Performa Aplikasi: https://medium.com/@nezzaluna10/enhance-app-performance-12ee63f0104f
+
+Aisyah Saajidah:
+
+- Advanced Widget: https://medium.com/@papilbuilder/membangun-pengalaman-onboarding-yang-smooth-di-flutter-menggunakan-pageview-animatedcontainer-7e678a87d7f6
+- Module Unit Testing: https://medium.com/@papilbuilder/penerapan-pengujian-modul-event-pada-aplikasi-gas-in-menggunakan-flutter-test-dan-mockito-37575e230d37

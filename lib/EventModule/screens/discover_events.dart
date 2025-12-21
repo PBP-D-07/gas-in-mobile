@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_in/EventMakerModule/screens/event_detail.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:gas_in/EventModule/screens/saved_search.dart';
@@ -486,6 +487,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
   }
 
   Widget _buildEventCard(dynamic event) {
+    final String eventId = event['id'] ?? '';
     final String name = event['name'] ?? 'No Name';
     final String description = event['description'] ?? '';
     final String location = event['location'] ?? '';
@@ -501,57 +503,112 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
       eventDate = null;
     }
 
-    return SizedBox(
-      width: double.infinity, // ⬅️ PENTING
-      child: Card(
-        elevation: 4,
-        margin: const EdgeInsets.only(bottom: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: () {
+          if (eventId.isNotEmpty) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EventDetailPage(eventId: eventId),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Event ID tidak valid'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        borderRadius: BorderRadius.circular(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Image Section
             ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(12),
               ),
-              child: SizedBox(
-                width: double.infinity,
-                height: 180,
-                child: thumbnail != null
-                    ? Image.network(
-                        'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id$thumbnail',
-                        height: 180,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            height: 180,
-                            color: Colors.grey[300],
-                            child: const Icon(
-                              Icons.image_not_supported,
-                              size: 50,
-                              color: Colors.grey,
+              child: thumbnail != null && thumbnail.isNotEmpty
+                  ? Image.network(
+                      // Handle both relative and absolute URLs
+                      thumbnail.startsWith('http')
+                          ? thumbnail
+                          : 'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id$thumbnail',
+                      height: 180,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          height: 180,
+                          color: Colors.grey[300],
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                  : null,
+                              color: Colors.deepPurple,
                             ),
-                          );
-                        },
-                      )
-                    : Container(
-                        height: 180,
-                        color: Colors.grey[300],
-                        child: const Icon(
-                          Icons.image,
-                          size: 50,
-                          color: Colors.grey,
-                        ),
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        print('Error loading image for event $eventId: $error');
+                        return Container(
+                          height: 180,
+                          color: Colors.grey[300],
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.image_not_supported,
+                                size: 50,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                'Image not available',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    )
+                  : Container(
+                      height: 180,
+                      color: Colors.grey[300],
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.image, size: 50, color: Colors.grey),
+                          SizedBox(height: 8),
+                          Text(
+                            'No image',
+                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                          ),
+                        ],
                       ),
-              ),
+                    ),
             ),
+
+            // Content Section
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Category Badge
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
@@ -571,14 +628,20 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                     ),
                   ),
                   const SizedBox(height: 8),
+
+                  // Event Name
                   Text(
                     name,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
+
+                  // Location
                   Row(
                     children: [
                       const Icon(
@@ -587,12 +650,18 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                         color: Colors.grey,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        location,
-                        style: const TextStyle(color: Colors.grey),
+                      Expanded(
+                        child: Text(
+                          location,
+                          style: const TextStyle(color: Colors.grey),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),
+
+                  // Date
                   if (eventDate != null) ...[
                     const SizedBox(height: 4),
                     Row(
@@ -603,22 +672,52 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                           color: Colors.grey,
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          DateFormat(
-                            'EEEE, dd MMM yyyy HH:mm',
-                            'id_ID',
-                          ).format(eventDate),
-                          style: const TextStyle(color: Colors.grey),
+                        Expanded(
+                          child: Text(
+                            DateFormat(
+                              'EEEE, dd MMM yyyy HH:mm',
+                              'id_ID',
+                            ).format(eventDate),
+                            style: const TextStyle(color: Colors.grey),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),
                   ],
                   const SizedBox(height: 8),
+
+                  // Description
                   Text(
                     description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // View Details Button
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        if (eventId.isNotEmpty) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  EventDetailPage(eventId: eventId),
+                            ),
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.arrow_forward, size: 16),
+                      label: const Text('View Details'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.deepPurple,
+                      ),
+                    ),
                   ),
                 ],
               ),

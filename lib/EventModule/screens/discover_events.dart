@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_in/EventMakerModule/screens/event_detail.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:gas_in/EventModule/screens/saved_search.dart';
@@ -17,7 +18,7 @@ class DiscoverEventsPage extends StatefulWidget {
 class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
   String? selectedLocation;
   String? selectedCategory;
-  
+
   List<dynamic> filteredEvents = [];
   bool isLoading = false;
 
@@ -37,7 +38,8 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
     final request = context.read<CookieRequest>();
 
     try {
-      String url = 'http://localhost:8000/event/api/events/?';
+      String url =
+          'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id/event/api/events/?';
       if (selectedLocation != null && selectedLocation!.isNotEmpty) {
         url += 'location=$selectedLocation&';
       }
@@ -48,7 +50,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
       print('Fetching events from: $url');
       final response = await request.get(url);
       print('Response: $response');
-      
+
       setState(() {
         if (response is Map && response['data'] != null) {
           filteredEvents = response['data'] is List ? response['data'] : [];
@@ -63,9 +65,9 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
       print('Error fetching events: $e');
       setState(() => isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       }
     }
   }
@@ -217,7 +219,10 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                         }
                       },
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.deepPurple, width: 2),
+                        side: const BorderSide(
+                          color: Colors.deepPurple,
+                          width: 2,
+                        ),
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -225,7 +230,10 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                       ),
                       child: const Text(
                         'See Filter Saved',
-                        style: TextStyle(color: Colors.deepPurple, fontSize: 16),
+                        style: TextStyle(
+                          color: Colors.deepPurple,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ),
@@ -241,7 +249,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
+                      color: Colors.grey.withValues(alpha: 0.1),
                       spreadRadius: 2,
                       blurRadius: 5,
                     ),
@@ -352,41 +360,41 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
                       ),
                     )
                   : filteredEvents.isEmpty
-                      ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(50.0),
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.event_busy,
-                                  size: 80,
-                                  color: Colors.grey[400],
-                                ),
-                                const SizedBox(height: 16),
-                                const Text(
-                                  'Tidak ada event ditemukan',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                const Text(
-                                  'Coba ubah filter atau buat event baru',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ],
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(50.0),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.event_busy,
+                              size: 80,
+                              color: Colors.grey[400],
                             ),
-                          ),
-                        )
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: filteredEvents.length,
-                          itemBuilder: (context, index) {
-                            return _buildEventCard(filteredEvents[index]);
-                          },
+                            const SizedBox(height: 16),
+                            const Text(
+                              'Tidak ada event ditemukan',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              'Coba ubah filter atau buat event baru',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
                         ),
+                      ),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: filteredEvents.length,
+                      itemBuilder: (context, index) {
+                        return _buildEventCard(filteredEvents[index]);
+                      },
+                    ),
             ],
           ),
         ),
@@ -400,7 +408,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
       'Bogor',
       'Depok',
       'Tangerang',
-      'Bekasi'
+      'Bekasi',
     ];
     final List<Map<String, String>> categoryOptions = [
       {'value': 'running', 'label': 'Lari'},
@@ -425,9 +433,7 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
         child: DropdownButton<String>(
           isExpanded: true,
           value: type == 'location' ? selectedLocation : selectedCategory,
-          hint: Text(
-            type == 'location' ? 'Semua Lokasi' : 'Semua Kategori',
-          ),
+          hint: Text(type == 'location' ? 'Semua Lokasi' : 'Semua Kategori'),
           items: [
             DropdownMenuItem(
               value: null,
@@ -457,12 +463,13 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
   }
 
   Widget _buildEventCard(dynamic event) {
+    final String eventId = event['id'] ?? '';
     final String name = event['name'] ?? 'No Name';
     final String description = event['description'] ?? '';
     final String location = event['location'] ?? '';
     final String category = event['category'] ?? '';
     final String? thumbnail = event['thumbnail'];
-    
+
     DateTime? eventDate;
     try {
       if (event['date'] != null) {
@@ -475,111 +482,224 @@ class _DiscoverEventsPageState extends State<DiscoverEventsPage> {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: () {
+          if (eventId.isNotEmpty) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EventDetailPage(eventId: eventId),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Event ID tidak valid'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
         borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image Section
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(12),
+              ),
+              child: thumbnail != null && thumbnail.isNotEmpty
+                  ? Image.network(
+                      // Handle both relative and absolute URLs
+                      thumbnail.startsWith('http')
+                          ? thumbnail
+                          : 'https://nezzaluna-azzahra-gas-in.pbp.cs.ui.ac.id$thumbnail',
+                      height: 180,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          height: 180,
+                          color: Colors.grey[300],
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                  : null,
+                              color: Colors.deepPurple,
+                            ),
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        print('Error loading image for event $eventId: $error');
+                        return Container(
+                          height: 180,
+                          color: Colors.grey[300],
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.image_not_supported,
+                                size: 50,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                'Image not available',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    )
+                  : Container(
+                      height: 180,
+                      color: Colors.grey[300],
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.image, size: 50, color: Colors.grey),
+                          SizedBox(height: 8),
+                          Text(
+                            'No image',
+                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
             ),
-            child: thumbnail != null
-                ? Image.network(
-                    'http://localhost:8000$thumbnail',
-                    height: 180,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        height: 180,
-                        color: Colors.grey[300],
-                        child: const Icon(
-                          Icons.image_not_supported,
-                          size: 50,
-                          color: Colors.grey,
-                        ),
-                      );
-                    },
-                  )
-                : Container(
-                    height: 180,
-                    color: Colors.grey[300],
-                    child: const Icon(
-                      Icons.image,
-                      size: 50,
-                      color: Colors.grey,
+
+            // Content Section
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Category Badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.deepPurple.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      getCategoryLabel(category),
+                      style: const TextStyle(
+                        color: Colors.deepPurple,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    getCategoryLabel(category),
+                  const SizedBox(height: 8),
+
+                  // Event Name
+                  Text(
+                    name,
                     style: const TextStyle(
-                      color: Colors.deepPurple,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      fontSize: 12,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, size: 16, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Text(
-                      location,
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
-                if (eventDate != null) ...[
                   const SizedBox(height: 4),
+
+                  // Location
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                      const Icon(
+                        Icons.location_on,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
                       const SizedBox(width: 4),
-                      Text(
-                        DateFormat('EEEE, dd MMM yyyy HH:mm', 'id_ID')
-                            .format(eventDate),
-                        style: const TextStyle(color: Colors.grey),
+                      Expanded(
+                        child: Text(
+                          location,
+                          style: const TextStyle(color: Colors.grey),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),
+
+                  // Date
+                  if (eventDate != null) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.calendar_today,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            DateFormat(
+                              'EEEE, dd MMM yyyy HH:mm',
+                              'id_ID',
+                            ).format(eventDate),
+                            style: const TextStyle(color: Colors.grey),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                  const SizedBox(height: 8),
+
+                  // Description
+                  Text(
+                    description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // View Details Button
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        if (eventId.isNotEmpty) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  EventDetailPage(eventId: eventId),
+                            ),
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.arrow_forward, size: 16),
+                      label: const Text('View Details'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.deepPurple,
+                      ),
+                    ),
+                  ),
                 ],
-                const SizedBox(height: 8),
-                Text(
-                  description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.grey),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

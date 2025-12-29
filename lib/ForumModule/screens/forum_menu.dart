@@ -61,51 +61,6 @@ class _ForumCommunityState extends State<ForumCommunity> {
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
-
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: GestureDetector(
-              onTap: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const PostFormPage(),
-                  ),
-                );
-                setState(() {});
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFF4A4E9E),
-                      Color(0xFF6D5AE6),
-                    ],
-                  ),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.add, size: 18, color: Colors.white),
-                    SizedBox(width: 8),
-                    Text(
-                      'Add Post',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
         ),
         actions: [
           Padding(
@@ -139,7 +94,11 @@ class _ForumCommunityState extends State<ForumCommunity> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.add, size: 18, color: Colors.white),
+                    const Icon(
+                      Icons.add,
+                      size: 18,
+                      color: Color.fromRGBO(255, 255, 255, 1),
+                    ),
                     const SizedBox(width: 8),
                     const Text(
                       'Add Post',
